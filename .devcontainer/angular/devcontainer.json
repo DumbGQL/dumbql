@@ -1,11 +1,12 @@
 {
-  "name": "DumbQL + Angular Demo",
+  "name": "DumbQL + Angular Sandbox",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
-  "postCreateCommand": "npm ci && npm run build:packages && node mock/server.mjs & npm start -- --host 0.0.0.0",
+  "postCreateCommand": "npm ci && node scripts/build-packages.mjs",
+  "postStartCommand": "node mock/server.mjs & npm start -- --host 0.0.0.0",
   "forwardPorts": [4000, 4200],
   "portsAttributes": {
-    "4000": { "label": "Mock GraphQL API", "onAutoForward": "notify" },
-    "4200": { "label": "Angular Dev Server", "onAutoForward": "openBrowser" }
+    "4000": { "label": "GraphQL Mock API", "onAutoForward": "notify" },
+    "4200": { "label": "Angular App", "onAutoForward": "openBrowser" }
   },
   "customizations": {
     "vscode": {

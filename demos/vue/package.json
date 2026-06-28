@@ -1,22 +1,21 @@
 {
-  "name": "dumbql-vue-demo",
+  "name": "@dumbql/demo-vue",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dumbql/client": "^0.0.1",
-    "@dumbql/vue": "^0.0.1",
+    "@dumbql/client": "*",
+    "@dumbql/vue": "*",
     "graphql": "^17.0.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
     "typescript": "~6.0.0",
-    "vite": "^6.0.0",
-    "vue-tsc": "^2.0.0"
+    "vite": "^6.0.0"
   }
 }

@@ -1,15 +1,15 @@
 {
-  "name": "dumbql-react-demo",
+  "name": "@dumbql/demo-react",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dumbql/client": "^0.0.1",
-    "@dumbql/react": "^0.0.1",
+    "@dumbql/client": "*",
+    "@dumbql/react": "*",
     "graphql": "^17.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

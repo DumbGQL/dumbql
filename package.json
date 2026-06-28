@@ -43,7 +43,9 @@
   },
   "private": true,
   "workspaces": [
-    "projects/dumbql/*"
+    "projects/dumbql/*",
+    "demos/react",
+    "demos/vue"
   ],
   "packageManager": "npm@11.16.0",
   "dependencies": {

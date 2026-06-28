@@ -502,6 +502,24 @@ src/
 └── dumbql.config.ts          # Central DumbQL configuration
 ```
 
+## Bugs Fixed in Other Clients
+
+Real GitHub issues from Apollo, URQL, and Relay that DumbQL addresses by design.
+
+| Project | Issue | Problem | DumbQL Fix |
+|---|---|---|---|
+| Apollo | [#9319](https://github.com/apollographql/apollo-client/issues/9319) | `INVALIDATE` in `cache.modify` does not evict data — stale data persists with no refetch | Cache middleware auto-evicts entities on mutation. No manual `modify`/`evict` needed |
+| Apollo | [#10289](https://github.com/apollographql/apollo-client/issues/10289) | `cache.evict` silently no-ops inside optimistic UI — open since 2022 | Optimistic updates are snapshots with explicit commit/rollback — eviction always works |
+| Apollo | [#11804](https://github.com/apollographql/apollo-client/issues/11804) | Skipped query returns outdated data after `clearStore()` — cache reset is ignored by skipped hooks | No skip concept. Queries are imperative — reset always returns fresh state |
+| Apollo | [#9735](https://github.com/apollographql/apollo-client/issues/9735) | Production-only bug: internal results cache merges stale data into `readFromStore` output | No internal result cache — every read goes directly to the normalized store |
+| Apollo | [#8958](https://github.com/apollographql/apollo-client/issues/8958) | `@apollo/client` requires `react` as dependency even in non-React projects | Framework-agnostic core (`@dumbql/client`) has zero framework dependencies |
+| Apollo Angular | [#2371](https://github.com/the-guild-org/apollo-angular/issues/2371) | apollo-angular incompatible with `@apollo/client` v4.0 — Angular version lags behind React | Angular packages track core in lockstep — no React version to wait for |
+| URQL | [#2414](https://github.com/urql-graphql/urql/issues/2414) | `relayPagination` does not reset data when non-relay params change — shows stale results | Pagination helpers are stateless — variable changes always produce a clean slate |
+| URQL | [#668](https://github.com/urql-graphql/urql/issues/668) | Query with `relayPagination` does not refetch when variables change — returns stale data | Query refetch on variable change is guaranteed — no stale data regression |
+| URQL | [#3877](https://github.com/urql-graphql/urql/pull/3877) | `relayPagination` concatenates pages in cache-write order, causing flickering mis-ordered items | Cursor merge functions use explicit ordering — no dependency on write timing |
+| Relay | [#3406](https://github.com/facebook/relay/issues/3406) | Relay is React-only. No Angular, Vue, or Svelte support — framework lock-in | DumbQL ships first-class bindings for Angular, React, and Vue from day one |
+| Relay | [#183](https://github.com/facebook/relay/issues/183) | Relay mandates `Node` interface + `Connection` spec — backend must conform | Supports offset, cursor, and relay-style pagination — no backend changes required |
+
 ---
 
 <picture>

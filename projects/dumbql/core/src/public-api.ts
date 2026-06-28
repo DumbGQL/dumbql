@@ -59,3 +59,11 @@ export { DEVTOLS_CONFIG } from './lib/devtools';
 
 export { makeVar, ReactiveVar } from './lib/reactive-vars';
 export { clientDirectiveMiddleware } from './lib/client-directive';
+export {
+  streamingMiddleware,
+  applyPatch,
+  applyStreamItems,
+  parseMultipartResponse,
+  type IncrementalPayload,
+  type IncrementalResponse,
+} from './lib/streaming';

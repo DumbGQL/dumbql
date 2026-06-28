@@ -1,6 +1,6 @@
 import { Injectable, inject, Injector } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, map, of, shareReplay, timer, switchMap, tap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, timer, switchMap, tap, Subscriber } from 'rxjs';
 import { CacheService } from '@dumbql/cache';
 import { print, type DocumentNode, type TypedDocumentNode } from './gql';
 import { gql } from './gql';
@@ -85,8 +85,21 @@ export class GraphqlService {
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
-    const query = print(document);
-    return this.withDedup(query, variables, () => this.executeQuery<TResponse>(query, variables, endpoint));
+    const queryStr = print(document);
+    return this.withDedup(queryStr, variables, () => this.executeQuery<TResponse>(queryStr, variables, endpoint));
+  }
+
+  /**
+   * Execute a query with streaming support (`@defer`/`@stream`).
+   * Uses the Fetch API internally for multipart/mixed response handling.
+   */
+  queryStream<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    variables?: TVariables,
+    endpoint?: string,
+  ): Observable<GraphQLResult<TResponse>> {
+    const queryStr = print(document);
+    return this.executeStreaming(queryStr, variables, endpoint) as Observable<GraphQLResult<TResponse>>;
   }
 
   mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
@@ -236,6 +249,137 @@ export class GraphqlService {
       map((response) => this.toResult(response)),
       catchError((error: unknown) => of(this.toHttpError(error))),
     );
+  }
+
+  /**
+   * Execute a query using the Fetch API for streaming (`@defer`/`@stream`).
+   * Emits each incremental patch as it arrives.
+   */
+  executeStreaming(
+    query: string,
+    variables?: Record<string, unknown>,
+    endpoint?: string,
+  ): Observable<GraphQLResult<unknown>> {
+    return new Observable<GraphQLResult<unknown>>((subscriber: Subscriber<GraphQLResult<unknown>>) => {
+      const url = endpoint || this._endpoint;
+      const headers = this.getHeaderMap();
+      const controller = new AbortController();
+
+      (async () => {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              ...headers,
+              'Content-Type': 'application/json',
+              Accept: 'multipart/mixed;boundary=graphql;defer=stream',
+            },
+            body: JSON.stringify({ query, variables }),
+            signal: controller.signal,
+          });
+
+          if (!response.ok) {
+            subscriber.next({ status: 'error', error: `HTTP ${response.status}` });
+            subscriber.complete();
+            return;
+          }
+
+          const contentType = response.headers.get('content-type') ?? '';
+          const reader = response.body?.getReader();
+          if (!reader) {
+            subscriber.next({ status: 'error', error: 'No response body' });
+            subscriber.complete();
+            return;
+          }
+
+          if (contentType.includes('multipart/mixed')) {
+            const boundary = this.parseBoundary(contentType);
+            if (!boundary) {
+              subscriber.next({ status: 'error', error: 'No boundary in multipart response' });
+              subscriber.complete();
+              return;
+            }
+            await this.readMultipartStream(reader, boundary, subscriber);
+          } else {
+            const chunks: Uint8Array[] = [];
+            let done = false;
+            while (!done) {
+              const { done: d, value } = await reader.read();
+              done = d;
+              if (value) chunks.push(value);
+            }
+            const text = new TextDecoder().decode(this.concatBuffers(chunks));
+            const json = JSON.parse(text) as GraphQLResponse<unknown>;
+            subscriber.next(this.toResult(json));
+            subscriber.complete();
+          }
+        } catch (err) {
+          if (err instanceof DOMException && err.name === 'AbortError') return;
+          subscriber.error(err);
+        }
+      })();
+
+      return () => controller.abort();
+    });
+  }
+
+  private parseBoundary(contentType: string): string | null {
+    const match = contentType.match(/boundary=(?:"([^"]+)"|([^;\s]+))/i);
+    return match ? (match[1] ?? match[2]) : null;
+  }
+
+  private async readMultipartStream(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    boundary: string,
+    subscriber: Subscriber<GraphQLResult<unknown>>,
+  ): Promise<void> {
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let done = false;
+
+    while (!done) {
+      const { done: d, value } = await reader.read();
+      done = d;
+      if (value) buffer += decoder.decode(value, { stream: !done });
+
+      const parts = buffer.split(`--${boundary}`);
+      if (parts.length > 1) {
+        buffer = parts.pop() ?? '';
+        for (const part of parts) {
+          const trimmed = part.trim();
+          if (!trimmed || trimmed === '--') continue;
+          const jsonStart = trimmed.indexOf('\n\n');
+          if (jsonStart === -1) continue;
+          const jsonStr = trimmed.slice(jsonStart + 2).trim();
+          if (!jsonStr) continue;
+          try {
+            const parsed = JSON.parse(jsonStr) as GraphQLResponse<unknown>;
+            const result = this.toResult(parsed);
+            subscriber.next(result);
+            const wrapper = parsed as { hasNext?: boolean };
+            if (wrapper.hasNext === false) {
+              subscriber.complete();
+              return;
+            }
+          } catch {
+            // skip malformed chunks
+          }
+        }
+      }
+    }
+
+    subscriber.complete();
+  }
+
+  private concatBuffers(chunks: Uint8Array[]): Uint8Array {
+    const total = chunks.reduce((sum, c) => sum + c.length, 0);
+    const result = new Uint8Array(total);
+    let offset = 0;
+    for (const chunk of chunks) {
+      result.set(chunk, offset);
+      offset += chunk.length;
+    }
+    return result;
   }
 
   private withRetry<T>(fn: () => Observable<GraphQLResult<T>>): Observable<GraphQLResult<T>> {

@@ -3,7 +3,7 @@
 > **Zero-boilerplate GraphQL client suite for any framework. ~10KB core, modular architecture, Angular-native + React + Vue.**
 
 <p align="center">
-  <img src="./projects/dumbql/core/assets/dumbql_logo.svg" alt="DumbQL" width="180"/>
+  <img src="./public/logos/logo.png" alt="DumbQL" width="180"/>
   <br/>
   <a href="#package-architecture">Packages</a> •
   <a href="#quick-start">Quick Start</a> •
@@ -505,8 +505,8 @@ src/
 ---
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./projects/dumbql/core/assets/dumbql_logo.svg">
-  <img alt="DumbQL" src="./projects/dumbql/core/assets/dumbql_logo.svg" width="120" align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="./public/logos/logo.png">
+  <img alt="DumbQL" src="./public/logos/logo.png" width="120" align="center">
 </picture>
 
 **Built for Angular · Modular · Zero‑boilerplate**

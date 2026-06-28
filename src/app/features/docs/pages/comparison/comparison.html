@@ -153,6 +153,93 @@
       </tbody>
     </table>
 
+    <h2 appAnchor id="fixed-bugs">Fixed Bugs &amp; Issues</h2>
+
+    <p>
+      Real GitHub issues from other GraphQL clients that DumbQL addresses
+      by design. Each link points to a confirmed bug or architectural
+      limitation in the respective project.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Issue</th>
+          <th>Problem</th>
+          <th>DumbQL Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Apollo</td>
+          <td><a href="https://github.com/apollographql/apollo-client/issues/9319" target="_blank">#9319</a></td>
+          <td><code>INVALIDATE</code> in <code>cache.modify</code> does not evict data — stale data persists with no refetch</td>
+          <td>Cache middleware auto-evicts entities on mutation. No manual <code>modify</code> / <code>evict</code> needed</td>
+        </tr>
+        <tr>
+          <td>Apollo</td>
+          <td><a href="https://github.com/apollographql/apollo-client/issues/10289" target="_blank">#10289</a></td>
+          <td><code>cache.evict</code> silently no-ops inside optimistic UI — open since 2022</td>
+          <td>Optimistic updates are snapshots with explicit commit/rollback — eviction always works</td>
+        </tr>
+        <tr>
+          <td>Apollo</td>
+          <td><a href="https://github.com/apollographql/apollo-client/issues/11804" target="_blank">#11804</a></td>
+          <td>Skipped query returns outdated data after <code>clearStore()</code> — cache reset is ignored by skipped hooks</td>
+          <td>No skip concept. Queries are imperative — reset always returns fresh state</td>
+        </tr>
+        <tr>
+          <td>Apollo</td>
+          <td><a href="https://github.com/apollographql/apollo-client/issues/9735" target="_blank">#9735</a></td>
+          <td>Production-only bug: internal results cache merges stale data into <code>readFromStore</code> output</td>
+          <td>No internal result cache — every read goes directly to the normalized store</td>
+        </tr>
+        <tr>
+          <td>Apollo</td>
+          <td><a href="https://github.com/apollographql/apollo-client/issues/8958" target="_blank">#8958</a></td>
+          <td><code>@apollo/client</code> requires <code>react</code> as dependency even in non-React projects</td>
+          <td>Framework-agnostic core (<code>@dumbql/client</code>) has zero framework dependencies</td>
+        </tr>
+        <tr>
+          <td>Apollo Angular</td>
+          <td><a href="https://github.com/the-guild-org/apollo-angular/issues/2371" target="_blank">#2371</a></td>
+          <td>apollo-angular incompatible with <code>@apollo/client</code> v4.0 — Angular version lags behind React</td>
+          <td>Angular packages track core in lockstep — no React version to wait for</td>
+        </tr>
+        <tr>
+          <td>URQL</td>
+          <td><a href="https://github.com/urql-graphql/urql/issues/2414" target="_blank">#2414</a></td>
+          <td><code>relayPagination</code> does not reset data when non-relay params (e.g. <code>sort</code>) change — shows stale results</td>
+          <td>Pagination helpers are stateless — variable changes always produce a clean slate</td>
+        </tr>
+        <tr>
+          <td>URQL</td>
+          <td><a href="https://github.com/urql-graphql/urql/issues/668" target="_blank">#668</a></td>
+          <td>Query with <code>relayPagination</code> does not refetch when variables change — returns stale data</td>
+          <td>Query refetch on variable change is guaranteed — no stale data regression</td>
+        </tr>
+        <tr>
+          <td>URQL</td>
+          <td><a href="https://github.com/urql-graphql/urql/pull/3877" target="_blank">#3877</a></td>
+          <td><code>relayPagination</code> concatenates pages in cache-write order, causing flickering mis-ordered items</td>
+          <td>Cursor merge functions use explicit ordering — no dependency on write timing</td>
+        </tr>
+        <tr>
+          <td>Relay</td>
+          <td><a href="https://github.com/facebook/relay/issues/3406" target="_blank">#3406</a></td>
+          <td>Relay is React-only. No Angular, Vue, or Svelte support — framework lock-in</td>
+          <td>DumbQL ships first-class bindings for Angular, React, and Vue from day one</td>
+        </tr>
+        <tr>
+          <td>Relay</td>
+          <td><a href="https://github.com/facebook/relay/issues/183" target="_blank">#183</a></td>
+          <td>Relay mandates <code>Node</code> interface + <code>Connection</code> spec — backend must conform</td>
+          <td>Supports offset, cursor, and relay-style pagination — no backend changes required</td>
+        </tr>
+      </tbody>
+    </table>
+
     <h2 appAnchor id="apollo-pain">Apollo Pain Points</h2>
 
     <p>

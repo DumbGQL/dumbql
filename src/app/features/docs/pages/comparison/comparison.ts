@@ -15,6 +15,7 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 export class DocsComparison {
 	protected readonly tocSections: TocSection[] = [
 		{ id: 'comparison', title: 'Comparison Table' },
+		{ id: 'fixed-bugs', title: 'Fixed Bugs & Issues' },
 		{ id: 'apollo-pain', title: 'Apollo Pain Points' },
 		{ id: 'relay-pain', title: 'Relay Pain Points' },
 		{ id: 'urql-pain', title: 'URQL Pain Points' },

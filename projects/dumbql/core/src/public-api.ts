@@ -17,7 +17,7 @@ export { GraphqlService, type GraphQLResult, type GraphQLResponse } from './lib/
 export { gql, print } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode } from './lib/gql';
 export { query, type QueryHandle } from './lib/query';
-export { mutate } from './lib/mutate';
+export { mutate, type MutateOptions } from './lib/mutate';
 export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
 export { isSuccess, isError, unwrap, unwrapOrThrow, mapResult } from './lib/helpers';

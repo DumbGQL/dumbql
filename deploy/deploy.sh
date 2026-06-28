@@ -24,7 +24,7 @@ cd "$TEMP_DIR"
 
 # ── 2. Install ────────────────────────────────────────────────────────
 echo "=== 2/6 Installing dependencies ==="
-npm ci --silent
+npm ci
 
 # ── 3. Build packages ─────────────────────────────────────────────────
 echo "=== 3/6 Building @dumbql/* packages ==="

@@ -30,5 +30,6 @@ export class DocsPage {
 		{ path: '/docs/testing', label: '@dumbql/testing' },
 		{ path: '/docs/comparison', label: 'vs Other Solutions' },
 		{ path: '/docs/api', label: 'API Reference' },
+		{ path: '/docs/devcontainers', label: 'Dev Containers' },
 	];
 }

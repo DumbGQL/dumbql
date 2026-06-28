@@ -1,0 +1,19 @@
+{
+  "name": "DumbQL + React Demo",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "postCreateCommand": "npm --prefix demos/react install && node mock/server.mjs & npm --prefix demos/react run dev",
+  "forwardPorts": [4000, 5173],
+  "portsAttributes": {
+    "4000": { "label": "Mock GraphQL API", "onAutoForward": "notify" },
+    "5173": { "label": "Vite Dev Server", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "graphql.vscode-graphql"
+      ]
+    }
+  }
+}

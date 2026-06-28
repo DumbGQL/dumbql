@@ -1,0 +1,107 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <h1>Dev Containers</h1>
+      <p class="subtitle">
+        Spin up a fully-configured development environment with DumbQL in seconds.
+      </p>
+    </header>
+
+    <p>
+      Each devcontainer includes a running mock GraphQL backend and a minimal app
+      that queries it using <code>&#64;dumbql/*</code> packages — zero setup required.
+    </p>
+
+    <h2>Prerequisites</h2>
+    <ul>
+      <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a> with the
+        <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers</a>
+        extension</li>
+      <li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker</a></li>
+    </ul>
+
+    <h2>Angular Demo</h2>
+    <p>
+      The full DumbQL monorepo — Angular 22 app with cache, subscriptions,
+      file uploads, pagination, and all other packages.
+    </p>
+
+    <div class="code-block">
+      <pre><code># Open in VS Code and press Ctrl+Shift+P → "Dev Containers: Reopen in Container"
+# Or open the folder .devcontainer/angular/ directly</code></pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Service</th><th>URL</th><th>Port</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Angular App</td><td><code>http://localhost:4200</code></td><td>4200</td></tr>
+        <tr><td>Mock GraphQL API</td><td><code>http://localhost:4000/graphql</code></td><td>4000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>React Demo</h2>
+    <p>
+      A minimal Vite + React app with the <code>&#64;dumbql/react</code> package.
+      Demonstrates <code>DumbqlProvider</code>, <code>useQuery</code>, and
+      <code>gql</code> in a single-file component.
+    </p>
+
+    <div class="code-block">
+      <pre><code># Open .devcontainer/react/ in VS Code and reopen in container</code></pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Service</th><th>URL</th><th>Port</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vite Dev Server</td><td><code>http://localhost:5173</code></td><td>5173</td></tr>
+        <tr><td>Mock GraphQL API</td><td><code>http://localhost:4000/graphql</code></td><td>4000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Vue Demo</h2>
+    <p>
+      A minimal Vite + Vue app with the <code>&#64;dumbql/vue</code> package.
+      Demonstrates <code>createDumbqlPlugin</code>, <code>useQuery</code>, and
+      <code>gql</code>.
+    </p>
+
+    <div class="code-block">
+      <pre><code># Open .devcontainer/vue/ in VS Code and reopen in container</code></pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Service</th><th>URL</th><th>Port</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vite Dev Server</td><td><code>http://localhost:5173</code></td><td>5173</td></tr>
+        <tr><td>Mock GraphQL API</td><td><code>http://localhost:4000/graphql</code></td><td>4000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>How It Works</h2>
+    <p>
+      Each devcontainer uses the
+      <code>mcr.microsoft.com/devcontainers/typescript-node:22</code> base image.
+      The <code>postCreateCommand</code> installs dependencies and starts both
+      the mock backend and the dev server. The mock server (in <code>mock/</code>)
+      provides a GraphQL endpoint with sample notes and users.
+    </p>
+
+    <h2>Source Code</h2>
+    <p>
+      Demo apps live in the <code>demos/</code> directory:
+    </p>
+    <ul>
+      <li><code>demos/react/</code> — React + Vite demo</li>
+      <li><code>demos/vue/</code> — Vue + Vite demo</li>
+    </ul>
+    <p>
+      For Angular, the monorepo itself (<code>src/</code>) serves as the demo app.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GraphQL Debugger</title>
+<style>
+*{box-sizing:border-box}
+body{width:380px;min-height:240px;font:13px/1.4 system-ui,sans-serif;margin:0;padding:.75rem;background:#1a1a2e;color:#e0e0e0}
+h1{margin:0 0 .75rem;font-size:.9rem;font-weight:600}
+.stats{display:flex;gap:.5rem;margin-bottom:.75rem}
+.stat-box{flex:1;text-align:center;padding:.5rem;background:#16213e;border-radius:5px;border:1px solid #0f3460}
+.stat-box .num{font-size:1.3rem;font-weight:700}
+.stat-box .num.ok{color:#2ecc71}
+.stat-box .num.err{color:#e74c3c}
+.stat-box .num.total{color:#3498db}
+.stat-box .label{font-size:.6rem;color:#889;margin-top:.15rem;text-transform:uppercase;letter-spacing:.05em}
+.actions{display:flex;gap:.4rem}
+.actions button{flex:1;padding:.4rem;background:#0f3460;color:#e0e0e0;border:1px solid #1a4a8a;border-radius:4px;cursor:pointer;font-size:.75rem}
+.actions button.primary{background:#1a6b8a;border-color:#1a8aaa}
+.actions button:hover{filter:brightness(1.2)}
+.recent{margin-top:.75rem}
+.recent h2{font-size:.7rem;color:#889;text-transform:uppercase;letter-spacing:.05em;margin:0 0 .3rem}
+.recent-item{display:flex;align-items:center;gap:.4rem;padding:.25rem .4rem;font-size:.7rem;border-radius:3px}
+.recent-item:nth-child(odd){background:#16213e}
+.recent-item .badge{font-size:.55rem;font-weight:700;text-transform:uppercase;padding:.08rem .25rem;border-radius:2px}
+.recent-item .badge.query{background:#1a6b8a;color:#fff}
+.recent-item .badge.mutate{background:#8a6b1a;color:#fff}
+.recent-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-item .dur{color:#667;font-size:.6rem}
+.recent-item .status-dot{width:5px;height:5px;border-radius:50%}
+.recent-item .status-dot.ok{background:#2ecc71}
+.recent-item .status-dot.err{background:#e74c3c}
+.note{margin-top:.75rem;font-size:.65rem;color:#667;text-align:center}
+#bridgeStatus{font-size:.6rem;text-align:center;margin-top:.3rem}
+.empty{text-align:center;color:#667;padding:.5rem;font-size:.75rem}
+</style>
+</head>
+<body>
+<h1>GraphQL Debugger</h1>
+<div class="stats">
+  <div class="stat-box"><div class="num total" id="totalCount">0</div><div class="label">Total</div></div>
+  <div class="stat-box"><div class="num ok" id="okCount">0</div><div class="label">OK</div></div>
+  <div class="stat-box"><div class="num err" id="errCount">0</div><div class="label">Errors</div></div>
+  <div class="stat-box"><div class="num" id="typeCount" style="color:#9b59b6">0</div><div class="label">Types</div></div>
+  <div class="stat-box"><div class="num" id="avgDur" style="color:#f39c12">-</div><div class="label">Avg ms</div></div>
+</div>
+<div class="actions">
+  <button class="primary" id="openDevtools">Open DevTools</button>
+  <button id="clearPopup">Clear</button>
+</div>
+<div class="recent" id="recentList">
+  <h2>Recent</h2>
+  <div class="empty">No requests yet</div>
+</div>
+<div id="bridgeStatus" style="font-size:.6rem;text-align:center;margin-top:.3rem;color:var(--text-dim,#667)">...</div>
+<div class="note">Open DevTools → GraphQL tab for full inspector</div>
+<script src="popup.js"></script>
+</body>
+</html>

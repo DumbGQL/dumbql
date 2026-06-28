@@ -1,0 +1,16 @@
+query GetNoteDetails($id: String!) {
+  getNoteDetails(id: $id) {
+    id
+    title
+    content
+    description
+    iconUrl
+    noteType
+    createdAt
+    updatedAt
+    author {
+      id
+      username
+    }
+  }
+}

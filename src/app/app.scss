@@ -1,0 +1,45 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  height: 3.5rem;
+  border-bottom: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  margin-right: auto;
+
+  .app-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--tui-text-primary);
+  }
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--tui-border-normal);
+  color: var(--tui-text-secondary);
+  font-size: 0.8125rem;
+}

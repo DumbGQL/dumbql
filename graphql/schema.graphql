@@ -1,0 +1,83 @@
+"""
+Directs the executor to defer this fragment when the `if` argument is true or undefined.
+"""
+directive @defer(
+  """Deferred when true or undefined."""
+  if: Boolean = true
+
+  """Unique name"""
+  label: String
+) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+input CreateNoteInput {
+  title: String!
+  content: String!
+  description: String
+  icon: Upload
+  noteType: NoteType!
+}
+
+input CreateUserInput {
+  username: String!
+  password: String!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User!
+  deleteUser: Boolean!
+  setMasterKey(masterKey: String!): User!
+  createNote(input: CreateNoteInput!): Note!
+  updateNote(input: UpdateNoteInput!): Note!
+  deleteNote(id: String): Boolean!
+}
+
+type Note {
+  id: UUID!
+  title: String!
+  content: String!
+  iconUrl: String
+  description: String
+  noteType: NoteType!
+  createdAt: String!
+  updatedAt: String
+  author: User!
+}
+
+enum NoteType {
+  NOTE
+  PASSWORD
+}
+
+type Query {
+  getCurrentUser: User!
+  getNotes(filter: NoteType): [Note!]
+  getNoteDetails(id: String!): Note!
+}
+
+scalar UUID
+
+input UpdateNoteInput {
+  title: String
+  content: String
+  description: String
+  icon: Upload
+  noteType: NoteType!
+}
+
+input UpdateUserInput {
+  username: String
+  password: String
+  masterKey: String
+}
+
+scalar Upload
+
+type User {
+  id: UUID!
+  username: String!
+  password: String!
+  masterKey: String!
+  createdAt: String!
+  updatedAt: String!
+}

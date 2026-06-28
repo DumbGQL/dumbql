@@ -1,0 +1,20 @@
+<div class="docs-layout">
+  <aside class="docs-sidebar">
+    <div class="sidebar-title">Documentation</div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="nav-link"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+  <div class="docs-content">
+    <router-outlet />
+  </div>
+</div>

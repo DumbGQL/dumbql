@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "id": "DumbqlNgAddSchema",
+  "title": "DumbQL Installation Options",
+  "type": "object",
+  "properties": {
+    "cache": {
+      "type": "boolean",
+      "description": "Install `@dumbql/cache` for normalized query caching?",
+      "default": true,
+      "x-prompt": "Would you like to install normalized caching support (@dumbql/cache)?"
+    },
+    "subscriptions": {
+      "type": "boolean",
+      "description": "Install `@dumbql/subscriptions` for GraphQL WebSockets/SSE?",
+      "default": false,
+      "x-prompt": "Would you like to install WebSocket subscriptions support (@dumbql/subscriptions)?"
+    },
+    "upload": {
+      "type": "boolean",
+      "description": "Install `@dumbql/file-upload` for multipart GraphQL uploads?",
+      "default": false,
+      "x-prompt": "Would you like to install GraphQL file upload support (@dumbql/file-upload)?"
+    },
+    "middlewares": {
+      "type": "boolean",
+      "description": "Install `@dumbql/middlewares` for focus-refetch, retry, offline-queue, and auth-refresh?",
+      "default": true,
+      "x-prompt": "Would you like to install auxiliary middlewares (@dumbql/middlewares)?"
+    },
+    "devtools": {
+      "type": "boolean",
+      "description": "Enable and configure the DumbQL GraphQL Debugger DevTools?",
+      "default": true,
+      "x-prompt": "Would you like to configure the DumbQL DevTools debugger link?"
+    }
+  },
+  "required": []
+}

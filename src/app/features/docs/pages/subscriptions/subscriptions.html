@@ -1,0 +1,58 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>@dumbql/subscriptions</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+          <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
+        </div>
+      </div>
+      <p class="lead">
+        The subscriptions package enables real-time data streaming over WebSocket using
+        the <code>graphql-transport-ws</code> protocol. It integrates fully with the
+        DumbQL middleware pipeline so authenticated subscriptions work out of the box.
+      </p>
+    </header>
+
+    <h2 appAnchor id="graphql-subscription-service">GraphqlSubscriptionService</h2>
+    <p>
+      <code>GraphqlSubscriptionService</code> manages WebSocket connections and
+      subscription lifecycles. Install it by calling
+      <code>provideDumbqlSubscriptions</code> with the WebSocket URL:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; provideSubscriptionsCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="subscribe">subscribe()</h2>
+    <p>
+      Use <code>subscribe()</code> to listen for real-time events. It returns a
+      signal that updates whenever a new event arrives:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; subscribeCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="graphql-transport-ws">graphql-transport-ws Protocol</h2>
+    <p>
+      DumbQL subscriptions implement the <code>graphql-transport-ws</code> protocol
+      (the modern replacement for <code>subscriptions-transport-ws</code>). This
+      provides:
+    </p>
+    <ul>
+      <li><strong>Single connection multiplexing</strong> — one WebSocket handles many subscriptions</li>
+      <li><strong>Auto-reconnect</strong> — with exponential backoff and jitter</li>
+      <li><strong>Connection params</strong> — send auth tokens during the
+        <code>connection_init</code> handshake</li>
+      <li><strong>Complete / Error handling</strong> — per-subscription lifecycle callbacks</li>
+    </ul>
+    <div class="code-block">
+      <pre><code>&#123;&#123; connectionParamsCode &#125;&#125;</code></pre>
+    </div>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

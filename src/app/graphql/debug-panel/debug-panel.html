@@ -1,0 +1,163 @@
+@let entries = service.entries;
+
+<tui-expand [expanded]="open">
+  <div class="debug-panel__header">
+    <button
+      tuiIconButton
+      type="button"
+      icon="@tui.beaker"
+      appearance="flat"
+      size="s"
+      (click)="toggle()"
+    >
+      GraphQL Debug
+    </button>
+    <span class="debug-panel__count">{{ entries.length }}</span>
+    @if (open) {
+      <button
+        tuiIconButton
+        type="button"
+        icon="@tui.trash"
+        appearance="flat"
+        size="xs"
+        (click)="service.clear(); selectedEntryIndex = null"
+      >
+        Clear
+      </button>
+    }
+  </div>
+
+  @if (open) {
+    <div class="debug-panel__body">
+      <tui-tabs [(activeItemIndex)]="selectedIndex">
+        @for (tab of tabs; track tab) {
+          <button tuiTab>{{ tab }}</button>
+        }
+      </tui-tabs>
+
+      @if (selectedIndex === 0) {
+        <div class="debug-panel__list">
+          @for (entry of entries; track $index) {
+            <button
+              type="button"
+              class="debug-panel__entry"
+              [class.debug-panel__entry_selected]="selectedEntryIndex === $index"
+              (click)="selectEntry($index)"
+              (keyup.enter)="selectEntry($index)"
+            >
+              <div class="debug-panel__entry-header">
+                <span
+                  class="debug-panel__badge"
+                  [class.debug-panel__badge_query]="entry.type === 'query'"
+                  [class.debug-panel__badge_mutate]="entry.type === 'mutate'"
+                >
+                  {{ entry.type }}
+                </span>
+                @if (entry.operationName) {
+                  <span class="debug-panel__op-name">{{ entry.operationName }}</span>
+                }
+                <span class="debug-panel__duration">{{ entry.duration.toFixed(1) }}ms</span>
+                <span
+                  class="debug-panel__status"
+                  [class.debug-panel__status_ok]="entry.result.status === 'success'"
+                  [class.debug-panel__status_err]="entry.result.status === 'error'"
+                >
+                  {{ entry.result.status === 'success' ? 'OK' : 'ERR' }}
+                </span>
+              </div>
+              @if (entry.fields && entry.fields.length > 0) {
+                <div class="debug-panel__fields">
+                  {{ entry.fields.slice(0, 5).join(', ') }}{{ entry.fields.length > 5 ? ', ...' : '' }}
+                </div>
+              }
+            </button>
+          }
+
+          @if (entries.length === 0) {
+            <div class="debug-panel__empty">
+              No queries recorded yet.
+            </div>
+          }
+        </div>
+      }
+
+      @if (selectedIndex === 1 && selectedEntry) {
+        <div class="debug-panel__detail">
+          <h4>Field Tree: {{ selectedEntry.operationName ?? '(anonymous)' }}</h4>
+          @let tree = fieldTree(selectedEntry.document);
+          @if (tree.length > 0) {
+            <div class="debug-panel__tree">
+              @for (field of tree; track field.name) {
+                <div class="debug-panel__tree-node" [style.paddingLeft.px]="field.depth * 16">
+                  {{ field.name }}
+                </div>
+                @for (child of field.children; track child.name) {
+                  <div class="debug-panel__tree-node" [style.paddingLeft.px]="child.depth * 20">
+                    {{ child.name }}
+                  </div>
+                }
+              }
+            </div>
+          } @else {
+            <pre class="debug-panel__query">{{ selectedEntry.document }}</pre>
+          }
+        </div>
+      }
+
+      @if (selectedIndex === 2) {
+        <div class="debug-panel__detail">
+          <h4>Mutation Timing Chart</h4>
+          @let chart = mutationChart();
+          @if (chart.length > 0) {
+            @let maxEndVal = maxEnd(chart);
+            <div class="debug-panel__chart">
+              @for (point of chart; track point.label + point.start) {
+                <div class="debug-panel__chart-row">
+                  <span class="debug-panel__chart-label">{{ point.label }}</span>
+                  <div class="debug-panel__chart-bar-wrap">
+                    <div
+                      class="debug-panel__chart-bar"
+[style.marginLeft.px]="(point.start / maxEndVal) * 200"
+[style.width.px]="(point.duration / maxEndVal) * 200"
+                      [class.debug-panel__chart-bar_ok]="point.ok"
+                      [class.debug-panel__chart-bar_err]="!point.ok"
+                    ></div>
+                  </div>
+                  <span class="debug-panel__chart-dur">{{ point.duration.toFixed(0) }}ms</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="debug-panel__empty">No mutations recorded.</div>
+          }
+        </div>
+      }
+
+      @if (selectedIndex === 3) {
+        <div class="debug-panel__detail">
+          <h4>Normalized Entities</h4>
+          @if (selectedEntryIndex !== null) {
+            @let ents = entities(selectedEntryIndex);
+            @if (hasEntries(ents)) {
+              @for (group of ents | keyvalue; track group.key) {
+                <div class="debug-panel__norm-group">
+                  <h5>{{ group.key }} ({{ group.value.length }})</h5>
+                  <table class="debug-panel__norm-table">
+                    <tr><th>ID</th><th>Path</th></tr>
+                    @for (item of group.value; track item.id + item.path) {
+                      <tr><td>{{ item.id }}</td><td class="debug-panel__norm-path">{{ item.path }}</td></tr>
+                    }
+                  </table>
+                </div>
+              }
+            } @else {
+              <div class="debug-panel__empty">No entities found (need __typename + id).</div>
+            }
+          } @else {
+            <div class="debug-panel__empty">Select an entry first.</div>
+          }
+        </div>
+      }
+    </div>
+  }
+</tui-expand>

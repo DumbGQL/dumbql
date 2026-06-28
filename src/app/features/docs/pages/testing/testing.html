@@ -1,0 +1,51 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>@dumbql/testing</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+          <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
+        </div>
+      </div>
+      <p class="lead">
+        The testing package provides utilities for writing unit and integration tests
+        for Angular applications that use DumbQL. It includes mock providers,
+        a mock GraphQL link, and helpers for simulating query/mutation responses.
+      </p>
+    </header>
+
+    <h2 appAnchor id="mock-provider">provideDumbqlMock</h2>
+    <p>
+      Replace the real GraphQL link with a mock link during testing using
+      <code>provideDumbqlMock</code>. This allows you to simulate server responses
+      without making actual HTTP requests:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; mockProviderCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="mock-link">MockGraphqlLink</h2>
+    <p>
+      For more control, use <code>MockGraphqlLink</code> directly. This is useful
+      when you need to assert that specific queries were made or control the order
+      of responses:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; mockLinkCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="behavior-verification">Behavior Verification</h2>
+    <p>
+      The mock link tracks all executed operations, enabling assertions about what
+      was sent:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; behaviorVerificationCode &#125;&#125;</code></pre>
+    </div>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

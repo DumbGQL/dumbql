@@ -1,0 +1,43 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>@dumbql/persisted-queries</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+          <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
+        </div>
+      </div>
+      <p class="lead">
+        The persisted-queries package implements Automatic Persisted Queries (APQ),
+        allowing the client to send a hash of the query string instead of the full
+        query body. This reduces bandwidth for large queries and improves performance
+        on slow networks.
+      </p>
+    </header>
+
+    <h2 appAnchor id="apq-middleware">APQ Middleware</h2>
+    <p>
+      Add the <code>apqMiddleware</code> to your middleware chain to enable automatic
+      persisted queries. The middleware will first attempt to send the query hash; if
+      the server responds with a <code>PersistedQueryNotFound</code> error, it
+      automatically retries with the full query string:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; apqMiddlewareCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="wire-format">Wire Format</h2>
+    <p>
+      On the wire, the first request looks like this. The server returns
+      <code>PersistedQueryNotFound</code> if it doesn't have the query cached:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; sha256HashCode &#125;&#125;</code></pre>
+    </div>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

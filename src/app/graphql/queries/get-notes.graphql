@@ -1,0 +1,12 @@
+query GetNotes($filter: NoteType) {
+  getNotes(filter: $filter) {
+    id
+    title
+    content
+    description
+    iconUrl
+    noteType
+    createdAt
+    updatedAt
+  }
+}

@@ -1,0 +1,62 @@
+<div class="overview-layout">
+  <div class="overview-content">
+    <section class="doc-page">
+      <header class="page-header">
+        <div class="hero" id="overview">
+          <app-logo />
+          <p class="hero-subtitle">The Pragmatic GraphQL Client for Angular</p>
+          <p class="hero-desc">
+            A modular, tree-shakeable GraphQL client built specifically for Angular.
+            Each capability in its own <code>@dumbql/*</code> package —
+            you pay only for what you use.
+          </p>
+          <div class="hero-actions">
+            <a tuiButton appearance="primary" size="l" routerLink="/docs/getting-started">Get Started</a>
+            <a tuiButton appearance="secondary" size="l" routerLink="/docs/core">Core Docs</a>
+          </div>
+        </div>
+      </header>
+
+      <div tuiNotification appearance="info">
+        <strong>12 packages · ~25 kB total · Angular 22+ · SSR · Signals · Tree-shakeable</strong>
+      </div>
+
+      <h2 appAnchor>Packages</h2>
+
+      <div class="features-grid">
+        @for (f of features; track f.title) {
+          <app-doc-feature-card [icon]="f.icon" [title]="f.title" [description]="f.description" [link]="f.link" />
+        }
+      </div>
+
+      <h2 appAnchor>Why DumbQL?</h2>
+
+      <p>
+        Existing GraphQL clients for Angular are either abandoned ports of React libraries
+        (Apollo Angular), overly complex (Relay), or too simplistic. DumbQL is designed
+        from the ground up for Angular's DI system, leverages signals for reactivity,
+        and keeps each package small enough that the entire library adds less than 25 kB
+        to your production bundle.
+      </p>
+
+      <ul>
+        <li><strong>Zero magic</strong> — explicit middleware pipeline, no hidden cache layers</li>
+        <li><strong>Full control</strong> — configure every aspect from cache policies to retry logic</li>
+        <li><strong>Modular</strong> — 12 independent packages, import only what you use</li>
+        <li><strong>Signals-native</strong> — built for Angular's reactive primitives</li>
+        <li><strong>SSR ready</strong> — hydration, transfer state, chunked transfer</li>
+        <li><strong>Strongly typed</strong> — full TypeScript inference from queries</li>
+      </ul>
+
+      <h2 appAnchor>Getting Started</h2>
+
+      <p>
+        Ready to dive in? Head over to the <a routerLink="/docs/getting-started">Getting Started</a>
+        guide which walks you through installation, configuration, and your first query.
+      </p>
+    </section>
+  </div>
+  <aside class="overview-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

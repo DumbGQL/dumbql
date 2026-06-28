@@ -1,0 +1,6 @@
+{
+  "name": "@dumbql/persisted-queries",
+  "version": "0.0.1",
+  "peerDependencies": { "@angular/core": "^22.0.0", "@dumbql/core": "^0.0.1", "rxjs": "~7.8.0" },
+  "sideEffects": false
+}

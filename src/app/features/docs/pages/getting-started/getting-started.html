@@ -1,0 +1,52 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>Getting Started</h1>
+      </div>
+    </header>
+
+    <h2 appAnchor id="install">Install</h2>
+    <p>
+      Install the core package and any satellite packages you need:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; installCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="configure">Configure</h2>
+    <p>
+      Provide the <code>GraphqlService</code> (and cache, if used) in your
+      <code>app.config.ts</code>:
+    </p>
+    <div class="code-block">
+      <pre><code>&#123;&#123; configureCode &#125;&#125;</code></pre>
+    </div>
+
+    <h2 appAnchor id="first-query">Your First Query</h2>
+    <div tuiNotification appearance="warning">
+      <p>
+        <strong>TIP:</strong> Inject <code>GraphqlService</code> in any component and use the <code>gql</code>
+        tag for type-safe queries:
+      </p>
+    </div>
+    <div class="code-block">
+      <pre><code>&#123;&#123; firstQueryCode &#125;&#125;</code></pre>
+    </div>
+    <p>
+      The <code>query()</code> method returns a <code>Signal&lt;T | null&gt;</code>
+      that automatically refetches when dependencies or variables change.
+    </p>
+
+    <h2 appAnchor id="next-steps">Next Steps</h2>
+    <ul>
+      <li>Add <a routerLink="/docs/cache">caching</a> for normalized data</li>
+      <li>Enable <a routerLink="/docs/subscriptions">subscriptions</a> for real-time updates</li>
+      <li>Protect your app with <a routerLink="/docs/middlewares">middleware</a> for auth tokens</li>
+    </ul>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

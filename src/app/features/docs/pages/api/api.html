@@ -1,0 +1,204 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>API Reference</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+        </div>
+      </div>
+      <p class="lead">
+        Complete reference of all exported symbols from every DumbQL package.
+      </p>
+    </header>
+
+    <h2 appAnchor id="core">@dumbql/core</h2>
+    <h3>Classes</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>GraphqlService</code></td><td>Main service for queries, mutations, and watch queries</td></tr>
+        <tr><td><code>MutationRef&lt;T&gt;</code></td><td>Reference returned by <code>mutate()</code> with <code>.result</code> signal and <code>.loading</code> signal</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Functions</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>gql</code></td><td>Tagged template literal for GraphQL documents</td></tr>
+        <tr><td><code>createReactiveVar&lt;T&gt;(initial: T)</code></td><td>Creates a reactive variable</td></tr>
+        <tr><td><code>composeMiddlewares</code></td><td>Composes middleware functions into a link chain</td></tr>
+        <tr><td><code>createHttpLink</code></td><td>Creates an HTTP link for queries and mutations</td></tr>
+        <tr><td><code>executeQuery</code></td><td>Standalone query execution outside DI</td></tr>
+        <tr><td><code>buildRequest</code></td><td>Builds a GraphQL request object from document + variables</td></tr>
+        <tr><td><code>parseResult</code></td><td>Extracts data and errors from a raw response</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Providers</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>provideDumbqlCore(config)</code></td><td>Configures and provides GraphqlService</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Pipes</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>GqlPipe</code></td><td>Formats GraphQL data for display</td></tr>
+        <tr><td><code>GqlTypePipe</code></td><td>Resolves GraphQL type names</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Directives</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>DqlClientDirective</code></td><td>Structural directive for client-side resolvers</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Interfaces</h3>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>DumbqlCoreConfig</code></td><td>Configuration interface for <code>provideDumbqlCore</code></td></tr>
+        <tr><td><code>Link</code></td><td>Middleware link type</td></tr>
+        <tr><td><code>Operation</code></td><td>GraphQL operation (query, mutation, subscription)</td></tr>
+        <tr><td><code>FetchResult&lt;T&gt;</code></td><td>Typed fetch result</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="cache">@dumbql/cache</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>NormalizedCache</code></td><td>Low-level normalized document store</td></tr>
+        <tr><td><code>CacheService</code></td><td>Injectable cache service</td></tr>
+        <tr><td><code>provideDumbqlCache(config)</code></td><td>Provider function for cache</td></tr>
+        <tr><td><code>DumbqlCacheConfig</code></td><td>Cache configuration interface</td></tr>
+        <tr><td><code>TypePolicy</code></td><td>Type policy for custom normalization</td></tr>
+        <tr><td><code>PersistenceConfig</code></td><td>Persistence configuration</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="subscriptions">@dumbql/subscriptions</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>GraphqlSubscriptionService</code></td><td>Subscription management service</td></tr>
+        <tr><td><code>provideDumbqlSubscriptions(config)</code></td><td>Provider for subscriptions</td></tr>
+        <tr><td><code>DumbqlSubscriptionsConfig</code></td><td>Subscriptions configuration</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="file-upload">@dumbql/file-upload</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>UploadService</code></td><td>File upload service with multipart support</td></tr>
+        <tr><td><code>isUploadValue(value)</code></td><td>Type guard for File/Blob/FileList</td></tr>
+        <tr><td><code>extractUploads(variables)</code></td><td>Recursively extracts upload values from variables</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="middlewares">@dumbql/middlewares</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>authRefresh(config)</code></td><td>Auth token injection and auto-refresh middleware</td></tr>
+        <tr><td><code>retryExchange(config)</code></td><td>Retry failed operations with backoff</td></tr>
+        <tr><td><code>focusRefetch()</code></td><td>Refetch on window focus</td></tr>
+        <tr><td><code>offlineQueue(config)</code></td><td>Queue mutations when offline</td></tr>
+        <tr><td><code>AuthRefreshConfig</code></td><td>Auth middleware configuration</td></tr>
+        <tr><td><code>RetryExchangeConfig</code></td><td>Retry exchange configuration</td></tr>
+        <tr><td><code>OfflineQueueConfig</code></td><td>Offline queue configuration</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="pagination">@dumbql/pagination</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>offsetPagination(config)</code></td><td>Offset-based merge function</td></tr>
+        <tr><td><code>cursorPagination(config)</code></td><td>Cursor-based merge function</td></tr>
+        <tr><td><code>OffsetPaginationConfig</code></td><td>Offset pagination config</td></tr>
+        <tr><td><code>CursorPaginationConfig</code></td><td>Cursor pagination config</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="persisted-queries">@dumbql/persisted-queries</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>apqMiddleware(config)</code></td><td>Automatic Persisted Query middleware</td></tr>
+        <tr><td><code>sha256Hash(document)</code></td><td>Computes SHA-256 hash of a query document</td></tr>
+        <tr><td><code>ApqConfig</code></td><td>APQ middleware configuration</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="fragments">@dumbql/fragments</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>fragment(typeCondition, document)</code></td><td>Defines a typed fragment</td></tr>
+        <tr><td><code>spread(fragment)</code></td><td>Spreads a fragment into a query</td></tr>
+        <tr><td><code>compose(fragments)</code></td><td>Composes multiple fragments into one document</td></tr>
+        <tr><td><code>useFragment(fragment, parentSignal)</code></td><td>Extracts fragment data from query result</td></tr>
+        <tr><td><code>Fragment&lt;T&gt;</code></td><td>Fragment type</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="ssr">@dumbql/ssr</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>SsrStreamService</code></td><td>Server-side query streaming</td></tr>
+        <tr><td><code>TransferCacheService</code></td><td>Client-side cache hydration</td></tr>
+        <tr><td><code>provideDumbqlSsr(config)</code></td><td>SSR provider</td></tr>
+        <tr><td><code>DumbqlSsrConfig</code></td><td>SSR configuration</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="debugging">@dumbql/debugging</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>GraphqlDebugService</code></td><td>Debug logging service</td></tr>
+        <tr><td><code>parseFieldTree(document)</code></td><td>Parse query into field tree</td></tr>
+        <tr><td><code>buildMutationChart(document)</code></td><td>Build mutation dependency chart</td></tr>
+        <tr><td><code>normalizeData(data, config)</code></td><td>Preview cache normalization</td></tr>
+        <tr><td><code>provideDumbqlDebugging(config)</code></td><td>Debug provider</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="downloader">@dumbql/downloader</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>downloadAndStoreSchema(config)</code></td><td>Downloads schema via introspection</td></tr>
+        <tr><td><code>DownloadSchemaConfig</code></td><td>Download configuration</td></tr>
+        <tr><td><code>DownloadResult</code></td><td>Download result with file paths</td></tr>
+      </tbody>
+    </table>
+
+    <h2 appAnchor id="testing">@dumbql/testing</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>MockGraphqlService</code></td><td>Mock service for testing</td></tr>
+        <tr><td><code>when(service, operationName)</code></td><td>Select an operation to mock</td></tr>
+        <tr><td><code>respond(data)</code></td><td>Configure response for selected operation</td></tr>
+        <tr><td><code>provideDumbqlTesting(config)</code></td><td>Testing provider</td></tr>
+        <tr><td><code>DumbqlTestingConfig</code></td><td>Testing configuration</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

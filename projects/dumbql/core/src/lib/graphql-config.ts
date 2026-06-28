@@ -1,0 +1,16 @@
+export {
+	type GraphqlCoreConfig,
+	type SubscriptionsConfig,
+	type CacheConfig,
+	type PersistedQueriesConfig,
+	type UploadConfig,
+	type DebugConfig,
+	type PaginationConfig,
+	type SsrConfig,
+	type CodegenConfig,
+	type DumbqlConfig,
+	type GraphqlConfig,
+	DUMBQL_CONFIG,
+	GRAPHQL_CONFIG,
+	provideGraphql,
+} from './dumbql-config';

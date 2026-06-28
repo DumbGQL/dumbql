@@ -1,0 +1,28 @@
+<tui-root>
+  <header class="app-header">
+    <a class="app-logo" routerLink="/">
+      <app-logo size="icon" />
+      <span class="app-name">Angular</span>
+    </a>
+    <nav class="app-nav">
+      <a tuiLink routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a tuiLink routerLink="/docs" routerLinkActive="active">Docs</a>
+      <a tuiLink href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <button
+      tuiButton
+      appearance="secondary"
+      size="s"
+      class="theme-toggle"
+      (click)="toggleTheme()"
+    >
+      {{ isDarkMode() ? '☀️' : '🌙' }}
+    </button>
+  </header>
+  <main class="app-main">
+    <router-outlet />
+  </main>
+  <footer class="app-footer">
+    <span>DumbQL — GraphQL for the rest of us</span>
+  </footer>
+</tui-root>

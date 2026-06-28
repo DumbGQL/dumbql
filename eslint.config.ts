@@ -30,8 +30,9 @@ export default tseslint.config(
            './projects/dumbql/ssr/tsconfig.lib.json',
            './projects/dumbql/testing/tsconfig.lib.json',
            './projects/dumbql/persisted-queries/tsconfig.lib.json',
-           './projects/dumbql/middlewares/tsconfig.lib.json',
-         ],
+            './projects/dumbql/middlewares/tsconfig.lib.json',
+            './projects/dumbql/codegen/tsconfig.lib.json',
+          ],
       },
     },
     rules: {

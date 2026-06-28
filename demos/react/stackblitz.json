@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm ci && node scripts/build-packages.mjs",
+  "startCommand": "node mock/server.mjs & npm --prefix demos/react run dev -- --host 0.0.0.0"
+}

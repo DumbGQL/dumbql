@@ -33,7 +33,7 @@ export function compose(...defs: FragmentDefinition[]): DocumentNode {
 	const docs = defs.map((d) => d.document);
 	return {
 		kind: 'Document',
-		definitions: docs.flatMap((d) => d.definitions),
+		definitions: docs.reduce<DocumentNode['definitions']>((acc, d) => acc.concat(d.definitions), []),
 	} as unknown as DocumentNode;
 }
 

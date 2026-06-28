@@ -16,7 +16,22 @@ import { cacheMiddleware } from './cache-middleware';
 
 export { gql };
 
-export type GraphQLResult<T> = { status: 'success'; data: T } | { status: 'error'; error: string };
+export interface GraphQLError {
+  message: string;
+  locations?: { line: number; column: number }[];
+  path?: (string | number)[];
+  extensions?: Record<string, unknown>;
+}
+
+export interface NetworkErrorInfo {
+  message: string;
+  status?: number;
+  statusText?: string;
+}
+
+export type GraphQLResult<T> =
+  | { status: 'success'; data: T; graphQLErrors?: GraphQLError[] }
+  | { status: 'error'; error: string; graphQLErrors?: GraphQLError[]; networkError?: NetworkErrorInfo };
 
 export interface GraphQLResponse<T> {
   data?: T;
@@ -38,6 +53,7 @@ export class GraphqlService {
   private readonly injector = inject(Injector);
   private readonly config!: DumbqlConfig;
   private readonly errorPolicy!: ErrorPolicy;
+  private readonly showErrorsOnSuccess!: boolean;
   private readonly retryCount!: number;
   private readonly retryDelay!: number;
   private readonly batchWindow!: number;
@@ -64,6 +80,7 @@ export class GraphqlService {
     this.config = cfg;
     this._endpoint = cfg.endpoint || cfg.url || '/graphql';
     this.errorPolicy = cfg.errorPolicy ?? 'none';
+    this.showErrorsOnSuccess = cfg.showErrorsOnSuccess ?? false;
     this.retryCount = cfg.retryCount ?? 0;
     this.retryDelay = cfg.retryDelay ?? 1000;
     this.batchWindow = cfg.batchWindow ?? 0;
@@ -546,38 +563,60 @@ export class GraphqlService {
 
   private toResult<T>(response: GraphQLResponse<T>): GraphQLResult<T> {
     const hasErrors = response.errors && response.errors.length > 0;
+    const errorsPayload = hasErrors ? response.errors : undefined;
 
     if (hasErrors && this.errorPolicy === 'none') {
-      const msg = response.errors![0].message;
-      return this.withErrorNotification({ status: 'error', error: msg });
+      return this.withErrorNotification({
+        status: 'error', error: response.errors![0].message, graphQLErrors: response.errors!,
+      });
     }
 
     if (hasErrors && this.errorPolicy === 'ignore') {
-      if (response.data !== undefined) {
-        return { status: 'success', data: response.data };
+      if (response.data != null) {
+        const result: { status: 'success'; data: T; graphQLErrors?: GraphQLError[] } = {
+          status: 'success', data: response.data as T,
+        };
+        if (this.showErrorsOnSuccess) result.graphQLErrors = response.errors;
+        return result;
       }
-      return this.withErrorNotification({ status: 'error', error: 'No data returned' });
+      return this.withErrorNotification({
+        status: 'error', error: 'No data returned', graphQLErrors: response.errors!,
+      });
     }
 
     if (hasErrors && this.errorPolicy === 'all') {
-      const msg = response.errors!.map((e) => e.message).join('; ');
-      if (response.data !== undefined) {
-        return { status: 'success', data: response.data };
+      const msgs = response.errors!.map((e) => e.message);
+      if (response.data != null) {
+        return { status: 'success', data: response.data as T, graphQLErrors: response.errors };
       }
-      return this.withErrorNotification({ status: 'error', error: msg });
+      return this.withErrorNotification({
+        status: 'error', error: msgs.join('; '), graphQLErrors: response.errors!,
+      });
     }
 
-    if (response.data === undefined) {
-      return this.withErrorNotification({ status: 'error', error: 'No data returned from server' });
+    if (response.data == null) {
+      return this.withErrorNotification({
+        status: 'error', error: 'No data returned from server',
+      });
     }
 
-    return { status: 'success', data: response.data };
+    const result: { status: 'success'; data: T; graphQLErrors?: GraphQLError[] } = {
+      status: 'success', data: response.data as T,
+    };
+    if (this.showErrorsOnSuccess && errorsPayload) {
+      result.graphQLErrors = errorsPayload;
+    }
+    return result;
   }
 
   private toHttpError<T>(error: unknown): GraphQLResult<T> {
     if (error instanceof HttpErrorResponse) {
       if (error.error instanceof ErrorEvent) {
-        return this.withErrorNotification({ status: 'error', error: error.error.message });
+        const msg = error.error.message;
+        return this.withErrorNotification({
+          status: 'error', error: msg,
+          networkError: { message: msg, status: 0 },
+        });
       }
       let message: string;
       if (typeof error.error === 'string') {
@@ -587,25 +626,36 @@ export class GraphqlService {
       } else {
         message = `HTTP ${error.status}`;
       }
-      return this.withErrorNotification({ status: 'error', error: message });
+      return this.withErrorNotification({
+        status: 'error', error: message,
+        networkError: { message, status: error.status, statusText: error.statusText ?? undefined },
+      });
     }
     if (error instanceof Error) {
-      return this.withErrorNotification({ status: 'error', error: error.message });
+      return this.withErrorNotification({
+        status: 'error', error: error.message,
+        networkError: { message: error.message },
+      });
     }
-    return this.withErrorNotification({ status: 'error', error: 'Unknown error' });
+    return this.withErrorNotification({
+      status: 'error', error: 'Unknown error',
+      networkError: { message: 'Unknown error' },
+    });
   }
 
-  private withErrorNotification(result: { status: 'error'; error: string }): { status: 'error'; error: string } {
+  private withErrorNotification(result: GraphQLResult<never> & { status: 'error' }): GraphQLResult<never> {
     const onError = this.config.onError;
     if (!onError) return result;
 
+    const msg = result.error;
     if (typeof onError === 'function') {
-      onError(result.error);
+      onError(msg);
     } else {
       const svc = onError as OnErrorServiceConfig;
       const instance = this.injector.get(svc.provide);
-      const obs = svc.use(instance, result.error);
-      obs.subscribe();
+      const obs = svc.use(instance, msg);
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      obs.subscribe({ error: () => {} });
     }
 
     return result;

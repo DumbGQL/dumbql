@@ -30,6 +30,12 @@ export interface GraphqlCoreConfig {
 	url?: string;
 	headers?: Record<string, string | (() => string)>;
 	errorPolicy?: 'none' | 'all' | 'ignore';
+	/**
+	 * When true, includes `graphQLErrors` on successful results even when the
+	 * errorPolicy would normally strip them. Useful for detecting partial errors
+	 * (e.g. server returns data + errors) without having to switch to `'all'`.
+	 */
+	showErrorsOnSuccess?: boolean;
 	retryCount?: number;
 	retryDelay?: number;
 	dedup?: boolean;

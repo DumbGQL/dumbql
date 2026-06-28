@@ -14,23 +14,29 @@ export class CacheService {
   readonly cache = new NormalizedCache();
   readonly gc = new CacheGc(this.cache);
   private localState = new Map<string, BehaviorSubject<unknown>>();
+  /** Tracks which typenames each local state entry references, for selective mutation invalidation. */
+  private localStateTypes = new Map<string, Set<string>>();
   private persistSvc: CachePersistenceService | null = null;
 
   constructor() {
-  	try {
-  		const svc = inject(CachePersistenceService, { optional: true });
-  		if (svc) {
-  			this.persistSvc = svc;
-  			const restored = svc.restore();
-  			if (restored) {
-  				for (const [, entity] of restored) {
-  					this.cache.set(entity);
-  				}
-  			}
-  		}
-  	} catch {
-  		// persist service not configured
-  	}
+    try {
+      const svc = inject(CachePersistenceService, { optional: true });
+      if (svc) {
+        this.persistSvc = svc;
+        const restored = svc.restore();
+        if (restored) {
+          for (const [key, value] of restored) {
+            if (key.startsWith('__local__')) {
+              this.writeLocal(key.slice(9), value);
+            } else {
+              this.cache.set(value as CacheEntity);
+            }
+          }
+        }
+      }
+    } catch {
+      // persist service not configured
+    }
   }
 
   query(typename: string, id: string): CacheEntity | undefined {
@@ -86,6 +92,30 @@ export class CacheService {
 
   clearLocalState(): void {
   	this.localState.clear();
+  	this.localStateTypes.clear();
+  }
+
+  writeLocalWithTypes<T>(key: string, value: T, types: Set<string>): void {
+  	this.localStateTypes.set(key, types);
+  	this.writeLocal(key, value);
+  }
+
+  clearLocalStateByTypes(types: string[]): void {
+  	if (types.length === 0) return;
+  	const typeSet = new Set(types);
+  	const toDelete: string[] = [];
+  	for (const [key, tracked] of this.localStateTypes) {
+  		for (const t of tracked) {
+  			if (typeSet.has(t)) {
+  				toDelete.push(key);
+  				break;
+  			}
+  		}
+  	}
+  	for (const key of toDelete) {
+  		this.localState.delete(key);
+  		this.localStateTypes.delete(key);
+  	}
   }
 
   serialize(): string {
@@ -110,6 +140,14 @@ export class CacheService {
   }
 
   persist(): void {
-  	this.persistSvc?.persist(this.cache.all());
+    if (!this.persistSvc) return;
+    const data: [string, Record<string, unknown>][] = [];
+    for (const [k, v] of this.cache.all()) {
+      data.push([k, v as unknown as Record<string, unknown>]);
+    }
+    for (const [k, v] of this.localState) {
+      data.push([`__local__${k}`, { value: v.value }]);
+    }
+    this.persistSvc.persist(data);
   }
 }

@@ -29,7 +29,7 @@ export class GraphqlSubscriptionService {
 
   private wsUrl(): string {
   	const base = this.config.endpoint;
-  	return base.replace(/^http/, 'ws');
+  	return base?.replace(/^http/, 'ws') ?? 'ws://localhost/graphql';
   }
 
   subscribe<T>(
@@ -83,15 +83,15 @@ export class GraphqlSubscriptionService {
   			}
 
   			switch (msg.type) {
-  			case 'connection_ack': {
-  				clearTimeout(connTimeout);
-  				ws.send(JSON.stringify({
-  					type: 'subscribe',
-  					id: '1',
-  					payload: { query, variables },
-  				}));
-  				break;
-  			}
+			case 'connection_ack': {
+				clearTimeout(connTimeout);
+				ws.send(JSON.stringify({
+					type: 'subscribe',
+					id: subId,
+					payload: { query, variables },
+				}));
+				break;
+			}
   			case 'next': {
   				const payload = msg.payload as { data?: T; errors?: { message: string }[] };
   				if (payload.errors && payload.errors.length > 0) {
@@ -132,10 +132,10 @@ export class GraphqlSubscriptionService {
   		return () => {
   			completed = true;
   			clearTimeout(connTimeout);
-  			if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-  				ws.send(JSON.stringify({ type: 'complete', id: '1' }));
-  				ws.close(1000);
-  			}
+			if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+				ws.send(JSON.stringify({ type: 'complete', id: subId }));
+				ws.close(1000);
+			}
   			sendSubscriptionToExtension({ subId, type: 'close', timestamp: Date.now() });
   		};
   	});

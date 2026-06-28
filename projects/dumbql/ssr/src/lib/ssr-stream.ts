@@ -1,5 +1,4 @@
-import { Injectable, inject, InjectionToken } from '@angular/core';
-import { TransferState, makeStateKey } from '@angular/platform-browser';
+import { Injectable, inject, InjectionToken, TransferState, makeStateKey } from '@angular/core';
 
 export const SSR_STREAM_KEY = new InjectionToken<string>('SSR_STREAM_KEY');
 
@@ -20,7 +19,7 @@ export class SsrStreamService {
   private readonly config: SsrStreamConfig;
 
   constructor() {
-  	this.config = inject(SSR_STREAM_KEY, { optional: true }) ?? {};
+  	this.config = (inject(SSR_STREAM_KEY, { optional: true }) as SsrStreamConfig) ?? {};
   }
 
   /** Serialize data to TransferState in chunks */

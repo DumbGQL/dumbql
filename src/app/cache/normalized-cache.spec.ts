@@ -52,10 +52,20 @@ describe('NormalizedCache', () => {
       expect(cache.count()).toBe(0);
     });
 
-    it('ignores entity without id', () => {
+    it('stores entity without id using inline key', () => {
       const cache = createCache();
       cache.set({ __typename: 'User', name: 'no-id' } as never);
-      expect(cache.count()).toBe(0);
+      expect(cache.count()).toBe(1);
+    });
+
+    it('get with only typename returns all entities of that type', () => {
+      const cache = createCache();
+      cache.set({ __typename: 'User', name: 'inline-user' } as never);
+      cache.set(user1);
+      const users = cache.get('User') as Record<string, unknown>[];
+      expect(users).toHaveLength(2);
+      expect(users.some((u) => u['name'] === 'inline-user')).toBe(true);
+      expect(users.some((u) => u['name'] === 'Alice')).toBe(true);
     });
   });
 
@@ -95,6 +105,16 @@ describe('NormalizedCache', () => {
     it('does nothing when removing nonexistent entity', () => {
       const cache = createCache();
       expect(() => cache.remove('User', 'ghost')).not.toThrow();
+    });
+
+    it('remove with only typename removes all entities of that type', () => {
+      const cache = createCache();
+      cache.set(user1);
+      cache.set(user2);
+      cache.set(post1);
+      cache.remove('User');
+      expect(cache.count()).toBe(1);
+      expect(cache.get('Post', '10')).toEqual(post1);
     });
   });
 
@@ -237,7 +257,7 @@ describe('NormalizedCache', () => {
     it('restore replaces all entities', () => {
       const cache = createCache();
       cache.set(user1);
-      cache.restore(JSON.stringify([['Post:10', post1]]));
+      cache.restore(JSON.stringify({ entities: [['Post:10', post1]], inlineCounter: 0 }));
       expect(cache.count()).toBe(1);
       expect(cache.get('Post', '10')).toEqual(post1);
       expect(cache.get('User', '1')).toBeUndefined();
@@ -257,12 +277,35 @@ describe('NormalizedCache', () => {
     });
   });
 
-  describe('gc', () => {
-    it('is a no-op stub', () => {
+  describe('inline keys', () => {
+    it('auto-assigns inline keys for entities without id', () => {
+      const a = { __typename: 'User', name: 'A' } as never;
+      const b = { __typename: 'User', name: 'B' } as never;
+      const cache = createCache();
+      cache.set(a);
+      cache.set(b);
+      expect(cache.count()).toBe(2);
+      const users = cache.get('User')!;
+      expect(users).toHaveLength(2);
+      expect(users.some((u) => u['name'] === 'A')).toBe(true);
+      expect(users.some((u) => u['name'] === 'B')).toBe(true);
+    });
+
+    it('remove with only typename removes both id and inline entities', () => {
       const cache = createCache();
       cache.set(user1);
-      expect(() => cache.gc()).not.toThrow();
-      expect(cache.count()).toBe(1);
+      cache.set({ __typename: 'User', name: 'inline' } as never);
+      cache.remove('User');
+      expect(cache.count()).toBe(0);
+    });
+
+    it('snapshot and restore includes inline counter', () => {
+      const cache = createCache();
+      cache.set({ __typename: 'User', name: 'inline' } as never);
+      const json = cache.snapshot();
+      const cache2 = new NormalizedCache();
+      cache2.restore(json);
+      expect(cache2.count()).toBe(1);
     });
   });
 });

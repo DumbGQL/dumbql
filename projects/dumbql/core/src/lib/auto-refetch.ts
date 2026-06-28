@@ -4,28 +4,6 @@ import type { GraphQLResult } from './graphql.service';
 import type { GraphqlMiddleware } from './middleware';
 import { CacheService } from '@dumbql/cache';
 
-interface EntityRef {
-	__typename: string;
-	id?: string;
-}
-
-function extractEntities(data: unknown, entities: EntityRef[]): void {
-	if (!data || typeof data !== 'object') return;
-	if (Array.isArray(data)) {
-		for (const item of data) extractEntities(item, entities);
-		return;
-	}
-	const obj = data as Record<string, unknown>;
-	if (typeof obj['__typename'] === 'string') {
-		const id = typeof obj['id'] === 'string' || typeof obj['_id'] === 'string'
-			? String(obj['id'] ?? obj['_id']) : undefined;
-		entities.push({ __typename: obj['__typename'] as string, id });
-	}
-	for (const v of Object.values(obj)) {
-		if (v && typeof v === 'object') extractEntities(v, entities);
-	}
-}
-
 export function mutationCachePolicy(injector?: Injector): GraphqlMiddleware {
 	return (request, next) => {
 		if (request.type !== 'mutation') return next(request);
@@ -37,16 +15,30 @@ export function mutationCachePolicy(injector?: Injector): GraphqlMiddleware {
 				if (!inj) return;
 				const cache = inj.get(CacheService, null);
 				if (!cache) return;
-				const entities: EntityRef[] = [];
-				extractEntities(result.data, entities);
-				for (const e of entities) {
-					if (e.id) {
-						cache.evict(e.__typename, e.id);
-					}
+				const typeNames = new Set<string | undefined>();
+				extractTypes(result.data, typeNames);
+				const names = Array.from(typeNames).filter(Boolean) as string[];
+				if (names.length > 0) {
+					cache.clearLocalStateByTypes(names);
 				}
 			}),
 		);
 	};
+}
+
+function extractTypes(data: unknown, types: Set<string | undefined>): void {
+	if (!data || typeof data !== 'object') return;
+	if (Array.isArray(data)) {
+		for (const item of data) extractTypes(item, types);
+		return;
+	}
+	const obj = data as Record<string, unknown>;
+	if (typeof obj['__typename'] === 'string') {
+		types.add(obj['__typename'] as string);
+	}
+	for (const v of Object.values(obj)) {
+		if (v && typeof v === 'object') extractTypes(v, types);
+	}
 }
 
 @Injectable()

@@ -6,6 +6,8 @@ export interface FocusRefetchConfig {
 	minStaleSeconds?: number;
 }
 
+const lastFetch = new Map<string, number>();
+
 export function focusRefetchMiddleware(config?: FocusRefetchConfig): GraphqlMiddleware {
 	const visibilityOnly = config?.visibilityOnly ?? false;
 	const minStale = (config?.minStaleSeconds ?? 30) * 1000;
@@ -23,8 +25,6 @@ export function focusRefetchMiddleware(config?: FocusRefetchConfig): GraphqlMidd
 
 	return (request, next) => {
 		if (request.type !== 'query') return next(request);
-
-		const lastFetch = new Map<string, number>();
 
 		return next(request).pipe(
 			tap(() => {

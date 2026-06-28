@@ -1,6 +1,16 @@
 # DumbQL — Lightweight, Modular GraphQL Suite for Angular
 
-> **DumbQL** is a zero-boilerplate GraphQL client suite built for modern Angular (Standalone, SSR). It solves the core problems of Apollo Client, URQL, and Relay without the bloat — ~10KB core, modular architecture, and Angular-native design.
+> **Zero-boilerplate GraphQL client suite built for modern Angular (Standalone, SSR, Signals). ~10KB core, modular architecture, Angular-native.**
+
+<p align="center">
+  <img src="./projects/dumbql/core/assets/dumbql_logo.svg" alt="DumbQL" width="180"/>
+  <br/>
+  <a href="#package-architecture">Packages</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#why-not-apollo-urql-or-relay">Comparison</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#complete-api-guide">API Guide</a>
+</p>
 
 ---
 
@@ -31,6 +41,28 @@
 | **Angular Integration** | React-first port (Apollo Angular is a wrapper). Lags behind React version | React-only | React-only | **Angular-native**. Standalone components, Signals-compatible, SSR with `TransferState`, `@Injectable` services, pipes, `ng add` schematics |
 | **CLI Setup** | Create client manually | Create client manually | Requires compiler setup | **`ng add @dumbql/core`**. Interactive prompts. Auto-generates `dumbql.config.ts` |
 | **Learning Curve** | Moderate (basic) → Steep (advanced cache) | Low — most approachable | Very steep (3-5x Apollo) | **Low**. Familiar `HttpClient`-based. Intuitive discriminated union results |
+
+---
+
+## Package Architecture
+
+DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each package lives in `projects/dumbql/<name>` and has its own README.
+
+| Package | Description | README |
+|---------|-------------|--------|
+| `@dumbql/core` | Central GraphQL client — query, mutate, middleware, pipes, directives, config | [README](projects/dumbql/core/README.md) |
+| `@dumbql/cache` | Normalized entity cache with GC, persistence, optimistic updates | [README](projects/dumbql/cache/README.md) |
+| `@dumbql/ssr` | Server-Side Rendering — TransferState cache transfer + streaming | [README](projects/dumbql/ssr/README.md) |
+| `@dumbql/subscriptions` | WebSocket GraphQL subscriptions (graphql-transport-ws) | [README](projects/dumbql/subscriptions/README.md) |
+| `@dumbql/fragments` | Type-safe fragment definitions, composition, data access | [README](projects/dumbql/fragments/README.md) |
+| `@dumbql/middlewares` | Auth refresh, retry, focus refetch, offline queue | [README](projects/dumbql/middlewares/README.md) |
+| `@dumbql/pagination` | Cursor + offset pagination helpers with merge functions | [README](projects/dumbql/pagination/README.md) |
+| `@dumbql/persisted-queries` | Automatic Persisted Queries (APQ) with SHA-256 hashing | [README](projects/dumbql/persisted-queries/README.md) |
+| `@dumbql/file-upload` | Multipart file upload (graphql-multipart-request-spec) | [README](projects/dumbql/file-upload/README.md) |
+| `@dumbql/debugging` | Operation recording, field tree parsing, timing charts | [README](projects/dumbql/debugging/README.md) |
+| `@dumbql/testing` | Mock GraphQL backend for unit tests | [README](projects/dumbql/testing/README.md) |
+| `@dumbql/downloader` | Schema introspection downloader (Node.js CLI) | [README](projects/dumbql/downloader/README.md) |
+| `@dumbql/codegen` | TypeScript codegen from GraphQL schema + `.graphql` files | [README](projects/dumbql/codegen/README.md) |
 
 ---
 
@@ -445,19 +477,20 @@ src/
 │   │   └── debug-panel/      # Built-in debug component
 │   └── features/
 ├── projects/
-│   └── dumbql/               # DumbQL monorepo (12 packages)
-│       ├── core/
-│       ├── cache/
-│       ├── subscriptions/
-│       ├── file-upload/
-│       ├── middlewares/
-│       ├── pagination/
-│       ├── persisted-queries/
-│       ├── fragments/
-│       ├── ssr/
-│       ├── debugging/
-│       ├── downloader/
-│       └── testing/
+│   └── dumbql/               # DumbQL monorepo (13 packages)
+│       ├── core/             #   → README
+│       ├── cache/            #   → README
+│       ├── subscriptions/    #   → README
+│       ├── file-upload/      #   → README
+│       ├── middlewares/      #   → README
+│       ├── pagination/       #   → README
+│       ├── persisted-queries/#   → README
+│       ├── fragments/        #   → README
+│       ├── ssr/              #   → README
+│       ├── debugging/        #   → README
+│       ├── downloader/       #   → README
+│       ├── testing/          #   → README
+│       └── codegen/          #   → README
 ├── tools/                    # CLI tools
 │   ├── download-schema.mjs
 │   ├── generate-types.mjs
@@ -470,6 +503,13 @@ src/
 ```
 
 ---
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./projects/dumbql/core/assets/dumbql_logo.svg">
+  <img alt="DumbQL" src="./projects/dumbql/core/assets/dumbql_logo.svg" width="120" align="center">
+</picture>
+
+**Built for Angular · Modular · Zero‑boilerplate**
 
 ## License
 

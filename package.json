@@ -42,7 +42,9 @@
     ]
   },
   "private": true,
-  "workspaces": ["projects/dumbql/*"],
+  "workspaces": [
+    "projects/dumbql/*"
+  ],
   "packageManager": "npm@11.16.0",
   "dependencies": {
     "@angular/cdk": "^22.0.2",
@@ -92,6 +94,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.8",
+    "ng-packagr": "^22.0.0",
     "prettier": "^3.8.1",
     "stylelint": "^17.14.0",
     "stylelint-config-standard-scss": "^17.0.0",

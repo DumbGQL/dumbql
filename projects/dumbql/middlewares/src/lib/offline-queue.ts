@@ -20,13 +20,36 @@ interface QueuedMutation {
 
 let mutationIdCounter = 0;
 
+/** In-memory fallback when localStorage is unavailable (SSR, private browsing). */
+const memoryStore = new Map<string, QueuedMutation[]>();
+
 function isOnline(): boolean {
 	return typeof navigator === 'undefined' || navigator.onLine;
 }
 
+function getStorage(): Pick<Storage, 'getItem' | 'setItem'> {
+	try {
+		if (typeof localStorage !== 'undefined') {
+			localStorage.getItem('__dumbql_probe');
+			return localStorage;
+		}
+	} catch {
+		// localStorage forbidden
+	}
+	return {
+		getItem(key: string): string | null {
+			const v = memoryStore.get(key);
+			return v ? JSON.stringify(v) : null;
+		},
+		setItem(key: string, value: string): void {
+			memoryStore.set(key, JSON.parse(value));
+		},
+	};
+}
+
 function loadQueue(key: string): QueuedMutation[] {
 	try {
-		const raw = localStorage.getItem(key);
+		const raw = storage.getItem(key);
 		return raw ? JSON.parse(raw) : [];
 	} catch {
 		return [];
@@ -35,11 +58,13 @@ function loadQueue(key: string): QueuedMutation[] {
 
 function saveQueue(key: string, queue: QueuedMutation[]): void {
 	try {
-		localStorage.setItem(key, JSON.stringify(queue));
+		storage.setItem(key, JSON.stringify(queue));
 	} catch {
 		// storage full or unavailable
 	}
 }
+
+const storage = getStorage();
 
 @Injectable()
 export class OfflineQueueService {
@@ -54,7 +79,7 @@ export class OfflineQueueService {
 		this._queue = loadQueue(this.key);
 		const destroyRef = inject(DestroyRef);
 
-		if (this.config.autoReplay !== false) {
+		if (this.config.autoReplay !== false && typeof window !== 'undefined') {
 			const online$ = fromEvent(window, 'online');
 			online$.subscribe(() => this.replay());
 		}

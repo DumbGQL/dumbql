@@ -23,7 +23,7 @@ function calculateDelay(attempt: number, config: RetryExchangeConfig): number {
 }
 
 function defaultShouldRetry(result: GraphQLResult<unknown>): boolean {
-	return result.status === 'error';
+	return result.status === 'error' && !!result.networkError;
 }
 
 export function retryExchange(config?: RetryExchangeConfig): GraphqlMiddleware {

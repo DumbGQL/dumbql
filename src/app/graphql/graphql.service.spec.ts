@@ -75,7 +75,7 @@ describe('GraphqlService', () => {
 		const req = httpMock.expectOne('/graphql');
 		req.flush({ errors: [{ message: 'Unauthorized' }] });
 
-		expect(result).toEqual({ status: 'error', error: 'Unauthorized' });
+		expect(result).toEqual({ status: 'error', error: 'Unauthorized', graphQLErrors: [{ message: 'Unauthorized' }] });
 	});
 
 	it('handles empty data response', () => {
@@ -101,7 +101,7 @@ describe('GraphqlService', () => {
 		const req = httpMock.expectOne('/graphql');
 		req.error(new ProgressEvent('offline'), { status: 0, statusText: 'Unknown Error' });
 
-		expect(result).toEqual({ status: 'error', error: 'Unknown Error' });
+		expect(result).toEqual({ status: 'error', error: 'Unknown Error', networkError: { message: 'Unknown Error', status: 0, statusText: 'Unknown Error' } });
 	});
 
 	it('handles http 500 error', () => {
@@ -114,7 +114,7 @@ describe('GraphqlService', () => {
 		const req = httpMock.expectOne('/graphql');
 		req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-		expect(result).toEqual({ status: 'error', error: 'Internal Server Error' });
+		expect(result).toEqual({ status: 'error', error: 'Internal Server Error', networkError: { message: 'Internal Server Error', status: 500, statusText: 'Internal Server Error' } });
 	});
 
 	it('sends mutation via JSON when no files present', () => {

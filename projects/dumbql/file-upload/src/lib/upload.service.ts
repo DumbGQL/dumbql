@@ -37,7 +37,7 @@ export class UploadService {
   	}
 
   	return this.http.post<{ data?: T; errors?: { message: string }[] }>(
-  		this.config.endpoint,
+  		this.config.endpoint!,
   		formData,
   	).pipe(
   		catchError((error: unknown) => {

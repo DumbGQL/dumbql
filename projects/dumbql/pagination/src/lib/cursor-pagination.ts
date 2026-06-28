@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs';
-import { query, type GraphQLResult, type DocumentNode } from '@dumbql/core';
+import { query, type DocumentNode, type QueryHandle } from '@dumbql/core';
 
 export interface PageInfo {
   hasNextPage: boolean;
@@ -33,7 +32,7 @@ export interface CursorPaginationConfig {
 export function cursorPagination<T, TVars extends Record<string, unknown> = Record<string, unknown>>(
 	document: DocumentNode,
 	variables?: TVars,
-): Observable<GraphQLResult<CursorConnection<T>>> {
+): QueryHandle<CursorConnection<T>> {
 	return query<CursorConnection<T>, TVars>(document, variables);
 }
 

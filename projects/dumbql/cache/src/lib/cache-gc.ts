@@ -32,19 +32,19 @@ export class CacheGc {
   	}
   }
 
-  sweep(): number {
-  	const now = Date.now();
-  	let evicted = 0;
-  	for (const [key, since] of this.danglingSince) {
-  		if (now - since > this.ttlMs) {
-  			const [typename, id] = key.split(':');
-  			this.cache.remove(typename, id);
-  			this.danglingSince.delete(key);
-  			evicted++;
-  		}
-  	}
-  	return evicted;
-  }
+	sweep(): number {
+		const now = Date.now();
+		let evicted = 0;
+		for (const [key, since] of this.danglingSince) {
+			if (now - since >= this.ttlMs) {
+				const [typename, id] = key.split(':');
+				this.cache.remove(typename, id);
+				this.danglingSince.delete(key);
+				evicted++;
+			}
+		}
+		return evicted;
+	}
 
   refCountOf(typename: string, id: string): number {
   	return this.refCount.get(`${typename}:${id}`) ?? 0;

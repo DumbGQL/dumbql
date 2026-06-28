@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { from, Observable, of, switchMap, tap } from 'rxjs';
-import type { GraphQLResult } from '@dumbql/core';
+import type { GraphQLResult, GraphqlMiddleware } from '@dumbql/core';
 import { GraphqlService, type DocumentNode } from '@dumbql/core';
-import type { GraphqlMiddleware } from '@dumbql/core';
 
 async function sha256(message: string): Promise<string> {
 	if (typeof crypto !== 'undefined' && crypto.subtle) {
@@ -23,9 +22,12 @@ async function sha256(message: string): Promise<string> {
 }
 
 function isPersistedQueryNotFound(result: GraphQLResult<unknown>): boolean {
-	return result.status === 'error'
-		&& (result.error.includes('PersistedQueryNotFound')
-			|| result.error.includes('persistedQueryNotFound'));
+	if (result.status === 'error' && result.graphQLErrors) {
+		return result.graphQLErrors.some(
+			(e) => e.message.includes('PersistedQueryNotFound') || e.message.includes('persistedQueryNotFound'),
+		);
+	}
+	return false;
 }
 
 const hashCache = new Map<string, string>();
@@ -39,7 +41,24 @@ export function apqMiddleware(): GraphqlMiddleware {
 				...request.extensions,
 				persistedQuery: { version: 1, sha256Hash: hash },
 			};
-			return next({ ...request, query: '', extensions });
+			return next({ ...request, query: '', extensions }).pipe(
+				switchMap((result) => {
+					if (isPersistedQueryNotFound(result)) {
+						registeredHashes.delete(hash);
+						return next({
+							...request,
+							query: request.query,
+							extensions: { ...extensions, ...request.extensions },
+						}).pipe(
+							tap(() => {
+								const h = hashCache.get(request.query);
+								if (h) registeredHashes.add(h);
+							}),
+						);
+					}
+					return of(result);
+				}),
+			);
 		}
 
 		return from(sha256(request.query)).pipe(

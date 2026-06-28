@@ -1,7 +1,6 @@
 import {
   Directive,
   inject,
-  effect,
   afterRenderEffect,
   DestroyRef,
   input,
@@ -83,19 +82,38 @@ export class DumbqlQueryDirective<T = unknown> {
     const sub = query$.subscribe((r) => this.updateView(r));
     this.destroyRef.onDestroy(() => sub.unsubscribe());
 
-    effect(() => {
+    /*
+     * Why afterRenderEffect instead of effect:
+     *
+     * In directive-based queries (non-signal query pattern), input signals
+     * (dumbqlQueryDoc, dumbqlQueryVars) are watched to trigger refetch on change.
+     * Using effect() for this would start the HTTP request during Angular's
+     * change detection phase, before the frame is painted. While the request is
+     * async (no NG0100 risk), it delays the first meaningful paint.
+     *
+     * afterRenderEffect defers the refetch trigger until after the frame is
+     * rendered, keeping the critical rendering path free of side-effect
+     * initiation. The HTTP response arrives asynchronously either way, so the
+     * user-visible timing is identical — but the rendering path stays cleaner.
+     *
+     * Use the signal-based query() function (from @dumbql/core) when you need
+     * fully reactive, zone-less query execution without a ViewContainer ref.
+     */
+    afterRenderEffect(() => {
       this.dumbqlQueryDoc();
       this.dumbqlQueryVars();
       this.refetch$.next();
     });
 
-    afterRenderEffect(() => {
-      const loading = this.loading();
-      const result = this.result();
-      if (!loading && result) {
-        const el = this.viewRef?.rootNodes[0] as HTMLElement | undefined;
-        el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+    afterRenderEffect({
+      write: () => {
+        const loading = this.loading();
+        const result = this.result();
+        if (!loading && result) {
+          const el = this.viewRef?.rootNodes[0] as HTMLElement | undefined;
+          el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      },
     });
   }
 
@@ -112,12 +130,18 @@ export class DumbqlQueryDirective<T = unknown> {
       return;
     }
 
+    const errorText = r.status === 'error'
+      ? r.error
+      : r.graphQLErrors && r.graphQLErrors.length > 0
+        ? r.graphQLErrors.map((e) => e.message).join('; ')
+        : null;
+
     if (!this.viewRef) {
       this.viewRef = this.viewContainer.createEmbeddedView(this.templateRef, {
         $implicit: r,
         result: r,
         loading: this.loadingSignal(),
-        error: r.status === 'error' ? r.error : null,
+        error: errorText,
         refetch: () => this.refetch(),
       });
     } else {
@@ -125,7 +149,7 @@ export class DumbqlQueryDirective<T = unknown> {
       ctx.$implicit = r;
       ctx.result = r;
       ctx.loading = this.loadingSignal();
-      ctx.error = r.status === 'error' ? r.error : null;
+      ctx.error = errorText;
       this.viewRef.markForCheck();
     }
   }

@@ -1,5 +1,5 @@
 import { BehaviorSubject, type Observable } from 'rxjs';
-import { query, type DocumentNode } from '@dumbql/core';
+import { query, type DocumentNode, type GraphQLResult } from '@dumbql/core';
 
 export interface OffsetPaginationState<T> {
   items: T[];
@@ -43,7 +43,7 @@ export function offsetPagination<T, TVars extends Record<string, unknown> = Reco
 		state$.next({ ...prev, loading: true, error: null });
 
 		query<T, TVars>(document, { ...options.variables, offset, limit: prev.limit } as unknown as TVars)
-			.subscribe((result) => {
+			.result$.subscribe((result: GraphQLResult<T>) => {
 				if (result.status === 'success') {
 					const data = result.data as unknown as { items?: T[] };
 					const items = data?.items ?? [];

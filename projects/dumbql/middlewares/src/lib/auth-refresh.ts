@@ -24,9 +24,10 @@ export function authRefreshMiddleware(config: AuthRefreshConfig): GraphqlMiddlew
 		function execute(): Observable<GraphQLResult<unknown>> {
 			return next(request).pipe(
 				switchMap((result) => {
+					const httpStatus = result.status === 'error' ? result.networkError?.status : undefined;
 					const isAuthError = result.status === 'error'
 						&& triggerStatuses.size > 0
-						&& triggerStatuses.has(401);
+						&& (httpStatus !== undefined && triggerStatuses.has(httpStatus));
 
 					if (!isAuthError || attempts >= maxAttempts) {
 						return of(result);

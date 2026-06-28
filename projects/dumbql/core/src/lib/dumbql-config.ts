@@ -157,6 +157,8 @@ export interface CodegenConfig {
 		strictNullability?: boolean;
 		operationResultPrefix?: string;
 		operationResultSuffix?: string;
+		/** When true, only appends new type definitions instead of rewriting the entire file. */
+		merge?: boolean;
 	};
 }
 

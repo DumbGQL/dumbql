@@ -1,4 +1,4 @@
-export { generateSchemaTypes } from './lib/schema-types';
+export { generateSchemaTypes, generateSchemaFile } from './lib/schema-types';
 export type { SchemaData, SchemaType, CodegenScalars } from './lib/schema-types';
 
 export {

@@ -2,6 +2,50 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { loadConfig } from './load-config.mjs';
 
+function extractDeclarationLines(content) {
+	const names = new Set();
+	const re = /^export\s+(interface|type|const\s+enum)\s+(\w+)/gm;
+	let m;
+	while ((m = re.exec(content)) !== null) names.add(m[2]);
+	return names;
+}
+
+function mergeTypes(existingPath, newCode) {
+	if (!existsSync(existingPath)) return { content: newCode, count: 0 };
+
+	const existing = readFileSync(existingPath, 'utf-8');
+	const existingNames = extractDeclarationLines(existing);
+	const newDeclarations = [];
+	const lines = newCode.split('\n');
+
+	let i = 0;
+	while (i < lines.length) {
+		const line = lines[i];
+		const match = line.match(/^export\s+(interface|type|const\s+enum)\s+(\w+)/);
+		if (match) {
+			const name = match[2];
+			const block = [line];
+			i++;
+			while (i < lines.length && !lines[i].match(/^export\s+(interface|type|const\s+enum)\s+\w+/)) {
+				block.push(lines[i]);
+				i++;
+			}
+			if (!existingNames.has(name)) {
+				newDeclarations.push(block.join('\n'));
+			}
+		} else {
+			i++;
+		}
+	}
+
+	if (newDeclarations.length === 0) {
+		return { content: existing, count: 0 };
+	}
+
+	const result = existing.trimEnd() + '\n\n' + newDeclarations.join('\n\n') + '\n';
+	return { content: result, count: newDeclarations.length };
+}
+
 const builtinTypes = new Set([
 	'String', 'Int', 'Float', 'Boolean', 'ID',
 	'__Schema', '__Type', '__TypeKind', '__Field', '__InputValue',
@@ -142,9 +186,15 @@ async function run() {
 
 	const typesCode = generate(schemaData.__schema || schemaData, config);
 	const outputPath = join(typesDir, 'index.ts');
-	writeFileSync(outputPath, typesCode);
 
-	console.log(`Types generated: ${outputPath}`);
+	if (codegen.types?.merge) {
+		const { content, count } = mergeTypes(outputPath, typesCode);
+		writeFileSync(outputPath, content);
+		console.log(`Types merged (${count} new): ${outputPath}`);
+	} else {
+		writeFileSync(outputPath, typesCode);
+		console.log(`Types generated: ${outputPath}`);
+	}
 }
 
 run();

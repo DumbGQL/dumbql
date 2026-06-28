@@ -22,7 +22,8 @@
     "build:package:core": "npx ng-packagr -p projects/dumbql/core/ng-package.json",
     "build:package:cache": "npx ng-packagr -p projects/dumbql/cache/ng-package.json",
     "mock": "node mock/server.mjs",
-    "dev": "node mock/server.mjs & ng serve"
+    "dev": "node mock/server.mjs & ng serve",
+    "deploy": "bash deploy/deploy.sh"
   },
   "lint-staged": {
     "{src,projects/dumbql}/**/*.ts": [

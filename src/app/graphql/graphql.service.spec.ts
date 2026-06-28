@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -257,14 +257,17 @@ describe('standalone query() function', () => {
 		httpMock.verify();
 	});
 
-	it('sends a query via standalone function', () => {
+	it('sends a query via standalone function', async () => {
 		let result: unknown;
 
 		TestBed.runInInjectionContext(() => {
-			query<{ status: string }>(TEST_QUERY).subscribe((r) => {
+			query<{ status: string }>(TEST_QUERY).result$.subscribe((r: unknown) => {
 				result = r;
 			});
 		});
+
+		// toObservable uses effect() which fires asynchronously
+		await new Promise((r) => setTimeout(r, 0));
 
 		const req = httpMock.expectOne('/graphql');
 		req.flush({ data: { status: 'ok' } });

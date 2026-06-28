@@ -1,0 +1,20 @@
+{
+  "name": "@dumbql/react",
+  "version": "0.0.1",
+  "description": "React bindings for @dumbql/client — hooks for query, mutate, and subscriptions",
+  "keywords": ["react", "graphql", "hooks", "dumbql", "graphql-client", "react-hooks"],
+  "license": "MIT",
+  "type": "module",
+  "main": "src/public-api.ts",
+  "types": "src/public-api.ts",
+  "exports": {
+    ".": "./src/public-api.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "@dumbql/client": "^0.0.1",
+    "graphql": "^17.0.0"
+  }
+}

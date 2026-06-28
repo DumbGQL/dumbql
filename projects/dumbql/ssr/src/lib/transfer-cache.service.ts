@@ -1,7 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer, isPlatformBrowser } from '@angular/common';
 import { SsrStreamService } from './ssr-stream';
-import { type CacheService } from '@dumbql/cache';
+import { type CacheService } from '@dumbql/cache/angular';
 
 @Injectable({ providedIn: 'root' })
 export class TransferCacheService {

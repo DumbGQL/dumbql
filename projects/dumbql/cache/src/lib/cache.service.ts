@@ -1,35 +1,29 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, type Observable } from 'rxjs';
-import { NormalizedCache, type CacheEntity, type OptimisticUpdate } from './normalized-cache';
-import { CacheGc } from './cache-gc';
-import { CachePersistenceService } from './cache-persist';
-
-export interface LocalStateEntry<T = unknown> {
-  key: string;
-  value: T;
-}
+import { type CacheEntity, type OptimisticUpdate } from './normalized-cache';
+import { CacheStore } from './cache-store';
+import { CachePersistenceService, type CachePersistConfig } from './cache-persist-ng';
 
 @Injectable({ providedIn: 'root' })
 export class CacheService {
-  readonly cache = new NormalizedCache();
-  readonly gc = new CacheGc(this.cache);
-  private localState = new Map<string, BehaviorSubject<unknown>>();
-  /** Tracks which typenames each local state entry references, for selective mutation invalidation. */
-  private localStateTypes = new Map<string, Set<string>>();
+  private store = new CacheStore();
+  readonly cache = this.store.cache;
+  readonly gc = this.store.gc;
+
+  private localStateSubject = new Map<string, BehaviorSubject<unknown>>();
   private persistSvc: CachePersistenceService | null = null;
 
   constructor() {
     try {
-      const svc = inject(CachePersistenceService, { optional: true });
-      if (svc) {
-        this.persistSvc = svc;
-        const restored = svc.restore();
+      this.persistSvc = inject(CachePersistenceService, { optional: true }) ?? null;
+      if (this.persistSvc) {
+        const restored = this.persistSvc.restore();
         if (restored) {
           for (const [key, value] of restored) {
             if (key.startsWith('__local__')) {
               this.writeLocal(key.slice(9), value);
             } else {
-              this.cache.set(value as CacheEntity);
+              this.store.cache.set(value as CacheEntity);
             }
           }
         }
@@ -40,112 +34,86 @@ export class CacheService {
   }
 
   query(typename: string, id: string): CacheEntity | undefined {
-  	return this.cache.get(typename, id);
+    return this.store.query(typename, id);
   }
 
   write(entity: CacheEntity): void {
-  	this.cache.set(entity);
+    this.store.write(entity);
   }
 
   merge(entity: Partial<CacheEntity> & { __typename: string; id: string }): void {
-  	this.cache.merge(entity);
+    this.store.merge(entity);
   }
 
   evict(typename: string, id: string): void {
-  	this.cache.remove(typename, id);
+    this.store.evict(typename, id);
   }
 
   applyOptimistic(update: OptimisticUpdate): void {
-  	this.cache.applyOptimistic(update);
+    this.store.applyOptimistic(update);
   }
 
   rollbackOptimistic(id: string): void {
-  	this.cache.rollbackOptimistic(id);
+    this.store.rollbackOptimistic(id);
   }
 
   commitOptimistic(id: string): void {
-  	this.cache.commitOptimistic(id);
+    this.store.commitOptimistic(id);
   }
 
   readLocal(key: string): unknown {
-  	return this.localState.get(key)?.value;
+    return this.store.readLocal(key);
   }
 
   watchLocal(key: string): Observable<unknown> {
-  	const existing = this.localState.get(key);
-  	if (existing) {
-  		return existing.asObservable();
-  	}
-  	const subj = new BehaviorSubject<unknown>(undefined);
-  	this.localState.set(key, subj);
-  	return subj.asObservable();
+    const existing = this.localStateSubject.get(key);
+    if (existing) {
+      return existing.asObservable();
+    }
+    const subj = new BehaviorSubject<unknown>(this.store.readLocal(key));
+    this.localStateSubject.set(key, subj);
+    this.store.watchLocal(key, () => {
+      subj.next(this.store.readLocal(key));
+    });
+    return subj.asObservable();
   }
 
   writeLocal<T>(key: string, value: T): void {
-  	const existing = this.localState.get(key);
-  	if (existing) {
-  		existing.next(value);
-  	} else {
-  		this.localState.set(key, new BehaviorSubject<unknown>(value));
-  	}
+    this.store.writeLocal(key, value);
   }
 
   clearLocalState(): void {
-  	this.localState.clear();
-  	this.localStateTypes.clear();
+    this.localStateSubject.clear();
+    this.store.clearLocalState();
   }
 
   writeLocalWithTypes<T>(key: string, value: T, types: Set<string>): void {
-  	this.localStateTypes.set(key, types);
-  	this.writeLocal(key, value);
+    this.store.writeLocalWithTypes(key, value, types);
   }
 
   clearLocalStateByTypes(types: string[]): void {
-  	if (types.length === 0) return;
-  	const typeSet = new Set(types);
-  	const toDelete: string[] = [];
-  	for (const [key, tracked] of this.localStateTypes) {
-  		for (const t of tracked) {
-  			if (typeSet.has(t)) {
-  				toDelete.push(key);
-  				break;
-  			}
-  		}
-  	}
-  	for (const key of toDelete) {
-  		this.localState.delete(key);
-  		this.localStateTypes.delete(key);
-  	}
+    this.store.clearLocalStateByTypes(types);
   }
 
   serialize(): string {
-  	return JSON.stringify({
-  		entities: Array.from(this.cache.all().entries()),
-  		localState: Array.from(this.localState.entries()).map(([k, v]) => [k, v.value]),
-  	});
+    return this.store.serialize();
   }
 
   deserialize(json: string): void {
-  	const data = JSON.parse(json);
-  	for (const [, entity] of data.entities) {
-  		this.cache.set(entity);
-  	}
-  	for (const [key, value] of data.localState) {
-  		this.writeLocal(key, value);
-  	}
+    this.store.deserialize(json);
   }
 
   collectGarbage(): number {
-  	return this.gc.sweep();
+    return this.store.collectGarbage();
   }
 
   persist(): void {
     if (!this.persistSvc) return;
     const data: [string, Record<string, unknown>][] = [];
-    for (const [k, v] of this.cache.all()) {
+    for (const [k, v] of this.store.cache.all()) {
       data.push([k, v as unknown as Record<string, unknown>]);
     }
-    for (const [k, v] of this.localState) {
+    for (const [k, v] of this.localStateSubject) {
       data.push([`__local__${k}`, { value: v.value }]);
     }
     this.persistSvc.persist(data);

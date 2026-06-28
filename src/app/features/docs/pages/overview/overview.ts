@@ -24,6 +24,21 @@ interface Feature {
 export class DocsOverview {
 	protected readonly features: Feature[] = [
 		{
+			icon: '⚡', title: '@dumbql/client',
+			description: 'Framework-agnostic GraphQL client — query, mutate, streaming, middleware, cache.',
+			link: '/docs/client',
+		},
+		{
+			icon: '⚛️', title: '@dumbql/react',
+			description: 'React hooks, render-prop components, DumbqlProvider context.',
+			link: '/docs/react',
+		},
+		{
+			icon: '💚', title: '@dumbql/vue',
+			description: 'Vue composables, plugin, SSR support via onServerPrefetch.',
+			link: '/docs/vue',
+		},
+		{
 			icon: '⚡', title: '@dumbql/core',
 			description: 'GraphqlService, middleware, gql tag, pipes, standalone helpers, reactive variables.',
 			link: '/docs/core',

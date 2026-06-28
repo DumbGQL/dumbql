@@ -1,9 +1,11 @@
+// Framework-agnostic core (zero dependencies — no Angular needed)
 export { NormalizedCache, type CacheEntity, type OptimisticUpdate } from './lib/normalized-cache';
-export { CacheService } from './lib/cache.service';
+export { CacheStore, createCache } from './lib/cache-store';
 export { CacheGc } from './lib/cache-gc';
 export {
-	CachePersistenceService,
-	provideCachePersistence,
-	CACHE_PERSIST_CONFIG,
-	type CachePersistConfig,
+  CachePersistence,
+  CACHE_PERSIST_CONFIG,
+  type CachePersistConfig,
 } from './lib/cache-persist';
+
+// For Angular wrappers import from '@dumbql/cache/angular'

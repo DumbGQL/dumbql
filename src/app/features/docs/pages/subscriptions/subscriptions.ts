@@ -19,20 +19,21 @@ export class DocsSubscriptions {
 		{ id: 'graphql-transport-ws', title: 'graphql-transport-ws Protocol' },
 	];
 
-	protected readonly provideSubscriptionsCode = `import { provideDumbqlSubscriptions } from '@dumbql/subscriptions';
+	protected readonly provideSubscriptionsCode = `import { provideDumbqlSubscriptions } from '@dumbql/subscriptions/angular';
 
 provideDumbqlSubscriptions({
   wsUrl: 'ws://localhost:4000/graphql',
 });`;
 
-	protected readonly subscribeCode = `import { GraphqlSubscriptionService, gql } from '@dumbql/subscriptions';
+	protected readonly subscribeCode = `import { GraphqlSubscriptionService } from '@dumbql/subscriptions/angular';
+import { gql } from '@dumbql/core';
 
 const subscription = inject(GraphqlSubscriptionService);
 const newPosts = subscription.subscribe(
   gql\`subscription OnNewPost { newPost { id title createdAt } }\`,
 );
 
-// newPosts is a Signal<Post | null>
+// newPosts is an Observable<Post | null>
 // It updates every time the server pushes a new event`;
 
 	protected readonly connectionParamsCode = `provideDumbqlSubscriptions({

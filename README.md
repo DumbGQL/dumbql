@@ -1,6 +1,6 @@
-# DumbQL — Lightweight, Modular GraphQL Suite for Angular
+# DumbQL — So dumb GraphQL client but with smarter featurelist
 
-> **Zero-boilerplate GraphQL client suite built for modern Angular (Standalone, SSR, Signals). ~10KB core, modular architecture, Angular-native.**
+> **Zero-boilerplate GraphQL client suite for any framework. ~10KB core, modular architecture, Angular-native + React + Vue.**
 
 <p align="center">
   <img src="./projects/dumbql/core/assets/dumbql_logo.svg" alt="DumbQL" width="180"/>

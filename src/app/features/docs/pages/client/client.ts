@@ -1,0 +1,61 @@
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+
+@Component({
+	selector: 'app-docs-client',
+	standalone: true,
+	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './client.html',
+	styleUrl: './client.scss',
+})
+export class DocsClient {
+	protected readonly tocSections: TocSection[] = [
+		{ id: 'quick-start', title: 'Quick Start' },
+		{ id: 'api', title: 'API' },
+		{ id: 'middleware', title: 'Middleware' },
+		{ id: 'cache', title: 'Cache Integration' },
+		{ id: 'streaming', title: 'Streaming' },
+		{ id: 'file-upload', title: 'File Upload' },
+	];
+
+	protected readonly quickStartCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
+
+const client = createClient({ endpoint: '/graphql' });
+
+const GET_TODOS = gql\`query Todos { todos { id title } }\`;
+
+const result = await client.query<{ todos: Todo[] }>(GET_TODOS);
+if (isSuccess(result)) {
+  console.log(result.data.todos);
+}`;
+
+	protected readonly middlewareCode = `import { createClient, authMiddleware, loggingMiddleware } from '@dumbql/client';
+
+const client = createClient({
+  endpoint: '/graphql',
+  middleware: [
+    authMiddleware('my-token'),
+    loggingMiddleware('Todos'),
+  ],
+});`;
+
+	protected readonly cacheCode = `import { createClient, createCache } from '@dumbql/client';
+import { createCache } from '@dumbql/cache';
+
+const cache = createCache();
+const client = createClient({
+  endpoint: '/graphql',
+}, cache);`;
+
+	protected readonly streamingCode = `const stream = client.queryStream(gql\`query Stream { ... }\`);
+
+for await (const part of stream) {
+  if (isSuccess(part)) {
+    console.log('incremental:', part.data);
+  }
+}`;
+}

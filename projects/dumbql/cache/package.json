@@ -1,9 +1,28 @@
 {
   "name": "@dumbql/cache",
   "version": "0.0.1",
+  "description": "Normalized in-memory entity cache for GraphQL — __typename:id keying, GC, persistence, optimistic updates",
+  "keywords": ["graphql", "cache", "normalized-cache", "dumbql", "entity-cache"],
+  "license": "MIT",
+  "type": "module",
+  "main": "src/public-api.ts",
+  "types": "src/public-api.ts",
+  "exports": {
+    ".": "./src/public-api.ts",
+    "./angular": "./src/angular.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "rxjs": "~7.8.0"
   },
-  "sideEffects": false
+  "peerDependenciesMeta": {
+    "@angular/core": {
+      "optional": true
+    },
+    "rxjs": {
+      "optional": true
+    }
+  }
 }

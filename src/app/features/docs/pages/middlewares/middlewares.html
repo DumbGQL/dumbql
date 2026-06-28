@@ -9,54 +9,54 @@
         </div>
       </div>
       <p class="lead">
-        The middlewares package provides pre-built middleware functions that plug into
-        the DumbQL middleware pipeline. Each middleware is a pure function that
-        wraps the next link in the chain, giving you full control over request/response
-        flow.
+        Pre-built middleware functions that plug into the DumbQL middleware pipeline.
+        Each middleware wraps the next link in the chain — auth refresh, retry,
+        focus refetch, and offline queue.
       </p>
     </header>
 
-    <h2 appAnchor id="auth-refresh">authRefresh</h2>
+    <h2 appAnchor id="auth-refresh">authRefreshMiddleware</h2>
     <p>
-      Automatically attaches an authorization header and refreshes the token when
-      a 401 response is received:
+      Intercepts 401 responses, queues concurrent requests, calls
+      <code>refreshToken()</code>, then replays them with the new token:
     </p>
     <div class="code-block">
-      <pre><code>&#123;&#123; authRefreshCode &#125;&#125;</code></pre>
+      <pre><code>{{ authRefreshCode }}</code></pre>
     </div>
 
     <h2 appAnchor id="retry-exchange">retryExchange</h2>
     <p>
-      Retries failed operations with configurable delay and attempt limits:
+      Retries failed requests with exponential backoff and optional jitter:
     </p>
     <div class="code-block">
-      <pre><code>&#123;&#123; retryExchangeCode &#125;&#125;</code></pre>
+      <pre><code>{{ retryExchangeCode }}</code></pre>
     </div>
 
-    <h2 appAnchor id="focus-refetch">focusRefetch</h2>
+    <h2 appAnchor id="focus-refetch">focusRefetchMiddleware</h2>
     <p>
-      Refetches active queries when the browser tab regains focus:
+      Refetches stale queries on <code>visibilitychange</code> or
+      <code>window.focus</code> events:
     </p>
     <div class="code-block">
-      <pre><code>&#123;&#123; focusRefetchCode &#125;&#125;</code></pre>
+      <pre><code>{{ focusRefetchCode }}</code></pre>
     </div>
 
-    <h2 appAnchor id="offline-queue">offlineQueue</h2>
+    <h2 appAnchor id="offline-queue">offlineQueueMiddleware</h2>
     <p>
-      Queues mutations when the browser is offline and replays them when connectivity
-      returns:
+      Buffers mutations in localStorage when offline, replays on the
+      <code>online</code> event:
     </p>
     <div class="code-block">
-      <pre><code>&#123;&#123; offlineQueueCode &#125;&#125;</code></pre>
+      <pre><code>{{ offlineQueueCode }}</code></pre>
     </div>
 
     <h2 appAnchor id="composing">Composing Middlewares</h2>
     <p>
       Combine multiple middlewares using <code>composeMiddlewares</code> from
-      <code>@dumbql/core</code>. The order determines execution order:
+      <code>@dumbql/core</code>. Order determines execution order:
     </p>
     <div class="code-block">
-      <pre><code>&#123;&#123; composingMiddlewaresCode &#125;&#125;</code></pre>
+      <pre><code>{{ composingMiddlewaresCode }}</code></pre>
     </div>
   </div>
 

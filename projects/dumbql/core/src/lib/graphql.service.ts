@@ -1,7 +1,7 @@
 import { Injectable, inject, Injector } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, map, of, shareReplay, timer, switchMap, tap, Subscriber } from 'rxjs';
-import { CacheService } from '@dumbql/cache';
+import { CacheService } from '@dumbql/cache/angular';
 import { print, type DocumentNode, type TypedDocumentNode } from './gql';
 import { gql } from './gql';
 import { DUMBQL_CONFIG, type DumbqlConfig, type OnErrorServiceConfig } from './dumbql-config';

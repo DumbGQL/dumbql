@@ -2,7 +2,7 @@ import { inject, Injector } from '@angular/core';
 import { Observable, of, tap, merge, Subject, switchMap, takeUntil } from 'rxjs';
 import type { GraphQLResult } from './graphql.service';
 import type { GraphqlMiddleware } from './middleware';
-import { CacheService } from '@dumbql/cache';
+import { CacheService } from '@dumbql/cache/angular';
 import { DUMBQL_CONFIG, type DumbqlConfig } from './dumbql-config';
 
 interface EntityRef {

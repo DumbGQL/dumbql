@@ -2,7 +2,7 @@ import { inject, Injectable, type Provider, ENVIRONMENT_INITIALIZER, Injector } 
 import { tap } from 'rxjs';
 import type { GraphQLResult } from './graphql.service';
 import type { GraphqlMiddleware } from './middleware';
-import { CacheService } from '@dumbql/cache';
+import { CacheService } from '@dumbql/cache/angular';
 
 export function mutationCachePolicy(injector?: Injector): GraphqlMiddleware {
 	return (request, next) => {

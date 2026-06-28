@@ -1,19 +1,12 @@
-import { Injectable, inject, InjectionToken, type Provider, ENVIRONMENT_INITIALIZER } from '@angular/core';
-
 export interface CachePersistConfig {
   storageKey?: string;
   throttle?: number;
-  /** Schema version — bumping it invalidates all stored cache on next load. */
   version?: string;
-  /** Max age in ms for persisted data. Older data is discarded on restore. */
   maxAge?: number;
-  /** Preferred storage type. Defaults to localStorage with memory fallback. */
   storage?: 'localStorage' | 'memory';
 }
 
-export const CACHE_PERSIST_CONFIG = new InjectionToken<CachePersistConfig>('CACHE_PERSIST_CONFIG');
-
-// ─── Storage abstraction ────────────────────────────────────────────────────
+export const CACHE_PERSIST_CONFIG = Symbol('CACHE_PERSIST_CONFIG');
 
 interface StorageBackend {
   getItem(key: string): string | null;
@@ -51,30 +44,24 @@ class InMemoryStorage implements StorageBackend {
   }
 }
 
-// ─── Serialization ──────────────────────────────────────────────────────────
-
 interface PersistedPayload {
   version?: string;
   timestamp: number;
   data: [string, Record<string, unknown>][];
 }
 
-// ─── Service ────────────────────────────────────────────────────────────────
-
-@Injectable()
-export class CachePersistenceService {
+export class CachePersistence {
   private key: string;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private storage: StorageBackend;
   private version?: string;
   private maxAge?: number;
 
-  constructor() {
-    const config = inject(CACHE_PERSIST_CONFIG, { optional: true }) ?? {};
-    this.key = config.storageKey ?? '__dumbql_cache';
-    this.storage = createStorage(config);
-    this.version = config.version;
-    this.maxAge = config.maxAge;
+  constructor(config?: CachePersistConfig) {
+    this.key = config?.storageKey ?? '__dumbql_cache';
+    this.storage = createStorage(config ?? {});
+    this.version = config?.version;
+    this.maxAge = config?.maxAge;
   }
 
   persist(data: [string, Record<string, unknown>][]): void {
@@ -98,7 +85,6 @@ export class CachePersistenceService {
     }, delay);
   }
 
-  /** Returns full persisted data, or null if missing/expired/version-mismatch. */
   restore(): [string, Record<string, unknown>][] | null {
     try {
       const raw = this.storage.getItem(this.key);
@@ -130,16 +116,4 @@ export class CachePersistenceService {
       // ignore
     }
   }
-}
-
-export function provideCachePersistence(config?: CachePersistConfig): Provider[] {
-  return [
-    ...(config ? [{ provide: CACHE_PERSIST_CONFIG, useValue: config }] : []),
-    CachePersistenceService,
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => inject(CachePersistenceService),
-    },
-  ];
 }

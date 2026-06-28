@@ -36,10 +36,10 @@ createPost.mutate({ input: { title: 'Hello' } });`;
   console.log('Refetched:', r);
 });`;
 
-	protected readonly middlewareCode = `import { createAuthMiddleware } from '@dumbql/middlewares';
+	protected readonly middlewareCode = `import { authRefreshMiddleware } from '@dumbql/middlewares';
 
 const link = composeMiddlewares(
-  createAuthMiddleware(() => inject(AuthService).token()),
+  authRefreshMiddleware({ refreshToken: () => inject(AuthService).token() }),
   createHttpLink({ uri: '/graphql' }),
 );`;
 

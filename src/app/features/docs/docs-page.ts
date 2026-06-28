@@ -13,6 +13,9 @@ export class DocsPage {
 	protected readonly navItems = [
 		{ path: '/docs/overview', label: 'Overview' },
 		{ path: '/docs/getting-started', label: 'Getting Started' },
+		{ path: '/docs/client', label: '@dumbql/client' },
+		{ path: '/docs/react', label: '@dumbql/react' },
+		{ path: '/docs/vue', label: '@dumbql/vue' },
 		{ path: '/docs/core', label: '@dumbql/core' },
 		{ path: '/docs/cache', label: '@dumbql/cache' },
 		{ path: '/docs/subscriptions', label: '@dumbql/subscriptions' },

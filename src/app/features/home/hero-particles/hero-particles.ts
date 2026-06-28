@@ -16,11 +16,14 @@ const SNIPPETS = [
 interface TextParticle {
 	x: number;
 	y: number;
+	vx: number;
+	vy: number;
 	text: string;
 	opacity: number;
 	size: number;
 	color: string;
 	seed: number;
+	burst: number;
 }
 
 @Component({
@@ -74,7 +77,7 @@ export class HeroParticles {
 			'rgba(255, 255, 255, VAR)',
 		];
 
-		for (let i = 0; i < 35; i++) {
+		for (let i = 0; i < 12; i++) {
 			this.particles.push(this.spawn(canvas, colors));
 		}
 
@@ -98,8 +101,14 @@ export class HeroParticles {
 			const isActive = this.moveTimer > 0.01;
 
 			this.spawnTimer += 1;
-			if (isActive && this.spawnTimer % 10 === 0) {
-				this.particles.push(this.spawn(canvas, colors));
+			if (isActive && this.spawnTimer % 25 === 0) {
+				const p = this.spawn(canvas, colors);
+				const angle = Math.random() * Math.PI * 2;
+				const speed = 2 + Math.random() * 3;
+				p.vx = Math.cos(angle) * speed;
+				p.vy = Math.sin(angle) * speed;
+				p.burst = 1;
+				this.particles.push(p);
 			}
 
 			for (const p of this.particles) {
@@ -108,18 +117,28 @@ export class HeroParticles {
 				const dist = Math.sqrt(dx * dx + dy * dy);
 
 				if (isActive) {
-					const speed = Math.min(1, 80 / Math.max(dist, 1));
-					p.x += dx * speed * 0.035;
-					p.y += dy * speed * 0.035;
-
-					if (dist < 50) {
-						p.opacity -= 0.02;
+					if (p.burst > 0) {
+						p.x += p.vx;
+						p.y += p.vy;
+						p.vx *= 0.96;
+						p.vy *= 0.96;
+						p.opacity *= 0.98;
+						p.burst -= 0.02;
+						if (p.burst < 0) p.burst = 0;
 					} else {
-						const targetOpacity = Math.min(
-							0.7,
-							Math.max(0.1, 1 - dist / 600),
-						);
-						p.opacity += (targetOpacity - p.opacity) * 0.05;
+						const speed = Math.min(1, 80 / Math.max(dist, 1));
+						p.x += dx * speed * 0.035;
+						p.y += dy * speed * 0.035;
+
+						if (dist < 50) {
+							p.opacity -= 0.02;
+						} else {
+							const targetOpacity = Math.min(
+								0.7,
+								Math.max(0.1, 1 - dist / 600),
+							);
+							p.opacity += (targetOpacity - p.opacity) * 0.05;
+						}
 					}
 				} else {
 					const waveX = Math.sin(this.spawnTimer * 0.008 * (0.5 + p.seed * 0.2) + p.seed * 6) * 25;
@@ -148,7 +167,7 @@ export class HeroParticles {
 				ctx.fillText(p.text, p.x, p.y);
 			}
 
-			if (this.particles.length > 80) {
+			if (this.particles.length > 35) {
 				this.particles = this.particles.filter((p) => p.opacity > 0.05);
 			}
 
@@ -169,11 +188,14 @@ export class HeroParticles {
 		return {
 			x: this.mouseX + (Math.random() - 0.5) * 60,
 			y: this.mouseY + (Math.random() - 0.5) * 60,
+			vx: 0,
+			vy: 0,
 			text: SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)],
 			opacity: 0.1,
 			size: 10 + Math.random() * 4,
 			color: colors[Math.floor(Math.random() * colors.length)],
 			seed: Math.random(),
+			burst: 0,
 		};
 	}
 }

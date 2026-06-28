@@ -1,0 +1,70 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>@dumbql/react</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+          <span tuiChip appearance="neutral" size="xs">React 18+</span>
+        </div>
+      </div>
+      <p class="lead">
+        React bindings for <code>@dumbql/client</code>. Provides hooks (<code>useQuery</code>,
+        <code>useMutation</code>, <code>useSubscription</code>), render-prop components,
+        and a <code>DumbqlProvider</code> context wrapper.
+      </p>
+    </header>
+
+    <h2 appAnchor id="quick-start">Quick Start</h2>
+    <div class="code-block">
+      <pre><code>{{ quickStartCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="hooks">Hooks</h2>
+
+    <h3>useQuery</h3>
+    <p>
+      Executes a query on mount. Returns <code>&#123; data, loading, error, refetch &#125;</code>.
+      Automatically refetches when variables change.
+    </p>
+
+    <h3>useMutation</h3>
+    <p>
+      Returns a mutate function and result state:
+    </p>
+    <div class="code-block">
+      <pre><code>{{ mutationCode }}</code></pre>
+    </div>
+
+    <h3>useSubscription</h3>
+    <p>
+      Connects to a WebSocket subscription:
+    </p>
+    <div class="code-block">
+      <pre><code>{{ subscriptionCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="render-props">Render-prop Components</h2>
+    <p>
+      Alternative to hooks — useful in class components or when you need
+      inline query logic:
+    </p>
+    <div class="code-block">
+      <pre><code>{{ renderPropCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="context">Context & Provider</h2>
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>DumbqlProvider</code></td><td>Provides client + optional cache to the tree</td></tr>
+        <tr><td><code>useClient()</code></td><td>Returns <code>DumbqlClient</code> from context</td></tr>
+        <tr><td><code>useCache()</code></td><td>Returns <code>CacheStore | null</code> from context</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

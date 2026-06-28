@@ -42,7 +42,11 @@ code {
     color: var(--tui-background-accent-1);
   }
 }
-
+a {
+  .active {
+    border-bottom: solid currentcolor 0.1rem
+  }
+}
 h2:hover .anchor-btn,
 h3:hover .anchor-btn {
   opacity: 1;

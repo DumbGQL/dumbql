@@ -14,61 +14,51 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 })
 export class DocsMiddlewares {
 	protected readonly tocSections: TocSection[] = [
-		{ id: 'auth-refresh', title: 'authRefresh' },
+		{ id: 'auth-refresh', title: 'authRefreshMiddleware' },
 		{ id: 'retry-exchange', title: 'retryExchange' },
-		{ id: 'focus-refetch', title: 'focusRefetch' },
-		{ id: 'offline-queue', title: 'offlineQueue' },
+		{ id: 'focus-refetch', title: 'focusRefetchMiddleware' },
+		{ id: 'offline-queue', title: 'offlineQueueMiddleware' },
 		{ id: 'composing', title: 'Composing Middlewares' },
 	];
 
-	protected readonly authRefreshCode = `import { authRefresh } from '@dumbql/middlewares';
+	protected readonly authRefreshCode = `import { authRefreshMiddleware } from '@dumbql/middlewares';
 
-const link = composeMiddlewares(
-  authRefresh({
-    getToken: () => inject(AuthService).token(),
-    refreshToken: () => inject(AuthService).refresh(),
-    onRefreshFailure: () => inject(Router).navigate(['/login']),
-  }),
-  createHttpLink({ uri: '/graphql' }),
-);`;
+const middleware = authRefreshMiddleware({
+  refreshToken: () => fetch('/auth/refresh').then(r => r.json()),
+});`;
 
 	protected readonly retryExchangeCode = `import { retryExchange } from '@dumbql/middlewares';
 
-const link = composeMiddlewares(
-  retryExchange({
-    maxAttempts: 3,
-    initialDelay: 500,
-    maxDelay: 5000,
-    retryIf: (error) => error.status >= 500,
-  }),
-  createHttpLink({ uri: '/graphql' }),
-);`;
+const middleware = retryExchange({
+  maxRetries: 3,
+  initialDelay: 500,
+  maxDelay: 10000,
+});`;
 
-	protected readonly focusRefetchCode = `import { focusRefetch } from '@dumbql/middlewares';
+	protected readonly focusRefetchCode = `import { focusRefetchMiddleware } from '@dumbql/middlewares';
 
-const link = composeMiddlewares(
-  focusRefetch(),
-  createHttpLink({ uri: '/graphql' }),
-);`;
+const middleware = focusRefetchMiddleware({
+  minStaleSeconds: 30,
+});`;
 
-	protected readonly offlineQueueCode = `import { offlineQueue } from '@dumbql/middlewares';
+	protected readonly offlineQueueCode = `import { offlineQueueMiddleware } from '@dumbql/middlewares';
+import { provideOfflineQueue } from '@dumbql/middlewares/angular';
 
-const link = composeMiddlewares(
-  offlineQueue({
-    storage: localStorage,
-    queueKey: 'dumbql-offline-queue',
-  }),
-  createHttpLink({ uri: '/graphql' }),
-);`;
+// Provider (Angular only):
+export const appConfig = {
+  providers: [provideOfflineQueue({ maxQueue: 50 })],
+};
+
+const middleware = offlineQueueMiddleware();`;
 
 	protected readonly composingMiddlewaresCode = `import { composeMiddlewares, createHttpLink } from '@dumbql/core';
-import { authRefresh, retryExchange, focusRefetch, offlineQueue } from '@dumbql/middlewares';
+import { authRefreshMiddleware, retryExchange, focusRefetchMiddleware, offlineQueueMiddleware } from '@dumbql/middlewares';
 
 const link = composeMiddlewares(
-  authRefresh({ getToken: () => token() }),
-  retryExchange({ maxAttempts: 3 }),
-  focusRefetch(),
-  offlineQueue(),
+  authRefreshMiddleware({ refreshToken: () => getToken() }),
+  retryExchange({ maxRetries: 3 }),
+  focusRefetchMiddleware(),
+  offlineQueueMiddleware(),
   createHttpLink({ uri: '/graphql' }),
 );`;
 }

@@ -4,11 +4,11 @@
       <header class="page-header">
         <div class="hero" id="overview">
           <app-logo />
-          <p class="hero-subtitle">The Pragmatic GraphQL Client for Angular</p>
+          <p class="hero-subtitle">The Pragmatic GraphQL Client for Any Framework</p>
           <p class="hero-desc">
-            A modular, tree-shakeable GraphQL client built specifically for Angular.
-            Each capability in its own <code>@dumbql/*</code> package —
-            you pay only for what you use.
+            A modular, tree-shakeable GraphQL client with framework-agnostic core
+            and bindings for React, Vue, and Angular. Each capability in its own
+            <code>@dumbql/*</code> package — you pay only for what you use.
           </p>
           <div class="hero-actions">
             <a tuiButton appearance="primary" size="l" routerLink="/docs/getting-started">Get Started</a>
@@ -18,7 +18,7 @@
       </header>
 
       <div tuiNotification appearance="info">
-        <strong>12 packages · ~25 kB total · Angular 22+ · SSR · Signals · Tree-shakeable</strong>
+        <strong>15 packages · ~25 kB total · Angular 22+ · React 18+ · Vue 3+ · Tree-shakeable</strong>
       </div>
 
       <h2 appAnchor>Packages</h2>
@@ -32,18 +32,19 @@
       <h2 appAnchor>Why DumbQL?</h2>
 
       <p>
-        Existing GraphQL clients for Angular are either abandoned ports of React libraries
-        (Apollo Angular), overly complex (Relay), or too simplistic. DumbQL is designed
-        from the ground up for Angular's DI system, leverages signals for reactivity,
-        and keeps each package small enough that the entire library adds less than 25 kB
+        Existing GraphQL clients are either framework-locked (Apollo primarily targets
+        React), overly complex (Relay), or too simplistic. DumbQL is designed with a
+        framework-agnostic core and first-class bindings for React, Vue, and Angular,
+        keeping each package small enough that the entire library adds less than 25 kB
         to your production bundle.
       </p>
 
       <ul>
         <li><strong>Zero magic</strong> — explicit middleware pipeline, no hidden cache layers</li>
         <li><strong>Full control</strong> — configure every aspect from cache policies to retry logic</li>
-        <li><strong>Modular</strong> — 12 independent packages, import only what you use</li>
-        <li><strong>Signals-native</strong> — built for Angular's reactive primitives</li>
+        <li><strong>Modular</strong> — 15 independent packages, import only what you use</li>
+        <li><strong>Framework-agnostic core</strong> — works in any JS environment</li>
+        <li><strong>React + Vue + Angular</strong> — first-class bindings for all three</li>
         <li><strong>SSR ready</strong> — hydration, transfer state, chunked transfer</li>
         <li><strong>Strongly typed</strong> — full TypeScript inference from queries</li>
       </ul>

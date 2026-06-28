@@ -1,2 +1,2 @@
-export { GraphqlSubscriptionService } from './lib/graphql-subscription.service';
-export { subscribe } from './lib/subscribe';
+// Framework-agnostic core — no Angular/rxjs deps
+export { GraphqlSubscription } from './lib/graphql-subscription';

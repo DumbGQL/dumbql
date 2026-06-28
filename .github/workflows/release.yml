@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      - run: npm ci
+
+      - run: node scripts/build-packages.mjs
+
+      - name: Bump versions
+        run: |
+          for pkg in dist/dumbql/*/; do
+            if [ -f "$pkg/package.json" ]; then
+              node -e "
+                const p = require('./${pkg}package.json');
+                p.version = '0.0.1-build.${{ github.run_number }}';
+                require('fs').writeFileSync('./${pkg}package.json', JSON.stringify(p, null, 2) + '\n');
+              "
+            fi
+          done
+
+      - name: Publish to npm
+        run: |
+          for pkg in dist/dumbql/*/; do
+            if [ -f "$pkg/package.json" ]; then
+              name=$(node -p "require('./${pkg}package.json').name")
+              echo "Publishing $name..."
+              npm publish "$pkg" --access public --provenance || echo "⚠️  $name publish failed"
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.0.1-build.${{ github.run_number }}
+          name: Release v0.0.1-build.${{ github.run_number }}
+          generate_release_notes: true

@@ -21,37 +21,25 @@ export class DocsGettingStarted {
 		{ id: 'next-steps', title: 'Next Steps' },
 	];
 
-	protected readonly installCode = 'npm install @dumbql/core @dumbql/cache @dumbql/subscriptions';
+	protected readonly installCode = 'npm install @dumbql/client';
 
-	protected readonly configureCode = `import { provideDumbqlCore, provideDumbqlCache } from '@dumbql/core';
-import { createHttpLink } from '@dumbql/core/links';
+	protected readonly configureCode = `import { createClient } from '@dumbql/client';
 
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideDumbqlCore({
-      link: createHttpLink({ uri: '/graphql' }),
-    }),
-    provideDumbqlCache(),
-  ],
-};`;
+const client = createClient({ endpoint: '/graphql' });
 
-	protected readonly firstQueryCode = `import { Component, inject } from '@angular/core';
-import { GraphqlService, gql } from '@dumbql/core';
+// Use with any framework:
+// - React: <DumbqlProvider client={client}>…
+// - Vue:   app.use(createDumbqlPlugin(client))
+// - Angular: import { provideGraphql } from '@dumbql/core'`;
 
-@Component({
-  selector: 'app-books',
-  standalone: true,
-  template: \`<ul>
-    @for (b of books(); track b.id) {
-      <li>{{ b.title }}</li>
-}
-  </ul>\`,
-})
-export class BooksComponent {
-  #graphql = inject(GraphqlService);
+	protected readonly firstQueryCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
 
-  readonly books = this.#graphql.query(
-    gql\`query Books { books { id title } }\`,
-  );
+const client = createClient({ endpoint: '/graphql' });
+
+const BOOKS_QUERY = gql\`query Books { books { id title } }\`;
+
+const result = await client.query<{ books: Book[] }>(BOOKS_QUERY);
+if (isSuccess(result)) {
+  console.log(result.data.books);
 }`;
 }

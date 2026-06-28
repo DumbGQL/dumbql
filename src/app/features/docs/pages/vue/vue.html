@@ -1,0 +1,64 @@
+<div class="doc-page-layout">
+  <div class="doc-page-content doc-page">
+    <header class="page-header">
+      <div class="title-row">
+        <h1 appAnchor>@dumbql/vue</h1>
+        <div class="tags">
+          <span tuiBadge appearance="primary" size="s">Stable</span>
+          <span tuiChip appearance="neutral" size="xs">Vue 3+</span>
+        </div>
+      </div>
+      <p class="lead">
+        Vue composables for <code>@dumbql/client</code>. Provides <code>useQuery</code>,
+        <code>useMutation</code>, <code>useSubscription</code>, and a Vue plugin
+        (<code>createDumbqlPlugin</code>) for global client registration.
+      </p>
+    </header>
+
+    <h2 appAnchor id="quick-start">Quick Start</h2>
+    <div class="code-block">
+      <pre><code>{{ quickStartCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="composables">Composables</h2>
+
+    <h3>useQuery</h3>
+    <p>
+      Reactive query composable. Returns <code>&#123; data, loading, error, refetch &#125;</code>.
+      All values are Vue <code>ref</code>s. Supports <code>onServerPrefetch</code> for SSR.
+    </p>
+
+    <h3>useMutation</h3>
+    <div class="code-block">
+      <pre><code>{{ mutationCode }}</code></pre>
+    </div>
+
+    <h3>useSubscription</h3>
+    <div class="code-block">
+      <pre><code>{{ subscriptionCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="plugin">Vue Plugin</h2>
+    <p>
+      Register <code>@dumbql/client</code> globally with <code>createDumbqlPlugin</code>:
+    </p>
+    <div class="code-block">
+      <pre><code>{{ pluginCode }}</code></pre>
+    </div>
+
+    <table>
+      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>createDumbqlPlugin(client)</code></td><td>Vue plugin — installs client globally</td></tr>
+        <tr><td><code>useClient()</code></td><td>Access <code>DumbqlClient</code> from composition API</td></tr>
+        <tr><td><code>useQuery(doc, vars?, opts?)</code></td><td>Reactive query</td></tr>
+        <tr><td><code>useMutation(doc)</code></td><td>Mutation composable</td></tr>
+        <tr><td><code>useSubscription(doc, vars?, opts?)</code></td><td>Subscription composable</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="doc-page-toc">
+    <app-docs-toc [sections]="tocSections" />
+  </aside>
+</div>

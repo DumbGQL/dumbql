@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/dumbql_logo.svg" alt="DumbQL" width="160"/>
+  <img src="../../../public/logos/logo.png" alt="DumbQL" width="160"/>
 </p>
 
 <h1 align="center">@dumbql/core</h1>

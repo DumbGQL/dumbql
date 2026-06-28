@@ -4,11 +4,11 @@ import { GraphqlSubscriptionService } from './graphql-subscription.service';
 import type { DocumentNode } from '@dumbql/core';
 
 export function subscribe<T>(
-	document: DocumentNode,
-	variables?: Record<string, unknown>,
+  document: DocumentNode,
+  variables?: Record<string, unknown>,
 ): Observable<T> {
-	return defer(() => {
-		const svc = inject(GraphqlSubscriptionService);
-		return svc.subscribe<T>(document, variables);
-	});
+  return defer(() => {
+    const svc = inject(GraphqlSubscriptionService);
+    return svc.subscribe<T>(document, variables);
+  });
 }

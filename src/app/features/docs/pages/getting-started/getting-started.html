@@ -8,41 +8,55 @@
 
     <h2 appAnchor id="install">Install</h2>
     <p>
-      Install the core package and any satellite packages you need:
+      Install the framework-agnostic client, plus bindings for your framework:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; installCode &#125;&#125;</code></pre>
     </div>
+    <p>
+      For framework-specific bindings, install the corresponding package:
+    </p>
+    <ul>
+      <li>React: <code>npm install @dumbql/react @dumbql/cache</code></li>
+      <li>Vue: <code>npm install @dumbql/vue</code></li>
+      <li>Angular: <code>npm install @dumbql/core @dumbql/cache @dumbql/subscriptions</code></li>
+    </ul>
 
     <h2 appAnchor id="configure">Configure</h2>
     <p>
-      Provide the <code>GraphqlService</code> (and cache, if used) in your
-      <code>app.config.ts</code>:
+      Create a client with <code>createClient</code> and pass it to your framework's
+      provider:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; configureCode &#125;&#125;</code></pre>
     </div>
+    <p>
+      See <a routerLink="/docs/react">@dumbql/react</a>,
+      <a routerLink="/docs/vue">@dumbql/vue</a>, or
+      <a routerLink="/docs/core">@dumbql/core</a> (Angular) for framework-specific setup.
+    </p>
 
     <h2 appAnchor id="first-query">Your First Query</h2>
     <div tuiNotification appearance="warning">
       <p>
-        <strong>TIP:</strong> Inject <code>GraphqlService</code> in any component and use the <code>gql</code>
-        tag for type-safe queries:
+        <strong>TIP:</strong> Use <code>createClient</code> + <code>gql</code> tag
+        for type-safe queries:
       </p>
     </div>
     <div class="code-block">
       <pre><code>&#123;&#123; firstQueryCode &#125;&#125;</code></pre>
     </div>
     <p>
-      The <code>query()</code> method returns a <code>Signal&lt;T | null&gt;</code>
-      that automatically refetches when dependencies or variables change.
+      The <code>query()</code> method returns a Promise. Use <code>isSuccess</code> /
+      <code>isError</code> type guards to handle results.
     </p>
 
     <h2 appAnchor id="next-steps">Next Steps</h2>
     <ul>
+      <li>Add <a routerLink="/docs/client">@dumbql/client</a> for the core API</li>
       <li>Add <a routerLink="/docs/cache">caching</a> for normalized data</li>
       <li>Enable <a routerLink="/docs/subscriptions">subscriptions</a> for real-time updates</li>
-      <li>Protect your app with <a routerLink="/docs/middlewares">middleware</a> for auth tokens</li>
+      <li>Learn <a routerLink="/docs/react">React hooks</a> or <a routerLink="/docs/vue">Vue composables</a></li>
     </ul>
   </div>
 

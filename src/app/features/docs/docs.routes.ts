@@ -16,6 +16,21 @@ export const docsRoutes: Routes = [
 					import('./pages/getting-started/getting-started').then((m) => m.DocsGettingStarted),
 			},
 			{
+				path: 'client',
+				loadComponent: () =>
+					import('./pages/client/client').then((m) => m.DocsClient),
+			},
+			{
+				path: 'react',
+				loadComponent: () =>
+					import('./pages/react/react').then((m) => m.DocsReact),
+			},
+			{
+				path: 'vue',
+				loadComponent: () =>
+					import('./pages/vue/vue').then((m) => m.DocsVue),
+			},
+			{
 				path: 'core',
 				loadComponent: () =>
 					import('./pages/core/core').then((m) => m.DocsCore),

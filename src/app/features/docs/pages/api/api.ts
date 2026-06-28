@@ -14,6 +14,9 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 })
 export class DocsApi {
 	protected readonly tocSections: TocSection[] = [
+		{ id: 'client', title: '@dumbql/client' },
+		{ id: 'react', title: '@dumbql/react' },
+		{ id: 'vue', title: '@dumbql/vue' },
 		{ id: 'core', title: '@dumbql/core' },
 		{ id: 'cache', title: '@dumbql/cache' },
 		{ id: 'subscriptions', title: '@dumbql/subscriptions' },

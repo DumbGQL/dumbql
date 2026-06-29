@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/vue",
-  "version": "0.0.3-rc.2",
+  "version": "0.0.3-rc.1",
   "description": "Vue composables for @dumbql/client — useQuery, useMutation, useSubscription",
   "keywords": [
     "vue",

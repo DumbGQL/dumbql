@@ -53,6 +53,25 @@ export class DocsMigration {
 		{ apollo: 'typePolicies / keyFields', dumbql: 'Zero-config — auto __typename + id detection' },
 	];
 
+	protected readonly adapterCode = `import { fromApolloCache } from '@dumbql/apollo-adapter';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { DumbqlClient } from '@dumbql/client';
+import { CacheStore } from '@dumbql/cache';
+
+// Keep Apollo client for existing code
+const apolloCache = new InMemoryCache();
+const apolloClient = new ApolloClient({ uri, cache: apolloCache });
+
+// Create DumbQL client, wrapping Apollo's cache for compatibility
+const dumbqlCache = new CacheStore();
+const dumbqlClient = new DumbqlClient({ endpoint: uri, cache: dumbqlCache });
+
+// Create adapter so DumbQL can read from Apollo cache
+const adapter = fromApolloCache(apolloCache);
+
+// Use adapter.query() to read Apollo cache data from DumbQL
+const migratedData = adapter.query('Book', '1');`;
+
 	protected readonly migrationSteps = [
 		{
 			step: '1. Install DumbQL',

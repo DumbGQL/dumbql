@@ -170,11 +170,11 @@
 
     <h3>Message Flow</h3>
     <ol>
-      <li><strong>Client → Server:</strong> <code>{ type: 'connection_init' }</code></li>
-      <li><strong>Server → Client:</strong> <code>{ type: 'connection_ack' }</code></li>
-      <li><strong>Client → Server:</strong> <code>{ type: 'subscribe', id, payload: { query, variables } }</code></li>
-      <li><strong>Server → Client:</strong> <code>{ type: 'next', payload: { data } }</code> (repeated)</li>
-      <li><strong>Client → Server:</strong> <code>{ type: 'complete', id }</code> (on unsubscribe)</li>
+      <li><strong>Client → Server:</strong> <code>{{ '{' }} type: 'connection_init' {{ '}' }}</code></li>
+      <li><strong>Server → Client:</strong> <code>{{ '{' }} type: 'connection_ack' {{ '}' }}</code></li>
+      <li><strong>Client → Server:</strong> <code>{{ '{' }} type: 'subscribe', id, payload: {{ '{' }} query, variables {{ '}' }} {{ '}' }}</code></li>
+      <li><strong>Server → Client:</strong> <code>{{ '{' }} type: 'next', payload: {{ '{' }} data {{ '}' }} {{ '}' }}</code> (repeated)</li>
+      <li><strong>Client → Server:</strong> <code>{{ '{' }} type: 'complete', id {{ '}' }}</code> (on unsubscribe)</li>
     </ol>
 
     <p>

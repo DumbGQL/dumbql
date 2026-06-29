@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {
-  private readonly allVersions = ['0.0.3-rc.2', '0.0.2-alpha.1', '0.0.2-rc.3', '0.0.2-rc.2', '0.0.2-rc.1', '0.0.1'];
+  private readonly allVersions = ['0.0.2-alpha.1', '0.0.2-rc.3', '0.0.2-rc.2', '0.0.2-rc.1', '0.0.1'];
   private readonly storageKey = 'dumbql-docs-version';
 
   readonly currentVersion = signal(this.load());

@@ -1,7 +1,8 @@
 {
   "name": "@dumbql/codegen",
-  "version": "0.0.3-rc.2",
+  "version": "0.0.3-rc.1",
   "type": "module",
+  "keywords": ["graphql", "codegen", "code-generation", "dumbql", "typescript"],
   "main": "src/public-api.ts",
   "bin": {
     "dumbql-codegen": "bin/dumbql-codegen.mjs"

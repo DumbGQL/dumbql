@@ -14,7 +14,7 @@ export type {
 export { DumbqlConfigService, provideDumbql } from './lib/config.service';
 export { DUMBQL_CONFIG, GRAPHQL_CONFIG } from './lib/dumbql-config';
 export type { OnErrorServiceConfig, SchemaConfig, DumbqlPlugin } from './lib/dumbql-config';
-export { GraphqlService, type GraphQLResult, type GraphQLResponse } from './lib/graphql.service';
+export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCode } from './lib/graphql.service';
 export { gql, print } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode } from './lib/gql';
 export { query, type QueryHandle } from './lib/query';

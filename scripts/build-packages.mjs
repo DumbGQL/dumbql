@@ -8,6 +8,7 @@ const NM = join(ROOT, 'node_modules', '@dumbql');
 
 const BUILD_ORDER = [
   'cache',
+  'errors',
   'core',
   'client',
   'fragments',

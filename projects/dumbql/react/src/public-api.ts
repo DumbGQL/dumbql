@@ -9,6 +9,7 @@ export { useLiveQuery, type UseLiveQueryOptions, type UseLiveQueryResult } from 
 export { useSuspenseQuery, useBackgroundQuery, useReadQuery, type QueryRef } from './lib/use-suspense-query';
 export { useFragment, type UseFragmentResult } from './lib/use-fragment';
 export { usePrefetch } from './lib/use-prefetch';
+export { RateLimitGate, type RateLimitGateProps } from './lib/rate-limit-gate';
 
 // Components (render props)
 export { Query, type QueryProps } from './lib/query';

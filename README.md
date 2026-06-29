@@ -1,15 +1,15 @@
-# DumbQL — The GraphQL Client That Actually Understands Angular
+# DumbQL — The GraphQL Client That Actually Understands Your Framework
 
-> **Angular-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, not ported from React. Zero-boilerplate. Signals-ready.**
+> **Framework-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, React, and Vue — not ported from another framework. Zero-boilerplate. Signals-ready.**
 
-**If you're an Angular developer who's tired of:**
-> - Apollo Angular lagging 6 months behind every React release
+**If you're tired of:**
+> - Framework bindings that lag 6 months behind every major release
 > - Fighting React idioms (`MockedProvider`, render props) in Angular tests
 > - Installing 3 third-party packages just to upload a file
 > - Writing 50 lines of `typePolicies` to make normalized cache work
 > - Hearing "it works in React, we'll port it later"
 
-**DumbQL fixes all of this. One `ng add` and you're done.**
+**DumbQL fixes all of this. One `npm install` and you're done.**
 
 <p align="center">
   <img src="./public/logos/logo.png" alt="DumbQL" width="120"/>
@@ -80,7 +80,13 @@ export class UserComponent {
 }
 ```
 
-> **That's it.** No `ApolloModule.forRoot()`. No `graphql-tag` dependency. No React wrappers. Just Angular.
+> **That's it.** No `ApolloModule.forRoot()`. No `graphql-tag` dependency. No framework wrappers. Just your framework.
+
+**Why developers add DumbQL:**
+> - **Auto mock** — prototype without a backend. `autoMockMiddleware()` generates realistic data from your schema
+> - **Prefetch** — `prefetchedRoute()` resolves GraphQL data **before** Angular activates the route
+> - **Playground** — built-in GraphQL query editor at `/playground` in the docs site
+> - **No lock-in** — React, Vue, and Angular with the same core. Starters ready in one click
 
 ---
 
@@ -101,6 +107,10 @@ export class UserComponent {
 | **Request batching** | ❌ Requires separate link | ❌ Not built-in | ❌ Not built-in | **✅ Built-in (configurable window)** | Fewer HTTP requests. 50ms default batch window |
 | **Optimistic updates with snapshot rollback** | ❌ Complex with cache.evict | ❌ Not built-in | ✅ Built-in | **✅ Cache snapshot/commit/rollback** | Safe optimistic UI. One method to roll back all changes |
 | **CLI setup (`ng add`)** | ❌ Manual provider configuration | ❌ Not applicable | ❌ Not applicable | **✅ `ng add @dumbql/core`** | Interactive prompts. Auto-generates config file |
+| **Auto mock (no backend needed)** | ❌ Not built-in. Manual mocking per test | ❌ Not built-in | ❌ Not built-in | **✅ `autoMockMiddleware`** | Schema → mock data. Zero-config prototyping. Optional passthrough |
+| **Router data prefetch** | ❌ Complex custom resolvers | ❌ Not built-in | ✅ Relay compiler handles this | **✅ `prefetchedRoute()`** | Angular Router resolver. Data ready before component renders |
+| **GraphQL Playground (in-app)** | ❌ Separate Apollo Studio | ❌ Separate GraphQL playground | ❌ Requires separate tools | **✅ `/playground` route** | Interactive query editor with history. Built into docs site |
+| **React + Vue + Angular** | ⚠️ Angular port lags behind React | ❌ React-first, Angular community-maintained | ❌ React-only | **✅ First-class bindings** | Same core, same DX across all frameworks. One StackBlitz per framework |
 
 ---
 

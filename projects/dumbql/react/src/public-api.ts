@@ -8,6 +8,7 @@ export { useSubscription, type UseSubscriptionOptions, type UseSubscriptionResul
 export { useLiveQuery, type UseLiveQueryOptions, type UseLiveQueryResult } from './lib/use-live-query';
 export { useSuspenseQuery, useBackgroundQuery, useReadQuery, type QueryRef } from './lib/use-suspense-query';
 export { useFragment, type UseFragmentResult } from './lib/use-fragment';
+export { usePrefetch } from './lib/use-prefetch';
 
 // Components (render props)
 export { Query, type QueryProps } from './lib/query';

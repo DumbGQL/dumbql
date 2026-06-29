@@ -34,6 +34,7 @@ function linkPackage(pkg, distOut) {
     try { rmSync(nmLink, { recursive: true }); } catch {}
   }
   if (existsSync(distOut)) {
+    mkdirSync(NM, { recursive: true });
     symlinkSync(resolve(distOut), nmLink, 'dir');
     console.log(`  🔗 Linked @dumbql/${pkg} → ${resolve(distOut)}`);
   }

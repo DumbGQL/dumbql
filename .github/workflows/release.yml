@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "Publish version:"
           for pkg in dist/dumbql/*/; do
-            [ -f "${pkg}package.json" ] && node -p "require('${pkg}package.json').name + ' @ ' + require('${pkg}package.json').version"
+            [ -f "${pkg}package.json" ] && node -p "require('./${pkg}package.json').name + ' @ ' + require('./${pkg}package.json').version"
           done
 
       - name: Publish to npm
@@ -73,7 +73,7 @@ jobs:
           fi
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
-              name=$(node -p "require('${pkg}package.json').name")
+              name=$(node -p "require('./${pkg}package.json').name")
               echo "Publishing $name with tag $TAG..."
               npm publish "$pkg" --access public --tag "$TAG"
             fi

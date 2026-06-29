@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, type Observable } from 'rxjs';
-import { type CacheEntity, type OptimisticUpdate } from './normalized-cache';
+import { type CacheEntity, type OptimisticUpdate, type TypePolicy } from './normalized-cache';
 import { CacheStore } from './cache-store';
-import { CachePersistenceService, type CachePersistConfig } from './cache-persist-ng';
+import { CachePersistenceService } from './cache-persist-ng';
 
 @Injectable({ providedIn: 'root' })
 export class CacheService {
-  private store = new CacheStore();
+  private store: CacheStore;
   readonly cache = this.store.cache;
   readonly gc = this.store.gc;
 
@@ -101,6 +101,10 @@ export class CacheService {
 
   deserialize(json: string): void {
     this.store.deserialize(json);
+  }
+
+  setTypePolicies(policies: Record<string, TypePolicy>): void {
+    this.store.setTypePolicies(policies);
   }
 
   collectGarbage(): number {

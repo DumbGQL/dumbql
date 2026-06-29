@@ -10,15 +10,46 @@ export interface OptimisticUpdate {
   rollback: (previous: Map<string, CacheEntity>) => void;
 }
 
+export interface TypePolicy {
+  keyFields?: string[];
+  merge?: 'append' | 'prepend' | ((
+    existing: unknown | undefined,
+    incoming: unknown,
+    options?: { args?: Record<string, unknown> }
+  ) => unknown);
+}
+
 let inlineCounter = 0;
 
 function inlineKey(typename: string): string {
   return `${typename}:__inline__${++inlineCounter}`;
 }
 
+function buildKey(typename: string, entity: Record<string, unknown>, keyFields?: string[]): string | null {
+  if (!keyFields || keyFields.length === 0) {
+    const id = entity['id'];
+    if (id !== undefined && id !== null) return `${typename}:${String(id)}`;
+    return null;
+  }
+  const parts = keyFields.map((f) => {
+    const v = entity[f];
+    return v !== undefined && v !== null ? String(v) : 'null';
+  });
+  return `${typename}:${parts.join('.')}`;
+}
+
 export class NormalizedCache {
   private entities = new Map<string, CacheEntity>();
   private optimistics = new Map<string, OptimisticUpdate>();
+  private typePolicies: Record<string, TypePolicy>;
+
+  constructor(typePolicies?: Record<string, TypePolicy>) {
+    this.typePolicies = typePolicies ?? {};
+  }
+
+  setTypePolicies(policies: Record<string, TypePolicy>): void {
+    this.typePolicies = { ...policies };
+  }
 
   /** Build a cache key for a typed id. */
   key(typename: string, id: string): string {
@@ -43,26 +74,35 @@ export class NormalizedCache {
 
   /**
    * Store an entity.
-   * - With `id`: stored as `TypeName:id`
+   * - With `id` (and no keyFields policy): stored as `TypeName:id`
+   * - With keyFields policy: stored as `TypeName:field1.field2...`
    * - Without `id`: stored as `TypeName:__inline__N` (no data loss)
    */
   set(entity: CacheEntity): void {
   	if (!entity.__typename) return;
   	const t = entity.__typename;
-  	const k = entity.id ? this.key(t, entity.id) : inlineKey(t);
+  	const policy = this.typePolicies[t];
+  	const k = buildKey(t, entity as unknown as Record<string, unknown>, policy?.keyFields) ?? inlineKey(t);
   	this.entities.set(k, entity);
   }
 
   /**
    * Merge partial fields into an existing entity.
-   * Creates one with `id: '__inline__N'` if no id given.
+   * Respects typePolicies for custom keyFields and merge functions.
    */
   merge(entity: Partial<CacheEntity> & { __typename: string; id?: string }): void {
-  	const k = entity.id
-  		? this.key(entity.__typename, entity.id)
-  		: inlineKey(entity.__typename);
-  	const existing = this.entities.get(k) ?? { __typename: entity.__typename } as CacheEntity;
-  	this.entities.set(k, { ...existing, ...entity });
+  	const t = entity.__typename;
+  	const policy = this.typePolicies[t];
+  	const k = buildKey(t, entity as unknown as Record<string, unknown>, policy?.keyFields) ?? inlineKey(t);
+  	const existing = this.entities.get(k);
+
+  	if (policy?.merge && typeof policy.merge === 'function') {
+  		const merged = policy.merge(existing, entity, undefined);
+  		this.entities.set(k, merged as CacheEntity);
+  	} else {
+  		const base = existing ?? { __typename: t } as CacheEntity;
+  		this.entities.set(k, { ...base, ...entity });
+  	}
   }
 
   remove(typename: string, id?: string): void {

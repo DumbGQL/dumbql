@@ -1,16 +1,23 @@
-import { NormalizedCache, type CacheEntity, type OptimisticUpdate } from './normalized-cache';
+import { NormalizedCache, type CacheEntity, type OptimisticUpdate, type TypePolicy } from './normalized-cache';
 import { CacheGc } from './cache-gc';
 import { CachePersistence, type CachePersistConfig } from './cache-persist';
 
+export interface CacheStoreConfig {
+  persist?: CachePersistence | CachePersistConfig;
+  typePolicies?: Record<string, TypePolicy>;
+}
+
 export class CacheStore {
-  readonly cache = new NormalizedCache();
-  readonly gc = new CacheGc(this.cache);
+  readonly cache: NormalizedCache;
+  readonly gc: CacheGc;
   private localState = new Map<string, unknown>();
   private localStateListeners = new Map<string, Set<() => void>>();
   private localStateTypes = new Map<string, Set<string>>();
   private persistSvc: CachePersistence | null = null;
 
-  constructor(config?: { persist?: CachePersistence | CachePersistConfig }) {
+  constructor(config?: CacheStoreConfig) {
+    this.cache = new NormalizedCache(config?.typePolicies);
+    this.gc = new CacheGc(this.cache);
     if (config?.persist) {
       const svc = config.persist instanceof CachePersistence
         ? config.persist
@@ -129,6 +136,10 @@ export class CacheStore {
     }
   }
 
+  setTypePolicies(policies: Record<string, TypePolicy>): void {
+    this.cache.setTypePolicies(policies);
+  }
+
   collectGarbage(): number {
     return this.gc.sweep();
   }
@@ -146,6 +157,6 @@ export class CacheStore {
   }
 }
 
-export function createCache(config?: { persist?: CachePersistence | CachePersistConfig }): CacheStore {
+export function createCache(config?: CacheStoreConfig): CacheStore {
   return new CacheStore(config);
 }

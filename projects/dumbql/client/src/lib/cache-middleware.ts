@@ -1,6 +1,6 @@
 import type { GraphQLResult } from './result';
 import type { GraphqlMiddleware } from './middleware';
-import type { CacheStore } from '@dumbql/cache';
+import type { CacheStore, TypePolicy } from '@dumbql/cache';
 import type { CacheConfig } from './config';
 
 interface EntityRef {
@@ -40,6 +40,11 @@ function extractTypeNames(data: unknown, types: Set<string>): void {
 }
 
 export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): GraphqlMiddleware {
+  // Wire typePolicies if provided
+  if (config?.typePolicies) {
+    cache.setTypePolicies(config.typePolicies as Record<string, TypePolicy>);
+  }
+
   const fetchTimestamps = new Map<string, number>();
   const maxAge = config?.maxAge ?? 0;
   const staleTime = maxAge > 0 ? Math.floor(maxAge / 2) : 0;

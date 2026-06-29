@@ -4,6 +4,7 @@ import type { GraphQLResult } from './graphql.service';
 import type { GraphqlMiddleware } from './middleware';
 import { CacheService } from '@dumbql/cache/angular';
 import { DUMBQL_CONFIG, type DumbqlConfig } from './dumbql-config';
+import type { TypePolicy } from '@dumbql/cache';
 
 interface EntityRef {
 	__typename: string;
@@ -46,6 +47,8 @@ function extractTypeNames(data: unknown, types: Set<string>): void {
 	}
 }
 
+const initialized = new WeakSet<Injector>();
+
 export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 	const fetchTimestamps = new Map<string, number>();
 
@@ -57,6 +60,14 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 		if (!cache) return next(request);
 
 		const cfg = inj.get(DUMBQL_CONFIG, null) as DumbqlConfig | null;
+
+		// Wire typePolicies once per Injector
+		if (!initialized.has(inj) && cfg?.cache?.typePolicies) {
+			initialized.add(inj);
+			const policies = cfg.cache.typePolicies as Record<string, TypePolicy>;
+			cache.setTypePolicies(policies);
+		}
+
 		const maxAge = cfg?.cache?.maxAge ?? 0;
 		const staleTime = maxAge > 0 ? Math.floor(maxAge / 2) : 0;
 

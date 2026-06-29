@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/react",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.3-rc.1",
   "description": "React bindings for @dumbql/client — hooks for query, mutate, and subscriptions",
   "keywords": [
     "react",
@@ -25,7 +25,7 @@
   "sideEffects": false,
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "@dumbql/client": "^0.0.1",
+    "@dumbql/client": "^0.0.3",
     "graphql": "^17.0.0"
   }
 }

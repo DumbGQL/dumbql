@@ -5,5 +5,8 @@
   "main": "src/public-api.ts",
   "module": "src/public-api.ts",
   "types": "src/public-api.ts",
-  "sideEffects": false
+  "sideEffects": false,
+  "bin": {
+    "dumbql-migrate": "src/bin/migrate.js"
+  }
 }

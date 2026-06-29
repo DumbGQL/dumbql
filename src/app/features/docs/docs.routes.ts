@@ -90,6 +90,11 @@ export const docsRoutes: Routes = [
 				loadComponent: () => import('./pages/comparison/comparison').then((m) => m.DocsComparison),
 			},
 			{
+				path: 'migration',
+				loadComponent: () =>
+					import('./pages/migration/migration').then((m) => m.DocsMigration),
+			},
+			{
 				path: 'api',
 				loadComponent: () => import('./pages/api/api').then((m) => m.DocsApi),
 			},

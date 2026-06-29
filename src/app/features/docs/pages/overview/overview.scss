@@ -55,6 +55,21 @@
     margin-bottom: 1.5rem;
   }
 
+  .why-block {
+    text-align: left;
+    line-height: 1.6;
+
+    p {
+      margin: 0 0 0.75rem;
+      color: inherit;
+    }
+
+    code {
+      background: rgb(0 0 0 / 10%);
+      color: inherit;
+    }
+  }
+
   h2 {
     font-size: 1.375rem;
     margin: 2rem 0 0.75rem;

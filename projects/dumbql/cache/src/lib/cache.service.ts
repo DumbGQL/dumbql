@@ -6,7 +6,7 @@ import { CachePersistenceService } from './cache-persist-ng';
 
 @Injectable({ providedIn: 'root' })
 export class CacheService {
-  private store: CacheStore;
+  private store = new CacheStore();
   readonly cache = this.store.cache;
   readonly gc = this.store.gc;
 

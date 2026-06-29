@@ -25,16 +25,31 @@
 
 ## Quick Start
 
+**Angular:**
 ```bash
-# Create an Angular project
 ng new my-app --standalone
-
-# Add DumbQL — interactive prompts, zero config
 ng add @dumbql/core
-
-# Start developing
 npm start
 ```
+
+**React:**
+```bash
+git clone https://github.com/DumbGQL/dumbql
+cd dumbql/starters/react
+npm install && npm start
+```
+
+**Vue:**
+```bash
+git clone https://github.com/DumbGQL/dumbql
+cd dumbql/starters/vue
+npm install && npm start
+```
+
+**Or open in StackBlitz:**
+- [Angular](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular)
+- [React](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react)
+- [Vue](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue)
 
 ```typescript
 // app.config.ts
@@ -129,7 +144,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 | `@dumbql/ssr` | Server-Side Rendering — TransferState cache transfer + streaming | [README](projects/dumbql/ssr/README.md) |
 | `@dumbql/subscriptions` | WebSocket GraphQL subscriptions (graphql-transport-ws) | [README](projects/dumbql/subscriptions/README.md) |
 | `@dumbql/fragments` | Type-safe fragment definitions, composition, data access | [README](projects/dumbql/fragments/README.md) |
-| `@dumbql/middlewares` | Auth refresh, retry, focus refetch, offline queue | [README](projects/dumbql/middlewares/README.md) |
+| `@dumbql/middlewares` | Auth refresh, retry, focus refetch, offline queue, auto mock | [README](projects/dumbql/middlewares/README.md) |
 | `@dumbql/pagination` | Cursor + offset pagination helpers with merge functions | [README](projects/dumbql/pagination/README.md) |
 | `@dumbql/persisted-queries` | Automatic Persisted Queries (APQ) with SHA-256 hashing | [README](projects/dumbql/persisted-queries/README.md) |
 | `@dumbql/file-upload` | Multipart file upload (graphql-multipart-request-spec) | [README](projects/dumbql/file-upload/README.md) |
@@ -137,6 +152,8 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 | `@dumbql/testing` | Mock GraphQL backend for unit tests | [README](projects/dumbql/testing/README.md) |
 | `@dumbql/downloader` | Schema introspection downloader (Node.js CLI) | [README](projects/dumbql/downloader/README.md) |
 | `@dumbql/codegen` | TypeScript codegen from GraphQL schema + `.graphql` files | [README](projects/dumbql/codegen/README.md) |
+| `@dumbql/react` | React bindings — `useQuery`, `DumbqlProvider` | [README](projects/dumbql/react/README.md) |
+| `@dumbql/vue` | Vue 3 bindings — `useQuery`, `createDumbqlPlugin` | [README](projects/dumbql/vue/README.md) |
 
 ---
 
@@ -153,7 +170,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - Angular pipes — `GqlPipe`, `GraphqlDataPipe`, `GraphqlErrorPipe`
 - Reactive variables — `makeVar<T>()`, `ReactiveVar<T>`
 - Client directive middleware — `@client` field resolution
-- Router integration — `guardedRoute()`, `provideDumbqlRouter()`
+- Router integration — `guardedRoute()`, `provideDumbqlRouter()`, `prefetchedRoute()`, `fromPrefetched()`
 - Auto-refetch — `mutationCachePolicy()`, `provideAutoRefetch()`
 - DevTools integration — `DevtoolsService`, `devtoolsMiddleware`, `provideDevtools()`
 - Schema service — `SchemaService`, `provideSchemaFetch()`
@@ -190,6 +207,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - `retryExchange` — exponential backoff with jitter
 - `focusRefetchMiddleware` — refetch on tab focus
 - `offlineQueueMiddleware` + `OfflineQueueService` — offline mutation buffering + auto-replay
+- `autoMockMiddleware` — schema-based mock data generation for rapid prototyping (no backend needed)
 
 ### `@dumbql/pagination` — Pagination Helpers
 - `offsetPagination()` — stateful offset-based pagination with loadMore/refresh
@@ -225,6 +243,22 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - `MockGraphqlService` — register responses with `when(request, result)`
 - FIFO response queue, optional simulated delay
 - `provideDumbqlTesting()` — test provider setup
+
+---
+  
+## Starters & Playground
+
+Jumpstart development with pre-configured StackBlitz starters for each framework:
+
+| Framework | StackBlitz |
+|-----------|-----------|
+| Angular 22+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular) |
+| React 18+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react) |
+| Vue 3+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue) |
+
+Each starter includes `@dumbql/client`, a mock GraphQL backend, and a working query example — no backend required. Run locally with `npm start` from `starters/<framework>/`.
+
+The **GraphQL Playground** is available at `/playground` in the docs site — interactive query editor with variables, headers, JSON response viewer, and execution history.
 
 ---
 

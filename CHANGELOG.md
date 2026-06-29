@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.0.3-rc.1] — 2026-06-30
+
+### Added
+- **FieldPolicy (typePolicies) support** in `@dumbql/cache`:
+  - `TypePolicy` interface with `keyFields` (composite keys via dot-separated values) and custom `merge` functions
+  - `NormalizedCache.setTypePolicies()` — configure policies at runtime
+  - `CacheStore.setTypePolicies()` / `CacheService.setTypePolicies()` — wired through the stack
+  - Angular `cacheMiddleware` wires `typePolicies` from `DumbqlConfig.cache.typePolicies` on first request (guarded by `WeakSet<Injector>`)
+  - Client `cacheMiddleware` wires `typePolicies` from `CacheConfig.typePolicies` eagerly
+  - 8 FieldPolicy tests in `src/app/cache/field-policy.spec.ts`
+- **`@dumbql/codegen` CLI** — `npx dumbql-codegen` with flags:
+  - `--watch` / `-w` — watches `schema.json` and `.graphql` files, regenerates on change with 300ms debounce
+  - `--schema-only` — only generate schema types from `schema.json`
+  - `--documents-only` — only generate typed documents from `.graphql` files
+  - `--config, -c <path>` / `--output, -o <dir>` / `--help`
+- **Typed documents from `.graphql` files** — `findGraphqlFiles()`, `parseGraphqlFile()`, `generateTypedDocumentsCode()`, `generateIndexCode()` API
+- **`generateTypedDocumentsCode`** now accepts `string` (full TS source, auto-extracts type names) in addition to `string[]`
+- **`tools/generate-types.mjs`** refactored to use `@dumbql/codegen` library instead of duplicating schema generation / merge logic; now generates typed documents from `.graphql` files
+
+### Changed
+- Version bumped from `0.0.2-rc.4` → `0.0.3-rc.1` across all 18 packages
+
 ## [0.0.2-rc.4] — 2026-06-29
 
 ### Added

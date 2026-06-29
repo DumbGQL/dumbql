@@ -3,6 +3,9 @@
   "version": "0.0.3-rc.1",
   "type": "module",
   "main": "src/public-api.ts",
+  "bin": {
+    "dumbql-codegen": "bin/dumbql-codegen.mjs"
+  },
   "dependencies": {
     "graphql": "^17.0.0",
     "glob": "^11.0.0"

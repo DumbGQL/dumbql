@@ -86,9 +86,30 @@ jobs:
           git push origin "HEAD:${{ github.ref_name }}" --no-verify
           git push origin --tags --no-verify
 
+      - name: Extract changelog entry
+        id: changelog
+        env:
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          VER="${TAG#v}"
+          node -e "
+            const fs = require('fs');
+            const c = fs.readFileSync('CHANGELOG.md','utf-8').split('\n');
+            let s = false;
+            const b = [];
+            const re = new RegExp('^##\\\\s+\\\\[$VER\\\\]');
+            for (const l of c) {
+              const n = l.match(/^##\s+\[/);
+              if (l.match(re)) { s = true; continue; }
+              if (s && n) break;
+              if (s) b.push(l);
+            }
+            fs.writeFileSync('release_body.md', b.join('\n').trim());
+          "
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.name }}
           name: ${{ steps.tag.outputs.name }}
-          generate_release_notes: true
+          body_path: release_body.md

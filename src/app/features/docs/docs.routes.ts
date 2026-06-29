@@ -46,6 +46,11 @@ export const docsRoutes: Routes = [
 					import('./pages/subscriptions/subscriptions').then((m) => m.DocsSubscriptions),
 			},
 			{
+				path: 'live-queries',
+				loadComponent: () =>
+					import('./pages/live-queries/live-queries').then((m) => m.DocsLiveQueries),
+			},
+			{
 				path: 'file-upload',
 				loadComponent: () =>
 					import('./pages/file-upload/file-upload').then((m) => m.DocsFileUpload),

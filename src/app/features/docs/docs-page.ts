@@ -19,6 +19,7 @@ export class DocsPage {
 		{ path: '/docs/core', label: '@dumbql/core' },
 		{ path: '/docs/cache', label: '@dumbql/cache' },
 		{ path: '/docs/subscriptions', label: '@dumbql/subscriptions' },
+		{ path: '/docs/live-queries', label: 'Live Queries' },
 		{ path: '/docs/file-upload', label: '@dumbql/file-upload' },
 		{ path: '/docs/middlewares', label: '@dumbql/middlewares' },
 		{ path: '/docs/pagination', label: '@dumbql/pagination' },

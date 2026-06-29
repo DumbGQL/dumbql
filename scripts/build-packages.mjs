@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { existsSync, rmSync, symlinkSync, mkdirSync } from 'node:fs';
+import { existsSync, rmSync, symlinkSync, mkdirSync, cpSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
@@ -25,6 +25,9 @@ const BUILD_ORDER = [
   'vue',
 ];
 
+// Packages compiled with tsc (not ng-packagr, not plain copy)
+const TSC_PACKAGES = ['react', 'vue'];
+
 function linkPackage(pkg, distOut) {
   const nmLink = join(NM, pkg);
   if (existsSync(nmLink)) {
@@ -41,27 +44,43 @@ function build(pkg) {
   const pkgDir = join(ROOT, 'projects', 'dumbql', pkg);
   const distOut = join(DIST, pkg);
 
-  if (!existsSync(join(pkgDir, 'ng-package.json'))) {
-    console.log(`  ℹ️  Plain Node package, copying to dist/${pkg}`);
+  if (existsSync(join(pkgDir, 'ng-package.json'))) {
+    // Angular package — build with ng-packagr
+    const npxCmd = existsSync(join(ROOT, 'node_modules', '.bin', 'ng-packagr'))
+      ? 'npx ng-packagr'
+      : 'npx --yes ng-packagr';
+    execSync(`${npxCmd} -p ${pkgDir}/ng-package.json`, {
+      cwd: ROOT,
+      stdio: 'inherit',
+      env: { ...process.env, NODE_OPTIONS: '--max_old_space_size=4096' },
+    });
+    linkPackage(pkg, distOut);
+    return;
+  }
+
+  if (TSC_PACKAGES.includes(pkg)) {
+    // TypeScript package — compile with tsc
+    const tsconfig = join(pkgDir, 'tsconfig.lib.json');
+    console.log(`  🔧 Compiling TypeScript...`);
     mkdirSync(distOut, { recursive: true });
-    execSync(`cp -r ${pkgDir}/src ${distOut}/ && cp ${pkgDir}/package.json ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+    execSync(`npx tsc -p ${tsconfig}`, { cwd: ROOT, stdio: 'inherit' });
+    cpSync(join(pkgDir, 'package.json'), join(distOut, 'package.json'));
     for (const f of ['README.md', 'LICENSE']) {
       const p = join(pkgDir, f);
-      if (existsSync(p)) execSync(`cp ${p} ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+      if (existsSync(p)) cpSync(p, join(distOut, f));
     }
     linkPackage(pkg, distOut);
     return;
   }
 
-  const npxCmd = existsSync(join(ROOT, 'node_modules', '.bin', 'ng-packagr'))
-    ? 'npx ng-packagr'
-    : 'npx --yes ng-packagr';
-  execSync(`${npxCmd} -p ${pkgDir}/ng-package.json`, {
-    cwd: ROOT,
-    stdio: 'inherit',
-    env: { ...process.env, NODE_OPTIONS: '--max_old_space_size=4096' },
-  });
-
+  // Plain Node package — copy source directly
+  console.log(`  ℹ️  Plain Node package, copying to dist/${pkg}`);
+  mkdirSync(distOut, { recursive: true });
+  execSync(`cp -r ${pkgDir}/src ${distOut}/ && cp ${pkgDir}/package.json ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+  for (const f of ['README.md', 'LICENSE']) {
+    const p = join(pkgDir, f);
+    if (existsSync(p)) execSync(`cp ${p} ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+  }
   linkPackage(pkg, distOut);
 }
 

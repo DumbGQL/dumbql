@@ -29,11 +29,12 @@ jobs:
       - name: Bump versions
         run: |
           for pkg in dist/dumbql/*/; do
-            if [ -f "$pkg/package.json" ]; then
+            if [ -f "${pkg}package.json" ]; then
               node -e "
-                const p = require('./${pkg}package.json');
+                const p = require('$(realpath "${pkg}package.json")');
                 p.version = '0.0.1-build.${{ github.run_number }}';
-                require('fs').writeFileSync('./${pkg}package.json', JSON.stringify(p, null, 2) + '\n');
+                require('fs').writeFileSync('$(realpath "${pkg}package.json")', JSON.stringify(p, null, 2) + '\n');
+                console.log('bumped', p.name, '→', p.version);
               "
             fi
           done
@@ -41,10 +42,10 @@ jobs:
       - name: Publish to npm
         run: |
           for pkg in dist/dumbql/*/; do
-            if [ -f "$pkg/package.json" ]; then
-              name=$(node -p "require('./${pkg}package.json').name")
+            if [ -f "${pkg}package.json" ]; then
+              name=$(node -p "require('$(realpath "${pkg}package.json")').name")
               echo "Publishing $name..."
-              npm publish "$pkg" --access public --provenance || echo "⚠️  $name publish failed"
+              npm publish "$pkg" --access public
             fi
           done
         env:

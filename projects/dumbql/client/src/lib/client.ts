@@ -483,7 +483,7 @@ export class DumbqlClient {
 
     if (hasErrors && this.errorPolicy === 'none') {
       return this.withErrorNotification({
-        status: 'error', error: response.errors![0].message, graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'GRAPHQL_ERROR', error: response.errors![0].message, graphQLErrors: response.errors!,
       });
     }
 
@@ -496,7 +496,7 @@ export class DumbqlClient {
         return result;
       }
       return this.withErrorNotification({
-        status: 'error', error: 'No data returned', graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'NO_DATA', error: 'No data returned', graphQLErrors: response.errors!,
       });
     }
 
@@ -506,13 +506,13 @@ export class DumbqlClient {
         return { status: 'success', data: response.data as T, graphQLErrors: response.errors };
       }
       return this.withErrorNotification({
-        status: 'error', error: msgs.join('; '), graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'NO_DATA', error: msgs.join('; '), graphQLErrors: response.errors!,
       });
     }
 
     if (response.data == null) {
       return this.withErrorNotification({
-        status: 'error', error: 'No data returned from server',
+        status: 'error', errorCode: 'NO_DATA', error: 'No data returned from server',
       });
     }
 
@@ -528,18 +528,27 @@ export class DumbqlClient {
   private toHttpError<T>(error: { message: string; status?: number; statusText?: string } | Error): GraphQLResult<T> {
     if (error instanceof Error) {
       return this.withErrorNotification({
-        status: 'error', error: error.message,
+        status: 'error', errorCode: 'NETWORK_ERROR', error: error.message,
         networkError: { message: error.message },
       });
     }
     return this.withErrorNotification({
-      status: 'error', error: error.message,
+      status: 'error', errorCode: 'NETWORK_ERROR', error: error.message,
       networkError: { message: error.message, status: error.status, statusText: error.statusText ?? undefined },
     });
   }
 
   private withErrorNotification(result: GraphQLResult<never> & { status: 'error' }): GraphQLResult<never> {
-    const onError = this.config.onError;
+    const { onError, errorHandler } = this.config;
+
+    if (errorHandler) {
+      const err = new Error(result.error);
+      const out = errorHandler.handle(err);
+      if (out instanceof Promise) {
+        out.catch(() => {});
+      }
+    }
+
     if (onError) {
       onError(result.error);
     }

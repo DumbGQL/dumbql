@@ -4,6 +4,7 @@ export type {
   GraphQLResponse,
   GraphQLError,
   NetworkErrorInfo,
+  ErrorCode,
 } from './lib/result';
 export { gql, type DocumentNode, type TypedDocumentNode, print } from './lib/gql';
 export {

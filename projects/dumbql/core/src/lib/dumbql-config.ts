@@ -61,6 +61,18 @@ export interface GraphqlCoreConfig {
 	 * ```
 	 */
 	onError?: ((error: string) => void) | OnErrorServiceConfig;
+	/**
+	 * Custom error handler. Receives every error during query execution.
+	 * Called before `onError` — useful for logging, metrics, or custom toast.
+	 *
+	 * @example
+	 * ```typescript
+	 * errorHandler: {
+	 *   handle(error) { console.error('[GraphQL]', error); return true; }
+	 * }
+	 * ```
+	 */
+	errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
 }
 
 // ─── Subscriptions ──────────────────────────────────────────────────────────

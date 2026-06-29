@@ -11,9 +11,11 @@ export interface NetworkErrorInfo {
   statusText?: string;
 }
 
+export type ErrorCode = 'NO_DATA' | 'GRAPHQL_ERROR' | 'NETWORK_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN';
+
 export type GraphQLResult<T> =
   | { status: 'success'; data: T; graphQLErrors?: GraphQLError[] }
-  | { status: 'error'; error: string; graphQLErrors?: GraphQLError[]; networkError?: NetworkErrorInfo };
+  | { status: 'error'; error: string; errorCode?: ErrorCode; graphQLErrors?: GraphQLError[]; networkError?: NetworkErrorInfo };
 
 export interface GraphQLResponse<T> {
   data?: T;

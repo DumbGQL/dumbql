@@ -78,6 +78,11 @@ export interface ClientConfig {
     enabled?: boolean;
   };
   onError?: (error: string) => void;
+  /**
+   * Custom error handler. Receives every error during query execution.
+   * Called before `onError` — useful for logging, metrics, or custom toast.
+   */
+  errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
   subscriptions?: SubscriptionsConfig;
   cache?: CacheConfig;
   persistedQueries?: PersistedQueriesConfig;

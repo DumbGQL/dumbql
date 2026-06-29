@@ -29,9 +29,11 @@ export interface NetworkErrorInfo {
   statusText?: string;
 }
 
+export type ErrorCode = 'NO_DATA' | 'GRAPHQL_ERROR' | 'NETWORK_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN';
+
 export type GraphQLResult<T> =
   | { status: 'success'; data: T; graphQLErrors?: GraphQLError[] }
-  | { status: 'error'; error: string; graphQLErrors?: GraphQLError[]; networkError?: NetworkErrorInfo };
+  | { status: 'error'; error: string; errorCode?: ErrorCode; graphQLErrors?: GraphQLError[]; networkError?: NetworkErrorInfo };
 
 export interface GraphQLResponse<T> {
   data?: T;
@@ -567,7 +569,7 @@ export class GraphqlService {
 
     if (hasErrors && this.errorPolicy === 'none') {
       return this.withErrorNotification({
-        status: 'error', error: response.errors![0].message, graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'GRAPHQL_ERROR', error: response.errors![0].message, graphQLErrors: response.errors!,
       });
     }
 
@@ -580,7 +582,7 @@ export class GraphqlService {
         return result;
       }
       return this.withErrorNotification({
-        status: 'error', error: 'No data returned', graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'NO_DATA', error: 'No data returned', graphQLErrors: response.errors!,
       });
     }
 
@@ -590,13 +592,13 @@ export class GraphqlService {
         return { status: 'success', data: response.data as T, graphQLErrors: response.errors };
       }
       return this.withErrorNotification({
-        status: 'error', error: msgs.join('; '), graphQLErrors: response.errors!,
+        status: 'error', errorCode: 'NO_DATA', error: msgs.join('; '), graphQLErrors: response.errors!,
       });
     }
 
     if (response.data == null) {
       return this.withErrorNotification({
-        status: 'error', error: 'No data returned from server',
+        status: 'error', errorCode: 'NO_DATA', error: 'No data returned from server',
       });
     }
 
@@ -614,7 +616,7 @@ export class GraphqlService {
       if (error.error instanceof ErrorEvent) {
         const msg = error.error.message;
         return this.withErrorNotification({
-          status: 'error', error: msg,
+          status: 'error', errorCode: 'NETWORK_ERROR', error: msg,
           networkError: { message: msg, status: 0 },
         });
       }
@@ -627,24 +629,33 @@ export class GraphqlService {
         message = `HTTP ${error.status}`;
       }
       return this.withErrorNotification({
-        status: 'error', error: message,
+        status: 'error', errorCode: 'NETWORK_ERROR', error: message,
         networkError: { message, status: error.status, statusText: error.statusText ?? undefined },
       });
     }
     if (error instanceof Error) {
       return this.withErrorNotification({
-        status: 'error', error: error.message,
+        status: 'error', errorCode: 'NETWORK_ERROR', error: error.message,
         networkError: { message: error.message },
       });
     }
     return this.withErrorNotification({
-      status: 'error', error: 'Unknown error',
+      status: 'error', errorCode: 'NETWORK_ERROR', error: 'Unknown error',
       networkError: { message: 'Unknown error' },
     });
   }
 
   private withErrorNotification(result: GraphQLResult<never> & { status: 'error' }): GraphQLResult<never> {
-    const onError = this.config.onError;
+    const { onError, errorHandler } = this.config;
+
+    if (errorHandler) {
+      const err = new Error(result.error);
+      const out = errorHandler.handle(err);
+      if (out instanceof Promise) {
+        out.catch(() => {});
+      }
+    }
+
     if (!onError) return result;
 
     const msg = result.error;

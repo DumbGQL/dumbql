@@ -1,0 +1,5 @@
+{
+  "description": "DumbQL + Angular starter with mock GraphQL backend",
+  "installCommand": "npm install",
+  "startCommand": "npm start"
+}

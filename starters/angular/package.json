@@ -1,0 +1,24 @@
+{
+  "name": "@dumbql/starter-angular",
+  "private": true,
+  "scripts": {
+    "start": "node mock/server.mjs & ng serve --host 0.0.0.0",
+    "build": "ng build"
+  },
+  "dependencies": {
+    "@angular/core": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/platform-browser-dynamic": "^22.0.0",
+    "@dumbql/client": "^0.0.1",
+    "@dumbql/core": "^0.0.1",
+    "graphql": "^17.0.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0",
+    "zone.js": "^0.15.0"
+  },
+  "devDependencies": {
+    "@angular/cli": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
+    "typescript": "~5.8.0"
+  }
+}

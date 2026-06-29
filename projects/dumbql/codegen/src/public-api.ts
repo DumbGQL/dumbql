@@ -10,3 +10,10 @@ export {
 export type { ParsedOperation, OperationVar } from './lib/graphql-file-parser';
 
 export { mergeGeneratedTypes } from './lib/schema-merge';
+
+export {
+	parseFragmentFile,
+	generateFragmentCode,
+	generateFragmentIndex,
+} from './lib/fragment-parser';
+export type { ParsedFragment } from './lib/fragment-parser';

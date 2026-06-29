@@ -6,6 +6,9 @@ import {
   parseGraphqlFile,
   generateTypedDocumentsCode,
   generateIndexCode,
+  parseFragmentFile,
+  generateFragmentCode,
+  generateFragmentIndex,
 } from '@dumbql/codegen';
 
 const args = process.argv.slice(2);
@@ -134,7 +137,30 @@ async function generateDocuments(typesDir, codegenConfig, typesConfig) {
   writeFileSync(join(docsDir, 'index.ts'), index);
   console.log(`Generated ${operations.length} typed document(s) in ${docsDir}`);
 
-  return operations.length;
+  // ── Fragment types from .graphql files ──
+  const fragments = files
+    .map((f) => parseFragmentFile(f))
+    .filter((f) => f !== null)
+    .flat();
+
+  if (fragments.length > 0) {
+    const fragsDir = resolve(typesDir, 'fragments');
+    if (!existsSync(fragsDir)) mkdirSync(fragsDir, { recursive: true });
+
+    const typesPath = resolve(typesDir, 'index.ts');
+    const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
+
+    for (const frag of fragments) {
+      const code = generateFragmentCode([frag], typesCode);
+      writeFileSync(join(fragsDir, `${frag.name}.ts`), code);
+      console.log(`  Fragment: ${frag.name}.ts`);
+    }
+
+    writeFileSync(join(fragsDir, 'index.ts'), generateFragmentIndex(fragments));
+    console.log(`Generated ${fragments.length} fragment type(s) in ${fragsDir}`);
+  }
+
+  return operations.length + fragments.length;
 }
 
 async function generateAll(codegenConfig, typesConfig, schemaFile, typesDir, opts) {

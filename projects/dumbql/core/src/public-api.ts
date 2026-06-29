@@ -60,6 +60,7 @@ export { DEVTOLS_CONFIG } from './lib/devtools';
 
 export { makeVar, ReactiveVar } from './lib/reactive-vars';
 export { clientDirectiveMiddleware } from './lib/client-directive';
+export { graphqlResource, type GraphqlResourceOptions } from './lib/resource';
 export {
   streamingMiddleware,
   applyPatch,

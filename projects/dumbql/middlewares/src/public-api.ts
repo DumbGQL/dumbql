@@ -5,3 +5,4 @@ export { focusRefetchMiddleware, type FocusRefetchConfig } from './lib/focus-ref
 export { offlineQueueMiddleware, type OfflineQueueConfig } from './lib/offline-queue';
 export { autoMockMiddleware, type AutoMockConfig } from './lib/auto-mock';
 export { errorHandlerMiddleware, type ErrorHandlerConfig } from './lib/error-handler';
+export { rateLimitMiddleware, type RateLimitConfig } from './lib/rate-limit';

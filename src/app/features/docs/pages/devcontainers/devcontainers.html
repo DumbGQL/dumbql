@@ -3,57 +3,114 @@
     <header class="page-header">
       <h1>Sandboxes</h1>
       <p class="subtitle">
-        Try DumbQL instantly — online via StackBlitz or locally with Dev Containers.
-        Each sandbox includes a running mock GraphQL backend and a minimal app
-        that queries it using <code>&#64;dumbql/*</code> packages.
+        Try DumbQL instantly — online via StackBlitz or locally with Dev Containers. Each sandbox includes a running
+        mock GraphQL backend and a minimal app that queries it using <code>&#64;dumbql/*</code> packages.
       </p>
     </header>
 
     <h2>StackBlitz (Online)</h2>
-    <p>
-      Click a link below to open a fully-configured sandbox in your browser.
-      No installation required.
-    </p>
+    <p>Click a link below to open a fully-configured sandbox in your browser. No installation required.</p>
 
     <table>
       <thead>
-        <tr><th>Sandbox</th><th>Stack</th><th>Link</th></tr>
+        <tr>
+          <th>Sandbox</th>
+          <th>Stack</th>
+          <th>Link</th>
+        </tr>
       </thead>
       <tbody>
         <tr>
           <td>Angular</td>
           <td>Angular 22 + all &#64;dumbql/* packages</td>
-          <td><a href="https://stackblitz.com/github/DumbGQL/dumbql" target="_blank">stackblitz.com/github/DumbGQL/dumbql</a></td>
+          <td>
+            <a href="https://stackblitz.com/github/DumbGQL/dumbql" target="_blank"
+              >stackblitz.com/github/DumbGQL/dumbql</a
+            >
+          </td>
         </tr>
         <tr>
           <td>React</td>
           <td>Vite + React 19 + &#64;dumbql/react</td>
-          <td><a href="https://stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/react" target="_blank">stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/react</a></td>
+          <td>
+            <a href="https://stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/react" target="_blank"
+              >stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/react</a
+            >
+          </td>
         </tr>
         <tr>
           <td>Vue</td>
           <td>Vite + Vue 3 + &#64;dumbql/vue</td>
-          <td><a href="https://stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/vue" target="_blank">stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/vue</a></td>
+          <td>
+            <a href="https://stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/vue" target="_blank"
+              >stackblitz.com/github/DumbGQL/dumbql/tree/main/demos/vue</a
+            >
+          </td>
         </tr>
       </tbody>
     </table>
 
     <p>
-      Every sandbox automatically runs <code>node mock/server.mjs</code> (GraphQL
-      mock backend on port 4000) plus the framework dev server
-      (Angular 4200 / Vite 5173). The &#64;dumbql/* packages are built from
-      source and linked locally — no npm publish needed.
+      Every sandbox automatically runs <code>node mock/server.mjs</code> (GraphQL mock backend on port 4000) plus the
+      framework dev server (Angular 4200 / Vite 5173). The &#64;dumbql/* packages are built from source and linked
+      locally — no npm publish needed.
     </p>
 
-    <h2>VS Code Dev Containers</h2>
+    <h2>Starters</h2>
     <p>
-      For local development with Docker, each sandbox is available as a
-      Dev Container configuration:
+      Minimal scaffold projects to kickstart a new app. Each starter includes
+      <code>&#64;dumbql/*</code> packages pre-configured with a mock backend:
     </p>
 
     <table>
       <thead>
-        <tr><th>Sandbox</th><th>Config</th><th>Ports</th></tr>
+        <tr>
+          <th>Starter</th>
+          <th>Stack</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Angular</td>
+          <td>Standalone Angular 22 + <code>provideDumbql</code> + <code>DumbqlQuery</code></td>
+          <td>
+            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular" target="_blank"
+              >Open in StackBlitz</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>React</td>
+          <td>React 18 + <code>@dumbql/react</code> + <code>useQuery</code></td>
+          <td>
+            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react" target="_blank"
+              >Open in StackBlitz</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>Vue</td>
+          <td>Vue 3 + <code>@dumbql/vue</code> + <code>useQuery</code></td>
+          <td>
+            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue" target="_blank"
+              >Open in StackBlitz</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>VS Code Dev Containers</h2>
+    <p>For local development with Docker, each sandbox is available as a Dev Container configuration:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sandbox</th>
+          <th>Config</th>
+          <th>Ports</th>
+        </tr>
       </thead>
       <tbody>
         <tr>
@@ -83,15 +140,11 @@ code .devcontainer/react/
     </div>
 
     <h2>Source Code</h2>
-    <p>
-      Demo apps live in the <code>demos/</code> directory:
-    </p>
+    <p>Demo apps live in the <code>demos/</code> directory:</p>
     <ul>
       <li><code>demos/react/</code> — React + Vite demo</li>
       <li><code>demos/vue/</code> — Vue + Vite demo</li>
     </ul>
-    <p>
-      For Angular, the monorepo itself (<code>src/</code>) serves as the demo app.
-    </p>
+    <p>For Angular, the monorepo itself (<code>src/</code>) serves as the demo app.</p>
   </div>
 </div>

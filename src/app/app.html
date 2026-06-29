@@ -10,20 +10,15 @@
       <a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
       <a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
     </nav>
-    <select
-      tuiSelect
-      class="version-select"
-      [items]="versionService.versions"
-      [ngModel]="versionService.currentVersion()"
-      (ngModelChange)="versionService.setVersion($event)"
-    ></select>
-    <button
-      tuiButton
-      appearance="secondary"
-      size="s"
-      class="theme-toggle"
-      (click)="toggleTheme()"
-    >
+    <tui-textfield class="version-select">
+      <select
+        tuiSelect
+        [items]="versionService.versions"
+        [ngModel]="versionService.currentVersion()"
+        (ngModelChange)="versionService.setVersion($event)"
+      ></select>
+    </tui-textfield>
+    <button tuiButton appearance="secondary" size="s" class="theme-toggle" (click)="toggleTheme()">
       {{ isDarkMode() ? '☀️' : '🌙' }}
     </button>
   </header>

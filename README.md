@@ -15,7 +15,7 @@
   <img src="./public/logos/logo.png" alt="DumbQL" width="120"/>
   <br/>
   <a href="#quick-start">Quick Start</a> •
-  <a href="#what-dumbql-does-that-others-cant">Why DumbQL?</a> •
+  <a href="#why-choose-dumbql">Why DumbQL?</a> •
   <a href="#comparison">Comparison</a> •
   <a href="#package-architecture">Packages</a> •
   <a href="#configuration">Configuration</a>
@@ -87,6 +87,26 @@ export class UserComponent {
 > - **Prefetch** — `prefetchedRoute()` resolves GraphQL data **before** Angular activates the route
 > - **Playground** — built-in GraphQL query editor at `/playground` in the docs site
 > - **No lock-in** — React, Vue, and Angular with the same core. Starters ready in one click
+
+---
+
+## Why Choose DumbQL?
+
+Most GraphQL clients are built for one framework and awkwardly ported to others. DumbQL started as a framework-native library from day one — Angular-first, then React and Vue.
+
+**You should choose DumbQL if you value:**
+- **Zero boilerplate normalized cache** — no `typePolicies`, no `keyFields`, no `merge` functions. Just `__typename` + `id` and it works.
+- **Built-in middleware ecosystem** — auth refresh, retry, offline queue, auto mock, APQ, batching. No third-party packages needed.
+- **Framework-native design** — Angular Signals, React hooks v2 with options object, Vue composables. Not wrappers around a core — each framework gets its own ergonomic API.
+- **Offline-first mindset** — mutation queue with localStorage persistence, auto-replay on reconnect, optimistic update rollback.
+- **Debugging without extensions** — built-in DevTools panel for query inspection, cache snapshot, error timeline. Ship it to staging, not just local dev.
+- **Type safety without a build step** — phantom-typed `DocumentNode` with result + variables inference. Optional codegen for the full schema.
+- **Live Queries** — `useLiveQuery` for real-time data with WebSocket fallback. First-class support across all frameworks.
+
+**And you should NOT choose DumbQL if:**
+- You need a mature ecosystem with 1000+ community packages (Apollo has this)
+- You're tied to Relay's compiler-based data masking
+- You prefer one massive all-in-one package over modular composition
 
 ---
 

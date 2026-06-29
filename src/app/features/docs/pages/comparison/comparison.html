@@ -422,13 +422,64 @@
 
     <h2 appAnchor id="when-to-choose">When to Choose DumbQL</h2>
 
+    <p>
+      DumbQL is not for everyone. Here's when it shines — and when you might
+      want to look elsewhere.
+    </p>
+
+    <h3 appAnchor id="choose-dumbql">Choose DumbQL if you value:</h3>
+
     <ul>
-      <li>You want an <strong>Angular-native</strong> GraphQL client that feels like Angular, not a port of a React library</li>
-      <li><strong>Bundle size</strong> matters and you want to pay only for features you use</li>
-      <li>You need <strong>file uploads</strong>, <strong>subscriptions</strong>, <strong>persisted queries</strong>, and <strong>offline support</strong> without assembling custom infrastructure</li>
-      <li>You want <strong>first-class testing utilities</strong> that integrate with Angular TestBed</li>
-      <li>You want <strong>signals</strong> for reactivity instead of Observable streams</li>
-      <li>You want built-in <strong>debugging tools</strong> without browser extensions</li>
+      <li>
+        <strong>Zero-boilerplate normalized cache</strong> — no
+        <code>typePolicies</code>, no <code>keyFields</code>, no
+        <code>merge</code> functions. Just <code>__typename</code> +
+        <code>id</code> and it works.
+      </li>
+      <li>
+        <strong>Built-in middleware ecosystem</strong> — auth refresh, retry,
+        offline queue, auto mock, APQ, batching. No third-party packages needed.
+      </li>
+      <li>
+        <strong>Framework-native design</strong> — Angular Signals, React hooks
+        v2 with options object, Vue composables. Not wrappers around a core —
+        each framework gets its own ergonomic API.
+      </li>
+      <li>
+        <strong>Offline-first mindset</strong> — mutation queue with localStorage
+        persistence, auto-replay on reconnect, optimistic update rollback.
+      </li>
+      <li>
+        <strong>Debugging without extensions</strong> — built-in DevTools panel
+        for query inspection, cache snapshot, error timeline. Ship it to staging,
+        not just local dev.
+      </li>
+      <li>
+        <strong>Type safety without a build step</strong> — phantom-typed
+        <code>DocumentNode</code> with result + variables inference. Optional
+        codegen for the full schema.
+      </li>
+      <li>
+        <strong>Live Queries</strong> — <code>useLiveQuery</code> for real-time
+        data with WebSocket fallback. First-class support across all frameworks.
+      </li>
+    </ul>
+
+    <h3 appAnchor id="skip-dumbql">Do NOT choose DumbQL if:</h3>
+
+    <ul>
+      <li>
+        You need a mature ecosystem with 1000+ community packages — Apollo has
+        this; DumbQL is a smaller, focused library.
+      </li>
+      <li>
+        You're tied to Relay's compiler-based data masking and prefer static
+        build-time guarantees over runtime flexibility.
+      </li>
+      <li>
+        You prefer one massive all-in-one package over modular composition —
+        DumbQL ships 12+ packages and you pick what you need.
+      </li>
     </ul>
   </div>
 

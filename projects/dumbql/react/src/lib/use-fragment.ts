@@ -1,13 +1,12 @@
 import type { DocumentNode, TypedDocumentNode } from '@dumbql/client';
 import { useCache } from './provider';
-import type { CacheEntity } from '@dumbql/cache';
 
 interface FragmentIdentifier {
   __typename: string;
   id?: string;
 }
 
-interface UseFragmentResult<TData> {
+export interface UseFragmentResult<TData> {
   data: TData | null;
   complete: boolean;
 }

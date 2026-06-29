@@ -1,8 +1,15 @@
 {
   "name": "@dumbql/middlewares",
-  "version": "0.0.1",
+  "version": "0.0.2-rc.1",
   "description": "Pre-built middleware functions for DumbQL — auth refresh, retry, focus refetch, offline queue",
-  "keywords": ["graphql", "middleware", "auth", "retry", "offline", "dumbql"],
+  "keywords": [
+    "graphql",
+    "middleware",
+    "auth",
+    "retry",
+    "offline",
+    "dumbql"
+  ],
   "license": "MIT",
   "type": "module",
   "main": "src/public-api.ts",

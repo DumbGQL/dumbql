@@ -56,8 +56,9 @@ function nextVersion(current, type) {
 
 const type = process.argv[2];
 const dryRun = process.argv.includes('--dry-run') || process.argv.includes('-n');
+const noCommit = process.argv.includes('--no-commit');
 if (!type) {
-  console.log('Usage: node scripts/version.mjs <major|minor|patch|rc|beta|alpha> [--dry-run]');
+  console.log('Usage: node scripts/version.mjs <major|minor|patch|rc|beta|alpha> [--dry-run] [--no-commit]');
   process.exit(1);
 }
 
@@ -106,6 +107,8 @@ if (existsSync(distDir)) {
 
 if (dryRun) {
   console.log(`\n  [DRY RUN] Skipping git commit + tag`);
+} else if (noCommit) {
+  console.log(`\n  [NO COMMIT] Version files updated, skipping git ops`);
 } else {
   execSync(`git add -A && git commit -m "chore: bump to ${next}"`, { cwd: ROOT, stdio: 'inherit' });
   execSync(`git tag v${next}`, { cwd: ROOT, stdio: 'inherit' });

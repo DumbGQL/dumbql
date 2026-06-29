@@ -1,8 +1,14 @@
 {
   "name": "@dumbql/subscriptions",
-  "version": "0.0.1",
+  "version": "0.0.2-rc.1",
   "description": "GraphQL subscriptions over WebSocket (graphql-transport-ws) — framework-agnostic core + Angular service",
-  "keywords": ["graphql", "subscriptions", "websocket", "graphql-transport-ws", "dumbql"],
+  "keywords": [
+    "graphql",
+    "subscriptions",
+    "websocket",
+    "graphql-transport-ws",
+    "dumbql"
+  ],
   "license": "MIT",
   "type": "module",
   "main": "src/public-api.ts",

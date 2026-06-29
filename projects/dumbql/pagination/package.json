@@ -1,6 +1,10 @@
 {
   "name": "@dumbql/pagination",
-  "version": "0.0.1",
-  "peerDependencies": { "@angular/core": "^22.0.0", "@dumbql/core": "^0.0.1", "rxjs": "~7.8.0" },
+  "version": "0.0.2-rc.1",
+  "peerDependencies": {
+    "@angular/core": "^22.0.0",
+    "@dumbql/core": "^0.0.1",
+    "rxjs": "~7.8.0"
+  },
   "sideEffects": false
 }

@@ -1,8 +1,15 @@
 {
   "name": "@dumbql/vue",
-  "version": "0.0.1",
+  "version": "0.0.2-rc.1",
   "description": "Vue composables for @dumbql/client — useQuery, useMutation, useSubscription",
-  "keywords": ["vue", "graphql", "composables", "dumbql", "graphql-client", "vue3"],
+  "keywords": [
+    "vue",
+    "graphql",
+    "composables",
+    "dumbql",
+    "graphql-client",
+    "vue3"
+  ],
   "license": "MIT",
   "type": "module",
   "main": "./public-api.js",

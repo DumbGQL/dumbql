@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/codegen",
-  "version": "0.0.1",
+  "version": "0.0.2-rc.1",
   "type": "module",
   "main": "src/public-api.ts",
   "dependencies": {

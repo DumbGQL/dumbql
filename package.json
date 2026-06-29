@@ -23,7 +23,14 @@
     "build:package:cache": "npx ng-packagr -p projects/dumbql/cache/ng-package.json",
     "mock": "node mock/server.mjs",
     "dev": "node mock/server.mjs & ng serve",
-    "deploy": "bash deploy/deploy.sh"
+    "deploy": "bash deploy/deploy.sh",
+    "version": "node scripts/version.mjs",
+    "version:alpha": "node scripts/version.mjs alpha",
+    "version:beta": "node scripts/version.mjs beta",
+    "version:rc": "node scripts/version.mjs rc",
+    "version:patch": "node scripts/version.mjs patch",
+    "version:minor": "node scripts/version.mjs minor",
+    "version:major": "node scripts/version.mjs major"
   },
   "lint-staged": {
     "{src,projects/dumbql}/**/*.ts": [

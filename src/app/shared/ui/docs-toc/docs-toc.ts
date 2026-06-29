@@ -1,4 +1,4 @@
-import { Component, input, signal, afterRenderEffect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, signal, afterRenderEffect, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 
 export interface TocSection {
 	id: string;
@@ -13,7 +13,7 @@ export interface TocSection {
 	templateUrl: './docs-toc.html',
 	styleUrl: './docs-toc.scss',
 })
-export class DocsToc {
+export class DocsToc implements OnInit, OnDestroy {
 	readonly sections = input.required<TocSection[]>();
 
 	protected activeId = signal('');

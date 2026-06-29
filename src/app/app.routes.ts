@@ -11,4 +11,9 @@ export const routes: Routes = [
 		loadChildren: () =>
 			import('./features/docs/docs.routes').then((m) => m.docsRoutes),
 	},
+	{
+		path: 'playground',
+		loadComponent: () =>
+			import('./graphql/playground/playground').then((m) => m.GraphqlPlayground),
+	},
 ];

@@ -1,0 +1,5 @@
+{
+  "description": "DumbQL + Vue starter with mock GraphQL backend",
+  "installCommand": "npm install",
+  "startCommand": "npm start"
+}

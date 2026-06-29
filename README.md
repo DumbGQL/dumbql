@@ -1,20 +1,95 @@
-# DumbQL — So dumb GraphQL client but with smarter featurelist
+# DumbQL — The GraphQL Client That Actually Understands Angular
 
-> **Zero-boilerplate GraphQL client suite for any framework. ~10KB core, modular architecture, Angular-native + React + Vue.**
+> **Angular-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, not ported from React. Zero-boilerplate. Signals-ready.**
+
+**If you're an Angular developer who's tired of:**
+> - Apollo Angular lagging 6 months behind every React release
+> - Fighting React idioms (`MockedProvider`, render props) in Angular tests
+> - Installing 3 third-party packages just to upload a file
+> - Writing 50 lines of `typePolicies` to make normalized cache work
+> - Hearing "it works in React, we'll port it later"
+
+**DumbQL fixes all of this. One `ng add` and you're done.**
 
 <p align="center">
-  <img src="./public/logos/logo.png" alt="DumbQL" width="180"/>
+  <img src="./public/logos/logo.png" alt="DumbQL" width="120"/>
   <br/>
-  <a href="#package-architecture">Packages</a> •
   <a href="#quick-start">Quick Start</a> •
-  <a href="#why-not-apollo-urql-or-relay">Comparison</a> •
-  <a href="#configuration">Configuration</a> •
-  <a href="#complete-api-guide">API Guide</a>
+  <a href="#what-dumbql-does-that-others-cant">Why DumbQL?</a> •
+  <a href="#comparison">Comparison</a> •
+  <a href="#package-architecture">Packages</a> •
+  <a href="#configuration">Configuration</a>
 </p>
 
 ---
 
-## Why Not Apollo, URQL, or Relay?
+## Quick Start
+
+```bash
+# Create an Angular project
+ng new my-app --standalone
+
+# Add DumbQL — interactive prompts, zero config
+ng add @dumbql/core
+
+# Start developing
+npm start
+```
+
+```typescript
+// app.config.ts
+import { provideDumbql } from '@dumbql/core';
+import { provideHttpClient } from '@angular/common/http';
+
+export const appConfig = {
+  providers: [
+    provideHttpClient(),
+    provideDumbql({ endpoint: '/graphql' }),
+  ],
+};
+```
+
+```typescript
+// user.component.ts
+import { GraphqlService, gql, isSuccess } from '@dumbql/core';
+
+const GET_USER = gql`{ getUser { id name email } }`;
+
+@Component({
+  selector: 'app-user',
+  template: `{{ (gql.query(GET_USER) | async)?.data?.getUser?.name }}`,
+  standalone: true,
+})
+export class UserComponent {
+  gql = inject(GraphqlService);
+}
+```
+
+> **That's it.** No `ApolloModule.forRoot()`. No `graphql-tag` dependency. No React wrappers. Just Angular.
+
+---
+
+## What DumbQL Does That Others Can't
+
+| Feature | Apollo Angular | URQL | Relay | **DumbQL** | Why it matters |
+|---|---|---|---|---|---|
+| **Angular-native (not a React port)** | ❌ Port of `@apollo/client` — lags behind React releases | ❌ React-first — Angular is community-maintained | ❌ React-only — no Angular support at all | **✅ Built for Angular from day one** | Same-day Angular 22+ support. No waiting for React compatibility fixes |
+| **Signals support** | ❌ RxJS only — no Signals integration | ❌ Wonka streams only | ❌ No reactive primitives | **✅ `query()` returns `Signal<T>`** | Zone-less Angular. Fine-grained reactivity. Less boilerplate |
+| **File uploads** | ❌ Requires `apollo-upload-client` (unmaintained) | ❌ Requires `@urql/exchange-multipart` | ❌ Not supported | **✅ `@dumbql/file-upload`** | One `npm install`. Auto `File`/`Blob` detection |
+| **Offline mutation queue** | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ `offlineQueueMiddleware`** | Queue to localStorage. Auto-replay on reconnect |
+| **Auth refresh middleware** | ❌ Manual custom Link | ⚠️ `@urql/exchange-auth` | ❌ Custom network layer | **✅ `authRefreshMiddleware`** | Queues pending requests during refresh. Retry support |
+| **Testing utilities** | ❌ `MockedProvider` (React wrapper in Angular tests) | ❌ No Angular test utils | ❌ No Angular test utils | **✅ `@dumbql/testing`** | `MockGraphqlService` plugs into `TestBed`. FIFO queue |
+| **Built-in debugging (no browser extension)** | ❌ Requires Chrome Apollo DevTools | ❌ Requires URQL DevTools | ❌ Requires Relay DevTools | **✅ `@dumbql/debugging`** | Query tree, timing chart, entity inspector — in-app. No extension needed |
+| **Schema downloader CLI** | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ `@dumbql/downloader`** | `npm run schema:download` — one command |
+| **Persisted queries (SHA-256 APQ)** | ❌ Requires `apollo-link-persisted-queries` | ⚠️ Built-in | ✅ Built-in | **✅ Built-in** | Smaller network payloads. Automatic fallback on hash miss |
+| **Zero-config normalized cache** | ❌ Complex `typePolicies` setup needed | ❌ Document cache by default | ❌ Requires `Node` interface + `Connection` spec | **✅ Auto `__typename:id` normalization** | Works out of the box. No schema changes required |
+| **Request batching** | ❌ Requires separate link | ❌ Not built-in | ❌ Not built-in | **✅ Built-in (configurable window)** | Fewer HTTP requests. 50ms default batch window |
+| **Optimistic updates with snapshot rollback** | ❌ Complex with cache.evict | ❌ Not built-in | ✅ Built-in | **✅ Cache snapshot/commit/rollback** | Safe optimistic UI. One method to roll back all changes |
+| **CLI setup (`ng add`)** | ❌ Manual provider configuration | ❌ Not applicable | ❌ Not applicable | **✅ `ng add @dumbql/core`** | Interactive prompts. Auto-generates config file |
+
+---
+
+## Comparison: Why Not Apollo, URQL, or Relay?
 
 | Problem | Apollo Client | URQL | Relay | **DumbQL** |
 |---|---|---|---|---|
@@ -37,7 +112,6 @@
 | **Request Batching** | `apollo-link-batch-http` | Not built-in | Third-party | **Built-in batching**. Configurable `batchWindow` (default 50ms). Automatic batch flush |
 | **Request Deduplication** | Built-in | Not built-in | Not needed (compiler) | **Built-in dedup**. `shareReplay(1)`-based. Automatic cache key management |
 | **Testing** | `MockedProvider` + `MockLink` — complex setup | `mockExchange` | `RelayMockEnvironment` — steep learning curve | **`MockGraphqlService`**. Simple `when(query, result)` API. FIFO response queue. Optional simulated delay |
-| **Debugging** | Apollo DevTools only | DevTools (basic) | DevTools (basic) | **`GraphqlDebugService`** + full debug panel component. Request log, field tree parser, timing chart, entity inspector. Built-in component included |
 | **Angular Integration** | React-first port (Apollo Angular is a wrapper). Lags behind React version | React-only | React-only | **Angular-native**. Standalone components, Signals-compatible, SSR with `TransferState`, `@Injectable` services, pipes, `ng add` schematics |
 | **CLI Setup** | Create client manually | Create client manually | Requires compiler setup | **`ng add @dumbql/core`**. Interactive prompts. Auto-generates `dumbql.config.ts` |
 | **Learning Curve** | Moderate (basic) → Steep (advanced cache) | Low — most approachable | Very steep (3-5x Apollo) | **Low**. Familiar `HttpClient`-based. Intuitive discriminated union results |
@@ -151,67 +225,6 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - `MockGraphqlService` — register responses with `when(request, result)`
 - FIFO response queue, optional simulated delay
 - `provideDumbqlTesting()` — test provider setup
-
----
-
-## Quick Start
-
-```bash
-# Create a new Angular project
-ng new my-app --standalone
-
-# Add DumbQL (interactive prompts)
-ng add @dumbql/core
-
-# Or manual install
-npm install @dumbql/core @dumbql/cache
-npm install -D @dumbql/downloader
-
-# Start dev server
-npm start
-```
-
-### Minimal Setup
-
-```typescript
-// app.config.ts
-import { provideDumbql } from '@dumbql/core';
-import { provideHttpClient } from '@angular/common/http';
-
-export const appConfig = {
-  providers: [
-    provideHttpClient(),
-    provideDumbql({
-      endpoint: 'http://localhost:4000/graphql',
-      // Optional: cache, subscriptions, middlewares, etc.
-    }),
-  ],
-};
-```
-
-### Usage
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { GraphqlService, gql } from '@dumbql/core';
-import { AsyncPipe } from '@angular/common';
-import { Observable, map } from 'rxjs';
-
-const GET_USER = gql`{ getUser { id name email } }`;
-
-@Component({
-  selector: 'app-user',
-  standalone: true,
-  imports: [AsyncPipe],
-  template: `<div>{{ (user$ | async)?.name }}</div>`,
-})
-export class UserComponent {
-  private gql = inject(GraphqlService);
-  user$ = this.gql.query(GET_USER).pipe(
-    map(r => r.status === 'success' ? r.data.getUser : null),
-  );
-}
-```
 
 ---
 

@@ -7,8 +7,16 @@
     <nav class="app-nav">
       <a tuiLink routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
       <a tuiLink routerLink="/docs" routerLinkActive="active">Docs</a>
+      <a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
       <a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
     </nav>
+    <select
+      tuiSelect
+      class="version-select"
+      [items]="versionService.versions"
+      [ngModel]="versionService.currentVersion()"
+      (ngModelChange)="versionService.setVersion($event)"
+    ></select>
     <button
       tuiButton
       appearance="secondary"

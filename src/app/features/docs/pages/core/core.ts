@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
 import { TuiNotification } from '@taiga-ui/core';
 import { DocsToc, type TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
+import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
 	selector: 'app-docs-core',
@@ -13,6 +14,8 @@ import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-hea
 	styleUrl: './core.scss',
 })
 export class DocsCore {
+	protected readonly versionService = inject(VersionService);
+
 	protected readonly graphqlServiceCode = `const posts = this.graphql.query(
   gql\`query Posts { posts { id title } }\`,
 ); // → Signal<Post[]>

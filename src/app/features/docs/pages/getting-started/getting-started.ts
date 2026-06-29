@@ -1,23 +1,28 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiNotification } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
 import { RouterLink } from '@angular/router';
 import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
 	selector: 'app-docs-getting-started',
 	standalone: true,
-	imports: [TuiNotification, RouterLink, DocsToc, AnchorDirective],
+	imports: [TuiNotification, TuiBadge, RouterLink, DocsToc, AnchorDirective],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './getting-started.html',
 	styleUrl: './getting-started.scss',
 })
 export class DocsGettingStarted {
+	protected readonly versionService = inject(VersionService);
+
 	protected readonly tocSections: TocSection[] = [
 		{ id: 'install', title: 'Install' },
 		{ id: 'configure', title: 'Configure' },
 		{ id: 'first-query', title: 'Your First Query' },
+		{ id: 'starters', title: 'Starters' },
 		{ id: 'next-steps', title: 'Next Steps' },
 	];
 

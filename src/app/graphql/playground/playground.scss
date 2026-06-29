@@ -1,0 +1,183 @@
+.playground {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+  }
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.code-editor {
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  padding: 0.75rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 0.5rem;
+  background: var(--tui-background-neutral-1);
+  color: var(--tui-text-primary);
+  resize: vertical;
+  tab-size: 2;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--tui-link);
+  }
+
+  &::placeholder {
+    color: var(--tui-text-tertiary);
+  }
+}
+
+.error-notification {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--tui-error-bg, #fee2e2);
+  color: var(--tui-error-text, #dc2626);
+  font-size: 0.875rem;
+}
+
+.actions {
+  margin-top: 0.75rem;
+}
+
+.response-panel {
+  .loading {
+    color: var(--tui-text-secondary);
+    font-style: italic;
+  }
+
+  .placeholder {
+    color: var(--tui-text-tertiary);
+    font-style: italic;
+  }
+}
+
+.result {
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+
+    &.success {
+      background: var(--tui-success-bg);
+      color: var(--tui-success-text);
+    }
+
+    &.error {
+      background: var(--tui-error-bg);
+      color: var(--tui-error-text);
+    }
+  }
+}
+
+.response-json {
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 0.5rem;
+  background: var(--tui-background-neutral-1);
+  overflow: auto;
+  max-height: 60vh;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.history {
+  margin-top: 2rem;
+  border-top: 1px solid var(--tui-border-normal);
+  padding-top: 1.5rem;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--tui-background-neutral-1);
+  }
+
+  code {
+    font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.75rem;
+    color: var(--tui-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.history-status {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+
+  &.success {
+    color: var(--tui-success-text);
+  }
+
+  &.error {
+    color: var(--tui-error-text);
+  }
+}

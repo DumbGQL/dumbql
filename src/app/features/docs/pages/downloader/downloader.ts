@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
 import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
 	selector: 'app-docs-downloader',
@@ -13,6 +14,8 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 	styleUrl: './downloader.scss',
 })
 export class DocsDownloader {
+	protected readonly versionService = inject(VersionService);
+
 	protected readonly tocSections: TocSection[] = [
 		{ id: 'download-schema', title: 'downloadAndStoreSchema()' },
 		{ id: 'output-structure', title: 'Output Structure' },

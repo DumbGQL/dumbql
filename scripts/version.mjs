@@ -68,41 +68,68 @@ const next = nextVersion(cur, type);
 console.log(`  Current: ${cur}`);
 console.log(`  Next:    ${next}`);
 
-// Bump all packages
-const dirs = [PKGS_DIR];
-for (const dir of dirs) {
-  for (const entry of readdirSync(dir)) {
-    const pkgPath = join(dir, entry, 'package.json');
-    if (existsSync(pkgPath)) {
-      const pkg = readJson(pkgPath);
-      if (pkg.name?.startsWith('@dumbql/')) {
-        pkg.version = next;
-        writeJson(pkgPath, pkg);
-        console.log(`  ✓ ${pkg.name} → ${next}`);
-      }
-    }
-  }
+function bumpFile(pkgPath, name) {
+  if (!existsSync(pkgPath)) return;
+  const pkg = readJson(pkgPath);
+  pkg.version = next;
+  writeJson(pkgPath, pkg);
+  console.log(`  ✓ ${name} → ${next}`);
 }
 
-// Bump root package.json
-const rootPkg = readJson(join(ROOT, 'package.json'));
-rootPkg.version = next;
-writeJson(join(ROOT, 'package.json'), rootPkg);
-console.log(`  ✓ root → ${next}`);
-
-// Also bump dist/dumbql/* if present (for local publish testing)
-const distDir = join(ROOT, 'dist', 'dumbql');
-if (existsSync(distDir)) {
-  for (const entry of readdirSync(distDir)) {
-    const pkgPath = join(distDir, entry, 'package.json');
-    if (existsSync(pkgPath)) {
-      const pkg = readJson(pkgPath);
-      if (pkg.name?.startsWith('@dumbql/')) {
-        pkg.version = next;
-        writeJson(pkgPath, pkg);
+if (!dryRun) {
+  // Bump all packages
+  const dirs = [PKGS_DIR];
+  for (const dir of dirs) {
+    for (const entry of readdirSync(dir)) {
+      const pkgPath = join(dir, entry, 'package.json');
+      if (existsSync(pkgPath)) {
+        const pkg = readJson(pkgPath);
+        if (pkg.name?.startsWith('@dumbql/')) {
+          bumpFile(pkgPath, pkg.name);
+        }
       }
     }
   }
+
+  // Bump root package.json
+  bumpFile(join(ROOT, 'package.json'), 'root');
+
+  // Update VersionService with new version for docs version selector
+  const versionServicePath = join(ROOT, 'src', 'app', 'shared', 'services', 'version.service.ts');
+  if (existsSync(versionServicePath)) {
+    let vsContent = readFileSync(versionServicePath, 'utf-8');
+    if (!vsContent.includes(`'${next}'`)) {
+      vsContent = vsContent.replace(
+        /(private readonly allVersions = \[)([^\]]*)(\])/,
+        (_, pre, versions, post) => {
+          const existing = versions.split(',').map(s => s.trim().replace(/^'|'$/g, '')).filter(Boolean);
+          if (!existing.includes(next)) {
+            existing.unshift(next);
+          }
+          return `${pre}${existing.map(v => `'${v}'`).join(', ')}${post}`;
+        },
+      );
+      writeFileSync(versionServicePath, vsContent);
+      console.log(`  ✓ VersionService updated with ${next}`);
+    }
+  }
+
+  // Also bump dist/dumbql/* if present (for local publish testing)
+  const distDir = join(ROOT, 'dist', 'dumbql');
+  if (existsSync(distDir)) {
+    for (const entry of readdirSync(distDir)) {
+      const pkgPath = join(distDir, entry, 'package.json');
+      if (existsSync(pkgPath)) {
+        const pkg = readJson(pkgPath);
+        if (pkg.name?.startsWith('@dumbql/')) {
+          pkg.version = next;
+          writeJson(pkgPath, pkg);
+        }
+      }
+    }
+  }
+} else {
+  console.log(`\n  [DRY RUN] Files NOT modified`);
 }
 
 if (dryRun) {

@@ -3,6 +3,9 @@
     <header class="page-header">
       <div class="title-row">
         <h1 appAnchor>Getting Started</h1>
+        <div class="tags">
+          <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+        </div>
       </div>
     </header>
 
@@ -50,6 +53,34 @@
       The <code>query()</code> method returns a Promise. Use <code>isSuccess</code> /
       <code>isError</code> type guards to handle results.
     </p>
+
+    <h2 appAnchor id="starters">Starters</h2>
+    <p>
+      Kickstart a new project with one of our StackBlitz starters:
+    </p>
+    <ul>
+      <li>
+        <strong>Angular 22+</strong> —
+        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular"
+           target="_blank" rel="noopener">Open in StackBlitz</a>
+        — standalone app with <code>@dumbql/client</code>, mock backend, and
+        <code>provideDumbql</code> + <code>DumbqlQuery</code> directive.
+      </li>
+      <li>
+        <strong>React 18+</strong> —
+        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react"
+           target="_blank" rel="noopener">Open in StackBlitz</a>
+        — standalone app with <code>@dumbql/client</code>, <code>@dumbql/react</code>, mock backend, and
+        <code>useQuery</code> hook.
+      </li>
+      <li>
+        <strong>Vue 3+</strong> —
+        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue"
+           target="_blank" rel="noopener">Open in StackBlitz</a>
+        — standalone app with <code>@dumbql/client</code>, <code>@dumbql/vue</code>, mock backend, and
+        <code>useQuery</code> composable.
+      </li>
+    </ul>
 
     <h2 appAnchor id="next-steps">Next Steps</h2>
     <ul>

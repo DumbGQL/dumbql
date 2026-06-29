@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { DocsApiTable, type ApiEntry } from '../../../../shared/ui/docs-api-table/docs-api-table';
 import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
 	selector: 'app-docs-cache',
@@ -14,6 +15,8 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 	styleUrl: './cache.scss',
 })
 export class DocsCache {
+	protected readonly versionService = inject(VersionService);
+
 	protected selectedTabIndex = 0;
 
 	protected readonly tabs = ['Docs', 'API'];

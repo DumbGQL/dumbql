@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/apollo-adapter",
-  "version": "0.0.3-rc.1",
+  "version": "0.0.3-rc.2",
   "description": "Migration adapter from Apollo Client to DumbQL",
   "main": "src/public-api.ts",
   "module": "src/public-api.ts",

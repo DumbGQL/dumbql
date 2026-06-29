@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bgV" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="boltV" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#42B883"/>
+      <stop offset="100%" stop-color="#35a373"/>
+    </linearGradient>
+    <linearGradient id="accentV" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#533483"/>
+      <stop offset="100%" stop-color="#42B883"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="200" cy="200" r="190" fill="url(#bgV)" stroke="url(#accentV)" stroke-width="4"/>
+
+  <path d="M200 60 L80 340 L200 280 L320 340 Z" fill="none" stroke="#42B883" stroke-width="2" opacity="0.15"/>
+  <path d="M200 120 L120 320 L200 270 L280 320 Z" fill="none" stroke="#42B883" stroke-width="2" opacity="0.15"/>
+
+  <path d="M180 110 L140 210 L175 210 L160 290 L260 180 L215 180 L240 110 Z"
+        fill="url(#boltV)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+
+  <circle cx="100" cy="140" r="6" fill="#42B883" opacity="0.8"/>
+  <circle cx="300" cy="160" r="5" fill="#42B883" opacity="0.8"/>
+  <circle cx="270" cy="280" r="4" fill="#42B883" opacity="0.6"/>
+  <circle cx="120" cy="270" r="5" fill="#42B883" opacity="0.8"/>
+
+  <line x1="100" y1="140" x2="180" y2="110" stroke="#42B883" stroke-width="1.5" opacity="0.4"/>
+  <line x1="300" y1="160" x2="240" y2="110" stroke="#42B883" stroke-width="1.5" opacity="0.4"/>
+  <line x1="270" y1="280" x2="160" y2="290" stroke="#42B883" stroke-width="1.5" opacity="0.4"/>
+  <line x1="120" y1="270" x2="160" y2="290" stroke="#42B883" stroke-width="1.5" opacity="0.4"/>
+  <line x1="100" y1="140" x2="140" y2="210" stroke="#42B883" stroke-width="1" opacity="0.3"/>
+  <line x1="300" y1="160" x2="260" y2="180" stroke="#42B883" stroke-width="1" opacity="0.3"/>
+
+  <text x="200" y="355" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="52" font-weight="800" fill="#42B883" letter-spacing="4">
+    VUE
+  </text>
+</svg>

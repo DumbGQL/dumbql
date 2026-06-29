@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.0.2-rc.4] — 2026-06-29
+
+### Added
+- **React/Vue hooks v2** — all three hooks (`useQuery`, `useMutation`, `useSubscription`) now accept an options object with:
+  - `onCompleted` / `onError` callbacks for side effects
+  - `errorCode` in return value for typed error handling
+  - `useQuery`: `networkStatus`, `called`, `fetchMore`, `pollInterval`, `skip` options
+  - `useMutation`: `called`, `update` callback (writes to cache after mutation), `errorCode`
+  - `useSubscription`: `onNext`, `onComplete` callbacks, `errorCode`
+- **`useLiveQuery`** — new hook for React and Vue that executes an initial HTTP query then opens a WebSocket subscription for real-time updates. Accepts `onCompleted`/`onError` callbacks, `wsEndpoint`, `shouldSubscribe` options.
+- **`GraphqlLiveQuery`** — framework-agnostic class in `@dumbql/subscriptions` that does initial fetch + WebSocket subscription for live queries
+- **DevTools Panel** — in-app overlay for debugging (`@dumbql/debugging`):
+  - Toggle with `Ctrl+Shift+D`
+  - **Queries tab** — history with timing, type, status, fields, operation name
+  - **Cache tab** — normalized cache snapshot with typename, id, fields
+  - **Errors tab** — filtered error entries
+  - `provideDevToolsPanel()` provider, `<dumbql-devtools-panel>` component
+- **`getCacheService()`** — public method on `DumbqlClient` to access the underlying `CacheStore` (needed for mutation `update` callbacks)
+- **`@dumbql/apollo-adapter`** — migration helper package:
+  - `fromApolloCache()` — wraps Apollo InMemoryCache into a CacheStore-compatible interface
+  - `createMigrationGuide()` — returns a map of Apollo→DumbQL API equivalents
+- **Apollo adapter** added to build order in `scripts/build-packages.mjs`
+
+### Changed
+- **Backward-incompatible**: `useQuery`, `useMutation`, `useSubscription` in `@dumbql/react` and `@dumbql/vue` now accept an options object as second argument instead of positional `variables`. Update: `useQuery(doc, { variables })` instead of `useQuery(doc, variables)`.
+- Version bumped from `0.0.2-rc.2` → `0.0.2-rc.4` across all 19 packages
+
 ## [0.0.2-alpha.1] — 2026-06-29
 
 ### Added

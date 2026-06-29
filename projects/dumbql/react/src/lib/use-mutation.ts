@@ -1,6 +1,14 @@
-import { useState, useCallback } from 'react';
-import type { DocumentNode, TypedDocumentNode, GraphQLResult } from '@dumbql/client';
-import { useClient } from './provider';
+import { useState, useCallback, useRef } from 'react';
+import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '@dumbql/client';
+import type { CacheStore } from '@dumbql/cache';
+import { useClient, useCache } from './provider';
+
+export interface UseMutationOptions<TData, TVariables> {
+  variables?: TVariables;
+  onCompleted?: (data: TData) => void;
+  onError?: (error: string, errorCode?: ErrorCode) => void;
+  update?: (cache: CacheStore, result: GraphQLResult<TData>) => void;
+}
 
 export type UseMutationFn<TData, TVariables> = (
   variables?: TVariables,
@@ -10,29 +18,53 @@ export interface UseMutationResult<TData, TVariables> {
   data: TData | null;
   loading: boolean;
   error: string | null;
+  errorCode?: ErrorCode;
+  called: boolean;
   mutate: UseMutationFn<TData, TVariables>;
 }
 
 export function useMutation<TData, TVariables extends Record<string, unknown> = Record<string, unknown>>(
   document: DocumentNode | TypedDocumentNode<TData, TVariables>,
+  options?: UseMutationOptions<TData, TVariables>,
 ): UseMutationResult<TData, TVariables> {
   const client = useClient();
+  const cache = useCache();
   const [result, setResult] = useState<GraphQLResult<TData> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [called, setCalled] = useState(false);
+
+  const onCompletedRef = useRef(options?.onCompleted);
+  const onErrorRef = useRef(options?.onError);
+  const updateRef = useRef(options?.update);
+  onCompletedRef.current = options?.onCompleted;
+  onErrorRef.current = options?.onError;
+  updateRef.current = options?.update;
 
   const mutate = useCallback<UseMutationFn<TData, TVariables>>(
     async (variables?: TVariables) => {
       setLoading(true);
-      const res = await client.mutate<TData, TVariables>(document, variables);
+      setCalled(true);
+      const res = await client.mutate<TData, TVariables>(document, variables ?? (options?.variables as TVariables | undefined));
       setResult(res);
       setLoading(false);
+
+      if (res.status === 'success') {
+        onCompletedRef.current?.(res.data);
+        if (cache && updateRef.current) {
+          updateRef.current(cache, res);
+        }
+      } else {
+        onErrorRef.current?.(res.error, res.errorCode);
+      }
+
       return res;
     },
-    [client, document],
+    [client, document, cache, options?.variables],
   );
 
   const data = result?.status === 'success' ? result.data : null;
   const error = result?.status === 'error' ? result.error : null;
+  const errorCode = result?.status === 'error' ? result.errorCode : undefined;
 
-  return { data, loading, error, mutate };
+  return { data, loading, error, errorCode, called, mutate };
 }

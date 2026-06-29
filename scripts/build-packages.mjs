@@ -22,6 +22,7 @@ const BUILD_ORDER = [
   'file-upload',
   'debugging',
   'testing',
+  'apollo-adapter',
   'react',
   'vue',
 ];

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../../public/logos/logo.png" alt="DumbQL" width="160"/>
+  <img src="https://raw.githubusercontent.com/DumbGQL/dumbql/main/projects/dumbql/react/assets/logo.svg" alt="DumbQL React" width="160"/>
 </p>
 
 <h1 align="center">@dumbql/react</h1>
@@ -48,33 +48,96 @@ function App() {
 }
 ```
 
-## API Overview
+## Hooks
 
-### Context & Providers
+### useQuery
+
+```tsx
+const { data, loading, error, errorCode, networkStatus, called, refetch, fetchMore } = useQuery(
+  document,
+  {
+    variables,
+    pollInterval,       // auto-polling in ms
+    skip,               // skip initial fetch
+    onCompleted,        // (data) => void
+    onError,            // (error, errorCode?) => void
+    fetchPolicy,        // 'cache-first' | 'network-only' | 'no-cache'
+  },
+);
+```
+
+**Result fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `TData \| null` | Response data |
+| `loading` | `boolean` | True during initial fetch or refetch |
+| `error` | `string \| null` | Error message |
+| `errorCode` | `ErrorCode \| undefined` | `'NO_DATA' \| 'GRAPHQL_ERROR' \| 'NETWORK_ERROR'` |
+| `networkStatus` | `NetworkStatus` | `'loading' \| 'ready' \| 'error' \| 'refetching' \| 'poll'` |
+| `called` | `boolean` | True after first execution |
+| `refetch` | `(vars?) => Promise<GraphQLResult<T>>` | Re-fetch with optional new variables |
+| `fetchMore` | `(merge, vars?) => Promise<GraphQLResult<T>>` | Fetch more data and merge with existing |
+
+### useMutation
+
+```tsx
+const { data, loading, error, errorCode, called, mutate } = useMutation(
+  document,
+  {
+    variables,
+    onCompleted,   // (data) => void
+    onError,       // (error, errorCode?) => void
+    update,        // (cache, result) => void — update cache after success
+  },
+);
+
+// Call mutate imperatively:
+mutate(variables);
+```
+
+### useSubscription
+
+```tsx
+const { data, loading, error, errorCode } = useSubscription(
+  document,
+  {
+    variables,
+    wsEndpoint,       // default: derived from client endpoint
+    shouldSubscribe,  // default: true
+    onNext,           // (data) => void
+    onError,          // (error, errorCode?) => void
+    onComplete,       // () => void
+  },
+);
+```
+
+### useLiveQuery
+
+Real-time query: initial HTTP fetch + WebSocket subscription for updates.
+
+```tsx
+const { data, loading, error, errorCode } = useLiveQuery(
+  document,
+  {
+    variables,
+    wsEndpoint,       // default: derived from client endpoint
+    shouldSubscribe,  // default: true
+    onCompleted,      // (data) => void
+    onError,          // (error, errorCode?) => void
+  },
+);
+```
+
+## Render-prop Components
 
 | Export | Description |
 |--------|-------------|
-| `DumbqlProvider` | Provides `DumbqlClient` and optional `CacheService` to the component tree |
-| `useClient()` | Returns `DumbqlClient` from context |
-| `useCache()` | Returns `CacheService \| null` from context |
-
-### Hooks
-
-| Export | Description |
-|--------|-------------|
-| `useQuery(doc, vars?)` | `{ data, loading, error, refetch }` |
-| `useMutation(doc)` | `{ data, loading, error, mutate }` |
-| `useSubscription(doc, vars?, opts?)` | `{ data, loading, error }` |
-
-### Render‑prop Components
-
-| Export | Description |
-|--------|-------------|
-| `<Query document variables>{…}</Query>` | Render prop with `UseQueryResult` |
-| `<Mutation document>{…}</Mutation>` | Render prop with `(mutate, result)` |
+| `<Query document variables pollInterval skip>{…}</Query>` | Render prop with `UseQueryResult` |
+| `<Mutation document variables>{…}</Mutation>` | Render prop with `(mutate, result)` |
 | `<Subscription document variables wsEndpoint>{…}</Subscription>` | Render prop with `UseSubscriptionResult` |
 
-### Render‑prop Example
+### Render-prop Example
 
 ```tsx
 import { Query, Mutation, gql } from '@dumbql/react';

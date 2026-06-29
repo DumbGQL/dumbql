@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../../public/logos/logo.png" alt="DumbQL" width="160"/>
+  <img src="https://raw.githubusercontent.com/DumbGQL/dumbql/main/projects/dumbql/core/assets/logo.svg" alt="DumbQL" width="160"/>
 </p>
 
 <h1 align="center">@dumbql/client</h1>

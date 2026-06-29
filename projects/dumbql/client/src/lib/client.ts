@@ -28,7 +28,7 @@ export class DumbqlClient {
   private batchWindow: number;
   private dedupEnabled: boolean;
   private pipeline: (request: GraphqlRequestContext) => Promise<GraphQLResult<unknown>>;
-  private cacheService: CacheStore | null = null;
+  private _cacheService: CacheStore | null = null;
 
   private batchQueue: BatchEntry[] | null = null;
   private batchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -44,7 +44,7 @@ export class DumbqlClient {
     this.retryDelay = config.retryDelay ?? 1000;
     this.batchWindow = config.batchWindow ?? 0;
     this.dedupEnabled = config.dedup ?? false;
-    this.cacheService = cache ?? null;
+    this._cacheService = cache ?? null;
     this.pipeline = this.buildPipeline(config);
   }
 
@@ -54,6 +54,10 @@ export class DumbqlClient {
 
   get endpoint(): string {
     return this._endpoint;
+  }
+
+  getCacheService(): CacheStore | null {
+    return this._cacheService;
   }
 
   query<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
@@ -93,11 +97,11 @@ export class DumbqlClient {
 
     const result = await result$;
 
-    if (result.status === 'success' && result.data && this.cacheService) {
+    if (result.status === 'success' && result.data && this._cacheService) {
       const typeNames = new Set<string>();
       extractTypeNames(result.data, typeNames);
       if (typeNames.size > 0) {
-        this.cacheService.clearLocalStateByTypes(Array.from(typeNames));
+        this._cacheService.clearLocalStateByTypes(Array.from(typeNames));
       }
     }
 
@@ -159,8 +163,8 @@ export class DumbqlClient {
   private buildPipeline(config: ClientConfig): (request: GraphqlRequestContext) => Promise<GraphQLResult<unknown>> {
     const mw: GraphqlMiddleware[] = [...(config.middleware ?? [])];
 
-    if (config.cache?.enabled !== false && this.cacheService) {
-      mw.push(cacheMiddleware(this.cacheService, config.cache));
+    if (config.cache?.enabled !== false && this._cacheService) {
+      mw.push(cacheMiddleware(this._cacheService, config.cache));
     }
 
     if (config.devAuth?.enabled !== false) {

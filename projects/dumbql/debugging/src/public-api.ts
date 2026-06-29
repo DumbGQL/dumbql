@@ -8,3 +8,12 @@ export {
 	type MutationChartPoint,
 	type NormalizedEntity,
 } from './lib/deep-inspection';
+
+// DevTools Panel
+export {
+  provideDevToolsPanel,
+  DevToolsService,
+  DevToolsPanelComponent,
+  type DevToolsTab,
+  type CacheSnapshot,
+} from './lib/devtools-panel/index';

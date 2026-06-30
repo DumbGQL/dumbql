@@ -30,6 +30,7 @@ function compareVersions(a: string, b: string): number {
 @Injectable({ providedIn: 'root' })
 export class VersionService {
   private readonly allVersions = [
+    '0.0.7',
     '0.0.6',
     '0.0.5',
     '0.0.4',

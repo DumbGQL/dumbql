@@ -46,7 +46,7 @@ if (existsSync(mockResolversPath)) {
 
 const port = flags.port ? Number(flags.port) : 4000;
 
-startDevServer({
+await startDevServer({
 	port,
 	mock: {
 		schema: flags.schema || (config.mock?.schema),

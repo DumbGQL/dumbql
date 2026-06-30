@@ -24,6 +24,7 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": { "buildTarget": "starter:build" },
           "configurations": { "production": { "buildTarget": "starter:build:production" } }
         }
       }

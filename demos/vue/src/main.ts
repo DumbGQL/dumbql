@@ -4,7 +4,7 @@ import { createDumbqlPlugin } from '@dumbql/vue';
 import App from './App.vue';
 
 const client = createClient({
-  endpoint: 'http://localhost:4000/graphql',
+  endpoint: '/graphql',
 });
 
 createApp(App)

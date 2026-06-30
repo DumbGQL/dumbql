@@ -2,13 +2,14 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0",
+    "start": "ng serve --host 0.0.0.0 & node -e \"!function p(){require('http').get('http://localhost:4200',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:4200',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
     "build": "ng build"
   },
   "dependencies": {
     "@angular/core": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/platform-browser-dynamic": "^22.0.0",
+    "@angular/router": "^22.0.0",
     "@dumbql/client": "^0.0.3",
     "@dumbql/core": "^0.0.3",
     "@dumbql/dev-server": "^0.0.3-rc.1",
@@ -18,8 +19,9 @@
     "zone.js": "^0.15.0"
   },
   "devDependencies": {
+    "@angular/build": "^22.0.0",
     "@angular/cli": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
-    "typescript": "~5.8.0"
+    "typescript": "~6.0.0"
   }
 }

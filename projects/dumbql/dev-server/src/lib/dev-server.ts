@@ -48,8 +48,10 @@ function createProxyHandler(frontendTarget: string) {
     });
 
     proxyReq.on('error', () => {
-      res.writeHead(502, { 'Content-Type': 'text/plain' });
-      res.end(`Bad Gateway: cannot proxy to ${frontendTarget}`);
+      if (!res.headersSent) {
+        res.writeHead(502, { 'Content-Type': 'text/plain' });
+        res.end(`Bad Gateway: cannot proxy to ${frontendTarget}`);
+      }
     });
 
     req.pipe(proxyReq, { end: true });
@@ -82,17 +84,70 @@ export function createDevServer(config: DevServerConfig = {}): Server {
   return server;
 }
 
-export function startDevServer(config: DevServerConfig & { port?: number }): Server {
+function waitForTarget(url: string, timeout = 60_000, interval = 500): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const isHttps = url.startsWith('https');
+    const requester = isHttps ? httpsRequest : httpRequest;
+    const parsed = new URL(url);
+
+    function poll() {
+      const req = requester(
+        {
+          hostname: parsed.hostname,
+          port: parsed.port || (isHttps ? 443 : 80),
+          path: '/',
+          method: 'HEAD',
+          timeout: 2000,
+        },
+        (res) => {
+          res.resume();
+          resolve();
+        },
+      );
+
+      req.on('error', () => {
+        if (Date.now() - start > timeout) {
+          reject(new Error(`Timeout waiting for ${url}`));
+          return;
+        }
+        setTimeout(poll, interval);
+      });
+
+      req.on('timeout', () => {
+        req.destroy();
+        if (Date.now() - start > timeout) {
+          reject(new Error(`Timeout waiting for ${url}`));
+          return;
+        }
+        setTimeout(poll, interval);
+      });
+
+      req.end();
+    }
+
+    poll();
+  });
+}
+
+export async function startDevServer(config: DevServerConfig & { port?: number }): Promise<Server> {
   const port = config.port ?? 4000;
+  const frontend = config.proxy?.target ?? 'http://localhost:4200';
   const server = createDevServer(config);
 
-  server.listen(port, () => {
-    const frontend = config.proxy?.target ?? 'http://localhost:4200';
-    console.log(`⚡ DumbQL Dev Server running at http://localhost:${port}`);
-    console.log(`   ➜ GraphQL:   http://localhost:${port}/graphql`);
-    console.log(`   ➜ Frontend:  ${frontend}`);
-    console.log(`   ➜ Open:      http://localhost:${port}`);
-  });
+  try {
+    await waitForTarget(frontend);
+  } catch {
+    console.warn(`Frontend dev server at ${frontend} not available yet, starting anyway...`);
+  }
 
-  return server;
+  return new Promise((resolve) => {
+    server.listen(port, () => {
+      console.log(`DumbQL Dev Server running at http://localhost:${port}`);
+      console.log(`  GraphQL:   http://localhost:${port}/graphql`);
+      console.log(`  Frontend:  ${frontend}`);
+      console.log(`  Open:      http://localhost:${port}`);
+      resolve(server);
+    });
+  });
 }

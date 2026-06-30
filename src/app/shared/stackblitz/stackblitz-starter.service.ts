@@ -12,13 +12,15 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0 --port 4200',
+          start:
+            "ng serve --host 0.0.0.0 --port 4200 & node -e \"!function p(){require('http').get('http://localhost:4200',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:4200',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
           build: 'ng build',
         },
         dependencies: {
           '@angular/core': '^22.0.0',
           '@angular/platform-browser': '^22.0.0',
           '@angular/platform-browser-dynamic': '^22.0.0',
+          '@angular/router': '^22.0.0',
           '@dumbql/client': '^0.0.3',
           '@dumbql/core': '^0.0.3',
           '@dumbql/dev-server': '^0.0.3-rc.1',
@@ -28,9 +30,10 @@ const angularProject: Project = {
           'zone.js': '^0.15.0',
         },
         devDependencies: {
+          '@angular/build': '^22.0.0',
           '@angular/cli': '^22.0.0',
           '@angular/compiler-cli': '^22.0.0',
-          typescript: '~5.8.0',
+          typescript: '~6.0.0',
         },
       },
       null,
@@ -73,6 +76,7 @@ const angularProject: Project = {
               },
               serve: {
                 builder: '@angular/build:dev-server',
+                options: { buildTarget: 'starter:build' },
                 configurations: { production: { buildTarget: 'starter:build:production' } },
               },
             },
@@ -138,13 +142,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideDumbql({
-      endpoint: 'http://localhost:4000/graphql',
+      endpoint: '/graphql',
     }),
   ],
 };`,
     'src/app/app.component.ts': `import { Component } from '@angular/core';
 import { gql } from '@dumbql/client';
-import { DumbqlQuery } from '@dumbql/core';
+import { DumbqlQueryDirective } from '@dumbql/core';
 
 const GET_NOTES = gql\`
   query {
@@ -165,7 +169,7 @@ interface Note {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [DumbqlQuery],
+  imports: [DumbqlQueryDirective],
   template: \`
     <h1>DumbQL + Angular</h1>
 
@@ -199,7 +203,8 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start:
+            "vite --host 0.0.0.0 --port 5173 & node -e \"!function p(){require('http').get('http://localhost:5173',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:5173',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
           build: 'vite build',
         },
         dependencies: {
@@ -273,7 +278,7 @@ import { createClient } from '@dumbql/client';
 import { createCache } from '@dumbql/cache';
 import App from './App';
 
-const client = createClient({ endpoint: 'http://localhost:4000/graphql' });
+const client = createClient({ endpoint: '/graphql' });
 const cache = createCache();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -335,7 +340,8 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start:
+            "vite --host 0.0.0.0 --port 5173 & node -e \"!function p(){require('http').get('http://localhost:5173',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:5173',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
           build: 'vite build',
         },
         dependencies: {
@@ -402,7 +408,7 @@ import { createDumbqlPlugin } from '@dumbql/vue';
 import { createClient } from '@dumbql/client';
 import App from './App.vue';
 
-const client = createClient({ endpoint: 'http://localhost:4000/graphql' });
+const client = createClient({ endpoint: '/graphql' });
 
 const app = createApp(App);
 app.use(createDumbqlPlugin(client));

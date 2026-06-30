@@ -5,7 +5,7 @@ import { DumbqlProvider } from '@dumbql/react';
 import { App } from './App';
 
 const client = createClient({
-  endpoint: 'http://localhost:4000/graphql',
+  endpoint: '/graphql',
 });
 
 createRoot(document.getElementById('root')!).render(

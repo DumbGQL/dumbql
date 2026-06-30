@@ -212,25 +212,53 @@ jobs:
           git push origin "HEAD:${{ github.ref_name }}" --no-verify
           git push origin --tags --no-verify
 
-      - name: Extract changelog entry
+      - name: Generate release body
         id: changelog
         run: |
-          TAG="${{ steps.tag.outputs.name }}"
+          export TAG="${{ steps.tag.outputs.name }}"
           export VER="${TAG#v}"
+          export PREV_TAG="$(git tag --sort=-creatordate | head -2 | tail -1)"
+
           node --input-type=module -e "
             import { readFileSync, writeFileSync } from 'node:fs';
+            import { execSync } from 'node:child_process';
+
             const ver = process.env.VER;
+            const prevTag = process.env.PREV_TAG;
             const lines = readFileSync('CHANGELOG.md','utf-8').split('\n');
+
             let inside = false;
             const body = [];
             const headerRe = /^##\s+\[/;
-            const versionRe = new RegExp('^##\\\\s+\\\\[' + ver.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\]');
+            const escVer = ver.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&');
+            const versionRe = new RegExp('^##\\\\s+\\\\[' + escVer + '\\\\]');
+
             for (const l of lines) {
               if (l.match(versionRe)) { inside = true; continue; }
               if (inside && l.match(headerRe)) break;
               if (inside) body.push(l);
             }
-            writeFileSync('release_body.md', (body.join('\n').trim()) || 'No changelog entry found for ' + ver);
+
+            let releaseBody = body.join('\n').trim();
+
+            if (!releaseBody) {
+              try {
+                const cutoff = prevTag || '';
+                const range = cutoff ? cutoff + '..HEAD' : '--all';
+                const log = execSync('git log ' + range + ' --oneline --no-decorate', { encoding: 'utf-8' });
+                const commits = log.trim().split('\n').filter(Boolean);
+                const items = commits.map(c => {
+                  const m = c.match(/^[\da-f]+\s+(.*)/);
+                  return m ? '- ' + m[1] : '- ' + c;
+                });
+                const today = new Date().toISOString().slice(0, 10);
+                releaseBody = '## [' + ver + '] — ' + today + '\n\n### Changed\n' + items.join('\n');
+              } catch {
+                releaseBody = 'No changelog entry found for ' + ver;
+              }
+            }
+
+            writeFileSync('release_body.md', releaseBody);
           "
 
       - name: Create GitHub Release

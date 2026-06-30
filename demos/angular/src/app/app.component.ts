@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { gql } from '@dumbql/client';
-import { DumbqlQuery } from '@dumbql/core';
+import { DumbqlQueryDirective } from '@dumbql/core';
 
 const GET_NOTES = gql`
   query {
@@ -21,7 +21,7 @@ interface Note {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [DumbqlQuery],
+  imports: [DumbqlQueryDirective],
   template: `
     <h1>DumbQL + Angular</h1>
 

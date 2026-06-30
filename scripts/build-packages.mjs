@@ -29,7 +29,7 @@ const BUILD_ORDER = [
 ];
 
 // Packages compiled with tsc (not ng-packagr, not plain copy)
-const TSC_PACKAGES = ['react', 'vue', 'dev-server'];
+const TSC_PACKAGES = ['cache', 'client', 'react', 'vue', 'dev-server'];
 
 function linkPackage(pkg, distOut) {
   const nmLink = join(NM, pkg);
@@ -66,6 +66,7 @@ function build(pkg) {
     // TypeScript package — compile with tsc
     const tsconfig = join(pkgDir, 'tsconfig.lib.json');
     console.log(`  🔧 Compiling TypeScript...`);
+    if (existsSync(distOut)) rmSync(distOut, { recursive: true });
     mkdirSync(distOut, { recursive: true });
     execSync(`npx tsc -p ${tsconfig}`, { cwd: ROOT, stdio: 'inherit' });
     cpSync(join(pkgDir, 'package.json'), join(distOut, 'package.json'));
@@ -82,9 +83,10 @@ function build(pkg) {
     return;
   }
 
-  // Plain Node package — copy source directly
-  console.log(`  ℹ️  Plain Node package, copying to dist/${pkg}`);
-  mkdirSync(distOut, { recursive: true });
+    // Plain Node package — copy source directly
+    console.log(`  ℹ️  Plain Node package, copying to dist/${pkg}`);
+    if (existsSync(distOut)) rmSync(distOut, { recursive: true });
+    mkdirSync(distOut, { recursive: true });
   execSync(`cp -r ${pkgDir}/src ${distOut}/ && cp ${pkgDir}/package.json ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
   for (const f of ['README.md', 'LICENSE']) {
     const p = join(pkgDir, f);

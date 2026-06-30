@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../../dist/dumbql/cache",
+    "outDir": "../../../dist/dumbql/client",
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,

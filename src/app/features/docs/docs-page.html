@@ -2,7 +2,7 @@
   <aside class="docs-sidebar">
     <div class="sidebar-title">Documentation</div>
     <nav class="sidebar-nav">
-      @for (item of navItems; track item.path) {
+      @for (item of navItems(); track item.path) {
         <a
           [routerLink]="item.path"
           routerLinkActive="active"
@@ -14,9 +14,7 @@
       }
     </nav>
     <div class="sidebar-footer">
-      <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">
-        GitHub →
-      </a>
+      <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener"> GitHub → </a>
     </div>
   </aside>
   <div class="docs-content">

@@ -2,7 +2,7 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0 --port 4200",
+    "start": "dumbql-dev & ng serve --host 0.0.0.0 --port 4200",
     "build": "ng build"
   },
   "dependencies": {
@@ -12,11 +12,11 @@
     "@angular/router": "^22.0.0",
     "@dumbql/client": "^1.0.2",
     "@dumbql/core": "^1.0.4",
+    "@dumbql/cache": "^1.0.3",
     "@dumbql/dev-server": "^1.0.0",
     "graphql": "^17.0.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.0",
-    "zone.js": "^0.15.0"
+    "rxjs": "^7.8.0"
   },
   "devDependencies": {
     "@angular/build": "^22.0.0",

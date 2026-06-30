@@ -12,7 +12,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'ng serve --host 0.0.0.0 --port 4200',
+          start: 'dumbql-dev & ng serve --host 0.0.0.0 --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -23,10 +23,10 @@ const angularProject: Project = {
           '@dumbql/client': '^1.0.2',
           '@dumbql/core': '^1.0.4',
           '@dumbql/cache': '^1.0.3',
+          '@dumbql/dev-server': '^1.0.0',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
-          'zone.js': '^0.15.0',
         },
         devDependencies: {
           '@angular/build': '^22.0.0',
@@ -129,19 +129,18 @@ const angularProject: Project = {
     'src/index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Angular</title>\n  <base href="/">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>',
     'src/styles.css': 'body { font-family: system-ui, sans-serif; padding: 1rem; }',
-    'src/main.ts': `import 'zone.js';
-import { bootstrapApplication } from '@angular/platform-browser';
+    'src/main.ts': `import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 
 bootstrapApplication(AppComponent, appConfig);`,
-    'src/app/app.config.ts': `import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+    'src/app/app.config.ts': `import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideDumbql } from '@dumbql/core';
 import { provideCacheService } from '@dumbql/cache/angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideDumbql({
       endpoint: 'http://localhost:4000/graphql',
     }),

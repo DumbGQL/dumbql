@@ -12,8 +12,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start:
-            "ng serve --host 0.0.0.0 --port 4200 & node -e \"!function p(){require('http').get('http://localhost:4200',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:4200',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
+          start: 'dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0 --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -203,8 +202,7 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start:
-            "vite --host 0.0.0.0 --port 5173 & node -e \"!function p(){require('http').get('http://localhost:5173',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:5173',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
+          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
           build: 'vite build',
         },
         dependencies: {
@@ -340,8 +338,7 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start:
-            "vite --host 0.0.0.0 --port 5173 & node -e \"!function p(){require('http').get('http://localhost:5173',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:5173',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
+          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
           build: 'vite build',
         },
         dependencies: {

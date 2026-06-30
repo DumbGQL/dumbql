@@ -2,7 +2,7 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "ng serve --host 0.0.0.0 & node -e \"!function p(){require('http').get('http://localhost:4200',r=>{r.resume();require('child_process').execSync('dumbql-dev --proxy http://localhost:4200',{stdio:'inherit'})}).on('error',()=>setTimeout(p,500))}()\"",
+    "start": "dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0",
     "build": "ng build"
   },
   "dependencies": {

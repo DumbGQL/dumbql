@@ -10,26 +10,16 @@
       <a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
       <a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
     </nav>
-    <button
-      appearance="secondary"
-      size="s"
-      iconEnd="@tui.chevron-down"
-      tuiButton
-      type="button"
-      class="version-select"
-      [tuiDropdown]="versionDropdown"
-    >
-      {{ versionService.currentVersion() }}
-    </button>
-    <ng-template #versionDropdown>
-      <tui-data-list>
-        @for (v of versionService.versions; track v) {
-          <button tuiOption type="button" (click)="versionService.setVersion(v)">
-            {{ v }}
-          </button>
-        }
-      </tui-data-list>
-    </ng-template>
+    <tui-textfield class="version-select">
+      <input
+        tuiComboBox
+        size="s"
+        placeholder="v{{ versionService.currentVersion() }}"
+        [ngModel]="versionService.currentVersion()"
+        (ngModelChange)="versionService.setVersion($event)"
+      />
+    </tui-textfield>
+    <tui-data-list-wrapper *tuiDropdown [items]="versionService.allVersions" />
     <button tuiButton appearance="secondary" size="s" class="theme-toggle" (click)="toggleTheme()">
       {{ isDarkMode() ? '☀️' : '🌙' }}
     </button>

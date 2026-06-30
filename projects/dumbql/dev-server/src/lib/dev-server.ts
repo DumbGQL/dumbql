@@ -8,14 +8,31 @@ import { createYoga, createSchema } from 'graphql-yoga';
 import type { GraphQLSchema } from 'graphql';
 import type { DevServerConfig } from './types.js';
 
+function isInlineSchema(s: string): boolean {
+  return /^\s*(type|schema|enum|input|interface|scalar|union|extend|directive)\b/.test(s);
+}
+
 function loadSchema(config: DevServerConfig['mock']): GraphQLSchema {
   let typeDefs = '';
-  const schemaPath = config?.schema ? resolve(config.schema) : resolve('graphql/schema.graphql');
 
-  if (existsSync(schemaPath)) {
-    typeDefs = readFileSync(schemaPath, 'utf-8');
+  if (config?.schema) {
+    if (isInlineSchema(config.schema)) {
+      typeDefs = config.schema;
+    } else {
+      const schemaPath = resolve(config.schema);
+      if (existsSync(schemaPath)) {
+        typeDefs = readFileSync(schemaPath, 'utf-8');
+      } else {
+        typeDefs = 'type Query { ping: String } type Mutation { pong: String }';
+      }
+    }
   } else {
-    typeDefs = 'type Query { ping: String } type Mutation { pong: String }';
+    const schemaPath = resolve('graphql/schema.graphql');
+    if (existsSync(schemaPath)) {
+      typeDefs = readFileSync(schemaPath, 'utf-8');
+    } else {
+      typeDefs = 'type Query { ping: String } type Mutation { pong: String }';
+    }
   }
 
   if (config?.resolvers) {

@@ -2,7 +2,7 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "dumbql-dev & ng serve --host 0.0.0.0 --port 4200",
+    "start": "dumbql-dev",
     "build": "ng build"
   },
   "dependencies": {

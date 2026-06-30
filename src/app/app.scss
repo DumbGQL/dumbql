@@ -37,9 +37,22 @@
 }
 
 .version-select {
-  min-width: 7rem;
-  text-align: left;
-  justify-content: space-between;
+  min-width: 8rem;
+
+  [tuiTextfield] {
+    text-align: center;
+
+    input {
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+}
+
+tui-data-list-wrapper {
+  --tui-background-base: var(--tui-background-base-alt);
+  --tui-text-primary: var(--tui-text-primary);
+  --tui-border-normal: var(--tui-border-normal);
 }
 
 .app-main {

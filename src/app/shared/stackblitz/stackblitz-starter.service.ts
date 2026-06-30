@@ -138,6 +138,7 @@ import { appConfig } from './app/app.config';
 bootstrapApplication(AppComponent, appConfig);`,
     'src/app/app.config.ts': `import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideDumbql } from '@dumbql/core';
+import { provideCacheService } from '@dumbql/cache/angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -145,6 +146,7 @@ export const appConfig: ApplicationConfig = {
     provideDumbql({
       endpoint: 'http://localhost:4000/graphql',
     }),
+    provideCacheService(),
   ],
 };`,
     'src/app/app.component.ts': `import { Component } from '@angular/core';

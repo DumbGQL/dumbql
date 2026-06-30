@@ -1,7 +1,11 @@
 {
   "name": "@dumbql/fragments",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "fragments", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "fragments",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "graphql": "^17.0.0"

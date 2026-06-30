@@ -1,7 +1,12 @@
 {
   "name": "@dumbql/testing",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "testing", "mock", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "testing",
+    "mock",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "@dumbql/core": "^0.0.3",

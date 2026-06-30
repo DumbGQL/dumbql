@@ -1,7 +1,12 @@
 {
   "name": "@dumbql/file-upload",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "file-upload", "upload", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "file-upload",
+    "upload",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",

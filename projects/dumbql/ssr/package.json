@@ -1,7 +1,12 @@
 {
   "name": "@dumbql/ssr",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "ssr", "server-side-rendering", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "ssr",
+    "server-side-rendering",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",

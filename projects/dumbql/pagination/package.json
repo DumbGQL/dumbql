@@ -1,7 +1,13 @@
 {
   "name": "@dumbql/pagination",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "pagination", "offset", "cursor", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "pagination",
+    "offset",
+    "cursor",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "@dumbql/core": "^0.0.3",

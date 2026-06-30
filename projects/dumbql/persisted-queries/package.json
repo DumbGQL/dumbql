@@ -1,7 +1,12 @@
 {
   "name": "@dumbql/persisted-queries",
-  "version": "0.0.3-rc.1",
-  "keywords": ["graphql", "persisted-queries", "apq", "dumbql"],
+  "version": "0.0.3",
+  "keywords": [
+    "graphql",
+    "persisted-queries",
+    "apq",
+    "dumbql"
+  ],
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "@dumbql/core": "^0.0.3",

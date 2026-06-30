@@ -7,10 +7,10 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@dumbql/client": "^0.0.7",
-    "@dumbql/react": "^0.0.7",
-    "@dumbql/cache": "^0.0.7",
-    "@dumbql/dev-server": "^0.0.7",
+    "@dumbql/client": "^0.0.8",
+    "@dumbql/react": "^0.0.8",
+    "@dumbql/cache": "^0.0.8",
+    "@dumbql/dev-server": "^0.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

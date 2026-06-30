@@ -28,7 +28,7 @@ export interface DumbqlQueryContext<T> {
   standalone: true,
 })
 export class DumbqlQueryDirective<T = unknown> {
-  readonly dumbqlQueryDoc = input<DocumentNode | null>(null);
+  readonly query = input<DocumentNode | null>(null);
   readonly dumbqlQueryVars = input<Record<string, unknown>>({});
   readonly dumbqlQueryEnabled = input(true);
 
@@ -39,7 +39,7 @@ export class DumbqlQueryDirective<T = unknown> {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly refetch$ = new Subject<void>();
-  private readonly doc$ = toObservable(this.dumbqlQueryDoc, { injector: this.injector });
+  private readonly doc$ = toObservable(this.query, { injector: this.injector });
   private readonly vars$ = toObservable(this.dumbqlQueryVars, { injector: this.injector });
 
   private readonly resultSignal = signal<GraphQLResult<T> | null>(null);
@@ -100,7 +100,7 @@ export class DumbqlQueryDirective<T = unknown> {
      * fully reactive, zone-less query execution without a ViewContainer ref.
      */
     afterRenderEffect(() => {
-      this.dumbqlQueryDoc();
+      this.query();
       this.dumbqlQueryVars();
       this.refetch$.next();
     });
@@ -130,11 +130,12 @@ export class DumbqlQueryDirective<T = unknown> {
       return;
     }
 
-    const errorText = r.status === 'error'
-      ? r.error
-      : r.graphQLErrors && r.graphQLErrors.length > 0
-        ? r.graphQLErrors.map((e) => e.message).join('; ')
-        : null;
+    const errorText =
+      r.status === 'error'
+        ? r.error
+        : r.graphQLErrors && r.graphQLErrors.length > 0
+          ? r.graphQLErrors.map((e) => e.message).join('; ')
+          : null;
 
     if (!this.viewRef) {
       this.viewRef = this.viewContainer.createEmbeddedView(this.templateRef, {

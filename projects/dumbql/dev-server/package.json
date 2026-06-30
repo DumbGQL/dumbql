@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/dev-server",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "Unified development server for DumbQL — mock GraphQL backend + frontend proxy, no CORS hassle",
   "keywords": [
     "graphql",

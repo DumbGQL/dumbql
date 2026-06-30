@@ -170,11 +170,13 @@ export async function startDevServer(config: DevServerConfig & { port?: number }
   const frontend = config.proxy?.target ?? 'http://localhost:4200';
   const server = createDevServer(config);
 
-  try {
-    await waitForTarget(frontend);
-  } catch {
-    console.warn(`Frontend dev server at ${frontend} not available yet, starting anyway...`);
-  }
+  waitForTarget(frontend)
+    .then(() => {
+      console.log(`  Frontend ready: ${frontend}`);
+    })
+    .catch(() => {
+      console.warn(`  Frontend at ${frontend} never responded`);
+    });
 
   return new Promise((resolve) => {
     server.listen(port, () => {

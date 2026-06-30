@@ -24,32 +24,58 @@ function loadSchema(config: DevServerConfig['mock']): GraphQLSchema {
   return createSchema({ typeDefs }) as GraphQLSchema;
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
+  'Access-Control-Max-Age': '86400',
+};
+
+function handleCors(res: ServerResponse): boolean {
+  res.writeHead(204, CORS_HEADERS);
+  res.end();
+  return true;
+}
+
 function createProxyHandler(frontendTarget: string) {
   return (req: IncomingMessage, res: ServerResponse) => {
+    if (req.method === 'OPTIONS') {
+      handleCors(res);
+      return;
+    }
+
     const url = new URL(req.url ?? '/', frontendTarget);
     const isHttps = frontendTarget.startsWith('https');
     const requester = isHttps ? httpsRequest : httpRequest;
+
+    const headers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(req.headers)) {
+      headers[k] = Array.isArray(v) ? (v as string[]).join(', ') : (v as string);
+    }
+    Object.assign(headers, CORS_HEADERS);
+    delete headers['host'];
 
     const options = {
       hostname: url.hostname,
       port: url.port || (isHttps ? 443 : 80),
       path: url.pathname + url.search,
       method: req.method,
-      headers: { ...req.headers },
+      headers,
     };
 
-    if (options.headers?.host) {
-      delete (options.headers as Record<string, string>)['host'];
-    }
-
     const proxyReq = requester(options, (proxyRes: IncomingMessage) => {
-      res.writeHead(proxyRes.statusCode ?? 200, proxyRes.headers);
+      const flatHeaders: Record<string, string> = {};
+      for (const [k, v] of Object.entries(proxyRes.headers)) {
+        flatHeaders[k] = Array.isArray(v) ? (v as string[]).join(', ') : (v as string);
+      }
+      const combinedHeaders = { ...flatHeaders, ...CORS_HEADERS };
+      res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
       proxyRes.pipe(res, { end: true });
     });
 
     proxyReq.on('error', () => {
       if (!res.headersSent) {
-        res.writeHead(502, { 'Content-Type': 'text/plain' });
+        res.writeHead(502, { 'Content-Type': 'text/plain', ...CORS_HEADERS });
         res.end(`Bad Gateway: cannot proxy to ${frontendTarget}`);
       }
     });
@@ -65,13 +91,22 @@ export function createDevServer(config: DevServerConfig = {}): Server {
   const yoga = createYoga({
     schema,
     graphqlEndpoint: '/graphql',
-    cors: false,
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    },
   });
 
   const proxy = createProxyHandler(frontendTarget);
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
+
+    if (req.method === 'OPTIONS') {
+      handleCors(res);
+      return;
+    }
 
     if (url.pathname === '/graphql') {
       yoga(req, res);
@@ -134,9 +169,6 @@ export async function startDevServer(config: DevServerConfig & { port?: number }
   const port = config.port ?? 4000;
   const frontend = config.proxy?.target ?? 'http://localhost:4200';
   const server = createDevServer(config);
-
-  // Print URL early so StackBlitz picks up the proxy port for preview
-  console.log(`DumbQL Dev Server: http://localhost:${port}/`);
 
   try {
     await waitForTarget(frontend);

@@ -141,7 +141,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideDumbql({
-      endpoint: '/graphql',
+      endpoint: 'http://localhost:4000/graphql',
     }),
   ],
 };`,

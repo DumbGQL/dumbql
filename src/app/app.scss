@@ -41,10 +41,12 @@
 
   [tuiTextfield] {
     text-align: center;
+    padding-inline: 0.5rem;
 
     input {
       text-align: center;
       cursor: pointer;
+      font-size: 0.8125rem;
     }
   }
 }

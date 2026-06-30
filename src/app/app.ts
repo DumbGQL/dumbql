@@ -1,28 +1,31 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink } from '@taiga-ui/core';
-import { TuiDataList } from '@taiga-ui/core/components/data-list';
-import { TuiDropdown } from '@taiga-ui/core/portals/dropdown';
+import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
 import { Logo } from './shared/ui/logo/logo';
 import { VersionService } from './shared/services/version.service';
-import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
+import { TuiChevron, TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [TuiDropdownDirective],
   imports: [
     TuiLink,
     RouterOutlet,
     RouterLink,
-    ...TuiDataListWrapper,
+    FormsModule,
+    TuiDataListWrapper,
     RouterLinkActive,
     TuiButton,
     TuiRoot,
     Logo,
-    ...TuiComboBox,
-    ...TuiDropdown,
-    ...TuiDataList,
+
+    TuiChevron,
+    TuiComboBox,
+    TuiDropdown,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

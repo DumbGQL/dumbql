@@ -70,10 +70,12 @@ function build(pkg) {
     mkdirSync(distOut, { recursive: true });
     execSync(`npx tsc -p ${tsconfig}`, { cwd: ROOT, stdio: 'inherit' });
     cpSync(join(pkgDir, 'package.json'), join(distOut, 'package.json'));
-    // Copy bin/ directory if present (for CLI tools)
-    const binDir = join(pkgDir, 'bin');
-    if (existsSync(binDir)) {
-      execSync(`cp -r ${binDir} ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+    // Copy subdirectories (angular/, bin/ etc.)
+    for (const sub of ['angular', 'bin']) {
+      const subDir = join(pkgDir, sub);
+      if (existsSync(subDir)) {
+        execSync(`cp -r ${subDir} ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+      }
     }
     for (const f of ['README.md', 'LICENSE']) {
       const p = join(pkgDir, f);

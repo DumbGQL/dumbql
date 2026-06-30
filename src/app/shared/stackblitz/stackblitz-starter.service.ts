@@ -20,15 +20,12 @@ const angularProject: Project = {
           '@angular/platform-browser': '^22.0.0',
           '@angular/platform-browser-dynamic': '^22.0.0',
           '@angular/router': '^22.0.0',
-          '@dumbql/client': '^1.0.0',
-          '@dumbql/core': '^1.0.0',
+          '@dumbql/client': '^1.0.2',
+          '@dumbql/core': '^1.0.2',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
           'zone.js': '^0.15.0',
-        },
-        overrides: {
-          '@dumbql/cache': '^1.0.0',
         },
         devDependencies: {
           '@angular/build': '^22.0.0',
@@ -210,9 +207,9 @@ const reactProject: Project = {
           build: 'vite build',
         },
         dependencies: {
-          '@dumbql/client': '^1.0.0',
+          '@dumbql/client': '^1.0.2',
           '@dumbql/react': '^1.0.0',
-          '@dumbql/cache': '^1.0.0',
+          '@dumbql/cache': '^1.0.2',
           '@dumbql/dev-server': '^1.0.0',
           react: '^18.2.0',
           'react-dom': '^18.2.0',
@@ -347,7 +344,7 @@ const vueProject: Project = {
           build: 'vite build',
         },
         dependencies: {
-          '@dumbql/client': '^1.0.0',
+          '@dumbql/client': '^1.0.2',
           '@dumbql/vue': '^1.0.0',
           '@dumbql/dev-server': '^1.0.0',
           vue: '^3.4.0',

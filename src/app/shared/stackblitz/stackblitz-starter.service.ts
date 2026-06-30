@@ -36,6 +36,16 @@ const angularProject: Project = {
       null,
       2,
     ),
+    'dumbql.config.json': JSON.stringify(
+      {
+        mock: {
+          schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
+        },
+        proxy: { target: 'http://localhost:4200' },
+      },
+      null,
+      2,
+    ),
     'angular.json': JSON.stringify(
       {
         $schema: './node_modules/@angular/cli/lib/config/schema.json',

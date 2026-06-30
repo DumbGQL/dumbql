@@ -1,4 +1,5 @@
 {
-  "installCommand": "npm ci && node scripts/build-packages.mjs",
-  "startCommand": "node mock/server.mjs & npm --prefix demos/react run dev -- --host 0.0.0.0"
+  "description": "React app with @dumbql/react and @dumbql/dev-server",
+  "installCommand": "npm install && node scripts/build-packages.mjs",
+  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:5173 & npm --prefix demos/react run dev -- --host 0.0.0.0"
 }

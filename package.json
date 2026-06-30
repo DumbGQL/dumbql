@@ -23,8 +23,8 @@
     "build:package:cache": "npx ng-packagr -p projects/dumbql/cache/ng-package.json",
     "test:react": "vitest run --config vitest.react.config.ts",
     "test:react:watch": "vitest --config vitest.react.config.ts",
-    "mock": "node mock/server.mjs",
-    "dev": "node mock/server.mjs & ng serve",
+    "mock": "echo 'Use: npx dumbql-dev (requires @dumbql/dev-server)'",
+    "dev": "echo 'Use: dumbql-dev --proxy http://localhost:4200 & ng serve'",
     "deploy": "bash deploy/deploy.sh",
     "version": "node scripts/version.mjs",
     "version:alpha": "node scripts/version.mjs alpha",
@@ -54,8 +54,12 @@
   "private": true,
   "workspaces": [
     "projects/dumbql/*",
+    "demos/angular",
     "demos/react",
-    "demos/vue"
+    "demos/vue",
+    "starters/angular",
+    "starters/react",
+    "starters/vue"
   ],
   "packageManager": "npm@11.16.0",
   "dependencies": {

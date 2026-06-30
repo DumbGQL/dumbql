@@ -1,5 +1,5 @@
 {
   "description": "DumbQL + Vue starter with mock GraphQL backend",
-  "installCommand": "npm install",
-  "startCommand": "npm start"
+  "installCommand": "npm install && node scripts/build-packages.mjs",
+  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:5173 & cd starters/vue && npx --yes vite --host 0.0.0.0 --port 5173"
 }

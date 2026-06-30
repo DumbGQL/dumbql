@@ -4,7 +4,7 @@ import type { Project } from '@stackblitz/sdk';
 
 const angularProject: Project = {
   title: 'Angular DumbQL Starter',
-  description: 'Standalone Angular 22 app with @dumbql/client and @dumbql/dev-server',
+  description: 'Standalone Angular 22 app with @dumbql/client',
   template: 'node',
   files: {
     'package.json': JSON.stringify(
@@ -12,7 +12,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'dumbql-dev',
+          start: 'ng serve --host 0.0.0.0 --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -22,7 +22,6 @@ const angularProject: Project = {
           '@angular/router': '^22.0.0',
           '@dumbql/client': '^1.0.0',
           '@dumbql/core': '^1.0.0',
-          '@dumbql/dev-server': '^1.0.0',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
@@ -44,7 +43,6 @@ const angularProject: Project = {
           schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
         },
         proxy: { target: 'http://localhost:4200' },
-        spawn: { cmd: 'ng serve --host 0.0.0.0 --port 4200' },
       },
       null,
       2,
@@ -203,7 +201,7 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev',
+          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
           build: 'vite build',
         },
         dependencies: {
@@ -340,7 +338,7 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev',
+          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
           build: 'vite build',
         },
         dependencies: {

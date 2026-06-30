@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "dumbql-dev",
+    "start": "dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173",
     "build": "vite build"
   },
   "dependencies": {

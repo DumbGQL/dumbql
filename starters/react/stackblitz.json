@@ -1,5 +1,5 @@
 {
   "description": "DumbQL + React starter with mock GraphQL backend",
   "installCommand": "npm install && node scripts/build-packages.mjs",
-  "startCommand": "cd starters/react && npx --yes dumbql-dev"
+  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:5173 --config starters/react/dumbql.config.json & cd starters/react && npx --yes vite --host 0.0.0.0 --port 5173"
 }

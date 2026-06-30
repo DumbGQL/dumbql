@@ -1,10 +1,8 @@
-import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, type Observable } from 'rxjs';
 import { type CacheEntity, type OptimisticUpdate, type TypePolicy } from './normalized-cache';
 import { CacheStore } from './cache-store';
 import { CachePersistenceService } from './cache-persist-ng';
 
-@Injectable({ providedIn: 'root' })
 export class CacheService {
   private store = new CacheStore();
   readonly cache = this.store.cache;
@@ -13,23 +11,19 @@ export class CacheService {
   private localStateSubject = new Map<string, BehaviorSubject<unknown>>();
   private persistSvc: CachePersistenceService | null = null;
 
-  constructor() {
-    try {
-      this.persistSvc = inject(CachePersistenceService, { optional: true }) ?? null;
-      if (this.persistSvc) {
-        const restored = this.persistSvc.restore();
-        if (restored) {
-          for (const [key, value] of restored) {
-            if (key.startsWith('__local__')) {
-              this.writeLocal(key.slice(9), value);
-            } else {
-              this.store.cache.set(value as CacheEntity);
-            }
+  constructor(persistSvc?: CachePersistenceService | null) {
+    this.persistSvc = persistSvc ?? null;
+    if (this.persistSvc) {
+      const restored = this.persistSvc.restore();
+      if (restored) {
+        for (const [key, value] of restored) {
+          if (key.startsWith('__local__')) {
+            this.writeLocal(key.slice(9), value);
+          } else {
+            this.store.cache.set(value as CacheEntity);
           }
         }
       }
-    } catch {
-      // persist service not configured
     }
   }
 
@@ -122,4 +116,11 @@ export class CacheService {
     }
     this.persistSvc.persist(data);
   }
+}
+
+import { type Provider } from '@angular/core';
+
+export function provideCacheService(persistSvc?: CachePersistenceService): Provider[] {
+  const service = new CacheService(persistSvc);
+  return [{ provide: CacheService, useValue: service }];
 }

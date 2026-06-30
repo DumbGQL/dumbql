@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/cache",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "Normalized in-memory entity cache for GraphQL — __typename:id keying, GC, persistence, optimistic updates",
   "keywords": [
     "graphql",

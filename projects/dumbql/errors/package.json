@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/errors",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "Typed error classes for dumbql — graphql, network, cache, validation errors with error handler",
   "keywords": [
     "graphql",

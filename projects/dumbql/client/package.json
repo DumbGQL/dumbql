@@ -28,6 +28,6 @@
     "graphql": "^17.0.0"
   },
   "peerDependencies": {
-    "@dumbql/cache": "^0.0.3"
+    "@dumbql/cache": "^1.0.0"
   }
 }

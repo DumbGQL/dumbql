@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/ssr",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "keywords": [
     "graphql",
     "ssr",

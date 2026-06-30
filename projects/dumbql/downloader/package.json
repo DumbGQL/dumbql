@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/downloader",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "type": "module",
   "keywords": [
     "graphql",

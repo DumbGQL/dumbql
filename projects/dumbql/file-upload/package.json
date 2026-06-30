@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/file-upload",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "keywords": [
     "graphql",
     "file-upload",

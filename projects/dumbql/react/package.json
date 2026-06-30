@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/react",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "description": "React bindings for @dumbql/client — hooks for query, mutate, and subscriptions",
   "keywords": [
     "react",

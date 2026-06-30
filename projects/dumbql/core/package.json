@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Angular GraphQL core — GraphqlService, middleware pipeline, gql tag, pipes, standalone helpers, reactive variables",
   "keywords": [
     "angular",

@@ -9,8 +9,14 @@ export interface ProxyConfig {
   target: string;
 }
 
+export interface SpawnConfig {
+  cmd: string;
+  cwd?: string;
+}
+
 export interface DevServerConfig {
   mock?: MockConfig;
   proxy?: ProxyConfig;
   port?: number;
+  spawn?: SpawnConfig;
 }

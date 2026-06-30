@@ -12,7 +12,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0 --port 4200',
+          start: 'dumbql-dev',
           build: 'ng build',
         },
         dependencies: {
@@ -44,6 +44,7 @@ const angularProject: Project = {
           schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
         },
         proxy: { target: 'http://localhost:4200' },
+        spawn: { cmd: 'ng serve --host 0.0.0.0 --port 4200' },
       },
       null,
       2,
@@ -202,7 +203,7 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start: 'dumbql-dev',
           build: 'vite build',
         },
         dependencies: {
@@ -241,6 +242,7 @@ const reactProject: Project = {
         proxy: {
           target: 'http://localhost:5173',
         },
+        spawn: { cmd: 'vite --host 0.0.0.0 --port 5173' },
       },
       null,
       2,
@@ -338,7 +340,7 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start: 'dumbql-dev',
           build: 'vite build',
         },
         dependencies: {
@@ -374,6 +376,7 @@ const vueProject: Project = {
         proxy: {
           target: 'http://localhost:5173',
         },
+        spawn: { cmd: 'vite --host 0.0.0.0 --port 5173' },
       },
       null,
       2,

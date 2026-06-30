@@ -3,6 +3,7 @@ import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { spawn as spawnChild } from 'node:child_process';
 import { createYoga, createSchema } from 'graphql-yoga';
 import type { GraphQLSchema } from 'graphql';
 import type { DevServerConfig } from './types.js';
@@ -192,6 +193,20 @@ export async function startDevServer(config: DevServerConfig & { port?: number }
   const port = config.port ?? 4000;
   const frontend = config.proxy?.target ?? 'http://localhost:4200';
   const server = createDevServer(config);
+
+  if (config.spawn) {
+    const [cmd, ...args] = config.spawn.cmd.split(/\s+/);
+    const child = spawnChild(cmd, args, {
+      cwd: config.spawn.cwd,
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+    child.on('exit', (code) => {
+      if (code && code > 0) {
+        console.warn(`  Spawned process exited with code ${code}`);
+      }
+    });
+    console.log(`  Spawning: ${config.spawn.cmd}`);
+  }
 
   waitForTarget(frontend)
     .then(() => {

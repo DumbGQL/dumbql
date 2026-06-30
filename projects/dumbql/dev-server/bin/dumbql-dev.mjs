@@ -46,6 +46,15 @@ if (existsSync(mockResolversPath)) {
 
 const port = flags.port ? Number(flags.port) : 4000;
 
+const spawn = config.spawn
+	? { cmd: config.spawn.cmd, cwd: config.spawn.cwd }
+	: undefined;
+
+if (flags.spawn) {
+	spawn = spawn || {};
+	spawn.cmd = flags.spawn;
+}
+
 await startDevServer({
 	port,
 	mock: {
@@ -55,4 +64,5 @@ await startDevServer({
 	proxy: {
 		target: flags.proxy ?? config.proxy?.target ?? 'http://localhost:4200',
 	},
+	spawn,
 });

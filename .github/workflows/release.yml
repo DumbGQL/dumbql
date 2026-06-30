@@ -3,44 +3,118 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Exact version (e.g. 0.0.3). Leave empty to auto-bump.'
+        required: false
+        default: ''
+        type: string
       type:
-        description: 'Version bump type'
+        description: 'Version bump type (used only if "version" is empty)'
         required: true
         default: 'patch'
         type: choice
         options:
-          - alpha
-          - beta
-          - rc
           - patch
           - minor
           - major
-      stable_tag:
-        description: 'npm dist-tag for packages not published as rc'
-        required: true
+          - rc
+          - beta
+          - alpha
+      tag_cache:
+        description: '@dumbql/cache'
         default: 'latest'
-        type: string
-      rc_dev_server:
-        description: 'Publish @dumbql/dev-server with "rc" tag'
-        required: false
-        default: true
-        type: boolean
-      rc_testing:
-        description: 'Publish @dumbql/testing with "rc" tag'
-        required: false
-        default: false
-        type: boolean
-      rc_custom:
-        description: 'Other packages to publish as rc (one per line, e.g. @dumbql/cache)'
-        required: false
-        default: ''
-        type: string
-      skip_packages:
-        description: 'Packages to skip entirely (one per line)'
-        required: false
-        default: ''
-        type: string
-
+        type: choice
+        options: [latest, rc, skip]
+      tag_client:
+        description: '@dumbql/client'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_codegen:
+        description: '@dumbql/codegen'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_core:
+        description: '@dumbql/core'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_dev_server:
+        description: '@dumbql/dev-server'
+        default: 'rc'
+        type: choice
+        options: [latest, rc, skip]
+      tag_errors:
+        description: '@dumbql/errors'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_fragments:
+        description: '@dumbql/fragments'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_downloader:
+        description: '@dumbql/downloader'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_ssr:
+        description: '@dumbql/ssr'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_subscriptions:
+        description: '@dumbql/subscriptions'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_middlewares:
+        description: '@dumbql/middlewares'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_pagination:
+        description: '@dumbql/pagination'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_persisted_queries:
+        description: '@dumbql/persisted-queries'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_file_upload:
+        description: '@dumbql/file-upload'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_debugging:
+        description: '@dumbql/debugging'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_testing:
+        description: '@dumbql/testing'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_apollo_adapter:
+        description: '@dumbql/apollo-adapter'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_react:
+        description: '@dumbql/react'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
+      tag_vue:
+        description: '@dumbql/vue'
+        default: 'latest'
+        type: choice
+        options: [latest, rc, skip]
 permissions:
   contents: write
 
@@ -66,8 +140,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version
-        id: version
-        run: node scripts/version.mjs ${{ inputs.type }}
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            node scripts/version.mjs custom --version '${{ inputs.version }}'
+          else
+            node scripts/version.mjs ${{ inputs.type }}
+          fi
 
       - name: Read tag
         id: tag
@@ -92,55 +170,37 @@ jobs:
 
       - name: Publish to npm
         env:
-          RC_DEV_SERVER: ${{ inputs.rc_dev_server }}
-          RC_TESTING: ${{ inputs.rc_testing }}
-          RC_CUSTOM: ${{ inputs.rc_custom }}
-          SKIP_PKGS: ${{ inputs.skip_packages }}
-          STABLE_TAG: ${{ inputs.stable_tag }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Build rc package name list from boolean + custom inputs
-          RC_LIST=()
-          if [ "$RC_DEV_SERVER" = "true" ]; then
-            RC_LIST+=("@dumbql/dev-server")
-          fi
-          if [ "$RC_TESTING" = "true" ]; then
-            RC_LIST+=("@dumbql/testing")
-          fi
-          if [ -n "$RC_CUSTOM" ]; then
-            while IFS= read -r line; do
-              line="$(echo "$line" | xargs)"
-              [ -z "$line" ] && continue
-              RC_LIST+=("$line")
-            done <<< "$RC_CUSTOM"
-          fi
-
-          # Read skip packages into associative array
-          declare -A SKIP_MAP
-          if [ -n "$SKIP_PKGS" ]; then
-            while IFS= read -r line; do
-              line="$(echo "$line" | xargs)"
-              [ -z "$line" ] && continue
-              SKIP_MAP["$line"]=1
-            done <<< "$SKIP_PKGS"
-          fi
-
+          declare -A TAG_MAP
+          TAG_MAP["@dumbql/cache"]="${{ inputs.tag_cache }}"
+          TAG_MAP["@dumbql/client"]="${{ inputs.tag_client }}"
+          TAG_MAP["@dumbql/codegen"]="${{ inputs.tag_codegen }}"
+          TAG_MAP["@dumbql/core"]="${{ inputs.tag_core }}"
+          TAG_MAP["@dumbql/dev-server"]="${{ inputs.tag_dev_server }}"
+          TAG_MAP["@dumbql/errors"]="${{ inputs.tag_errors }}"
+          TAG_MAP["@dumbql/fragments"]="${{ inputs.tag_fragments }}"
+          TAG_MAP["@dumbql/downloader"]="${{ inputs.tag_downloader }}"
+          TAG_MAP["@dumbql/ssr"]="${{ inputs.tag_ssr }}"
+          TAG_MAP["@dumbql/subscriptions"]="${{ inputs.tag_subscriptions }}"
+          TAG_MAP["@dumbql/middlewares"]="${{ inputs.tag_middlewares }}"
+          TAG_MAP["@dumbql/pagination"]="${{ inputs.tag_pagination }}"
+          TAG_MAP["@dumbql/persisted-queries"]="${{ inputs.tag_persisted_queries }}"
+          TAG_MAP["@dumbql/file-upload"]="${{ inputs.tag_file_upload }}"
+          TAG_MAP["@dumbql/debugging"]="${{ inputs.tag_debugging }}"
+          TAG_MAP["@dumbql/testing"]="${{ inputs.tag_testing }}"
+          TAG_MAP["@dumbql/apollo-adapter"]="${{ inputs.tag_apollo_adapter }}"
+          TAG_MAP["@dumbql/react"]="${{ inputs.tag_react }}"
+          TAG_MAP["@dumbql/vue"]="${{ inputs.tag_vue }}"
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
+              tag="${TAG_MAP[$name]}"
 
-              if [ "${SKIP_MAP[$name]}" = "1" ]; then
+              if [ "$tag" = "skip" ] || [ -z "$tag" ]; then
                 echo "  ⏭️  Skipping $name"
                 continue
               fi
-
-              tag="$STABLE_TAG"
-              for rc_pkg in "${RC_LIST[@]}"; do
-                if [ "$rc_pkg" = "$name" ]; then
-                  tag="rc"
-                  break
-                fi
-              done
 
               echo "  Publishing $name → tag: $tag"
               npm publish "$pkg" --access public --tag "$tag"

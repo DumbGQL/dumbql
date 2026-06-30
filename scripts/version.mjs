@@ -57,13 +57,28 @@ function nextVersion(current, type) {
 const type = process.argv[2];
 const dryRun = process.argv.includes('--dry-run') || process.argv.includes('-n');
 const noCommit = process.argv.includes('--no-commit');
+
+// Extract --version <value> if present
+const versionIdx = process.argv.indexOf('--version');
+const customVersion = versionIdx >= 0 ? process.argv[versionIdx + 1] : null;
+
 if (!type) {
-  console.log('Usage: node scripts/version.mjs <major|minor|patch|rc|beta|alpha> [--dry-run] [--no-commit]');
+  console.log('Usage: node scripts/version.mjs <major|minor|patch|rc|beta|alpha|custom> [--version x.y.z] [--dry-run] [--no-commit]');
   process.exit(1);
 }
 
 const cur = currentVersion();
-const next = nextVersion(cur, type);
+let next;
+
+if (type === 'custom') {
+  if (!customVersion) {
+    console.error('Error: --version <version> is required when type is "custom"');
+    process.exit(1);
+  }
+  next = customVersion;
+} else {
+  next = nextVersion(cur, type);
+}
 
 console.log(`  Current: ${cur}`);
 console.log(`  Next:    ${next}`);

@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/middlewares",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Pre-built middleware functions for DumbQL — auth refresh, retry, focus refetch, offline queue",
   "keywords": [
     "graphql",

@@ -119,7 +119,7 @@ export function createDevServer(config: DevServerConfig = {}): Server {
   return server;
 }
 
-function waitForTarget(url: string, timeout = 60_000, interval = 500): Promise<void> {
+function waitForTarget(url: string, timeout = 300_000, interval = 1_000): Promise<void> {
   return new Promise((resolve, reject) => {
     const start = Date.now();
     const isHttps = url.startsWith('https');
@@ -133,7 +133,7 @@ function waitForTarget(url: string, timeout = 60_000, interval = 500): Promise<v
           port: parsed.port || (isHttps ? 443 : 80),
           path: '/',
           method: 'HEAD',
-          timeout: 2000,
+          timeout: 10_000,
         },
         (res) => {
           res.resume();

@@ -37,6 +37,29 @@ function handleCors(res: ServerResponse): boolean {
   return true;
 }
 
+const LOADING_PAGE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Starting up...</title>
+  <meta http-equiv="refresh" content="3">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #1a1a2e; color: #e0e0e0; }
+    .loader { width: 48px; height: 48px; border: 4px solid #e0e0e0; border-top-color: #6366f1; border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .container { text-align: center; }
+    p { font-size: 18px; color: #a0a0b0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="loader"></div>
+    <p>Starting frontend dev server...</p>
+  </div>
+</body>
+</html>`;
+
 function createProxyHandler(frontendTarget: string) {
   return (req: IncomingMessage, res: ServerResponse) => {
     if (req.method === 'OPTIONS') {
@@ -75,8 +98,8 @@ function createProxyHandler(frontendTarget: string) {
 
     proxyReq.on('error', () => {
       if (!res.headersSent) {
-        res.writeHead(502, { 'Content-Type': 'text/plain', ...CORS_HEADERS });
-        res.end(`Bad Gateway: cannot proxy to ${frontendTarget}`);
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', ...CORS_HEADERS });
+        res.end(LOADING_PAGE);
       }
     });
 

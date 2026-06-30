@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/subscriptions",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "GraphQL subscriptions over WebSocket (graphql-transport-ws) — framework-agnostic core + Angular service",
   "keywords": [
     "graphql",

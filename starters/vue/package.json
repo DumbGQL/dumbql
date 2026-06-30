@@ -7,9 +7,9 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@dumbql/client": "^0.0.9",
-    "@dumbql/vue": "^0.0.9",
-    "@dumbql/dev-server": "^0.0.9",
+    "@dumbql/client": "^0.0.10",
+    "@dumbql/vue": "^0.0.10",
+    "@dumbql/dev-server": "^0.0.10",
     "vue": "^3.4.0"
   },
   "devDependencies": {

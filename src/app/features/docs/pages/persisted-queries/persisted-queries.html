@@ -7,22 +7,31 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The persisted-queries package implements Automatic Persisted Queries (APQ),
-        allowing the client to send a hash of the query string instead of the full
-        query body. This reduces bandwidth for large queries and improves performance
-        on slow networks.
+        The persisted-queries package implements Automatic Persisted Queries (APQ), allowing the client to send a hash
+        of the query string instead of the full query body. This reduces bandwidth for large queries and improves
+        performance on slow networks.
       </p>
     </header>
 
     <h2 appAnchor id="apq-middleware">APQ Middleware</h2>
     <p>
-      Add the <code>apqMiddleware</code> to your middleware chain to enable automatic
-      persisted queries. The middleware will first attempt to send the query hash; if
-      the server responds with a <code>PersistedQueryNotFound</code> error, it
-      automatically retries with the full query string:
+      Add the <code>apqMiddleware</code> to your middleware chain to enable automatic persisted queries. The middleware
+      will first attempt to send the query hash; if the server responds with a
+      <code>PersistedQueryNotFound</code> error, it automatically retries with the full query string:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; apqMiddlewareCode &#125;&#125;</code></pre>

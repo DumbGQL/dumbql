@@ -6,23 +6,25 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-testing',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './testing.html',
-	styleUrl: './testing.scss',
+  selector: 'app-docs-testing',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './testing.html',
+  styleUrl: './testing.scss',
 })
 export class DocsTesting {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'mock-provider', title: 'provideDumbqlMock' },
-		{ id: 'mock-link', title: 'MockGraphqlLink' },
-		{ id: 'behavior-verification', title: 'Behavior Verification' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/testing/src/lib';
 
-	protected readonly mockProviderCode = `import { provideDumbqlMock } from '@dumbql/testing';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'mock-provider', title: 'provideDumbqlMock' },
+    { id: 'mock-link', title: 'MockGraphqlLink' },
+    { id: 'behavior-verification', title: 'Behavior Verification' },
+  ];
+
+  protected readonly mockProviderCode = `import { provideDumbqlMock } from '@dumbql/testing';
 
 TestBed.configureTestingModule({
   providers: [
@@ -32,7 +34,7 @@ TestBed.configureTestingModule({
   ],
 });`;
 
-	protected readonly mockLinkCode = `import { MockGraphqlLink } from '@dumbql/testing';
+  protected readonly mockLinkCode = `import { MockGraphqlLink } from '@dumbql/testing';
 
 const mockLink = new MockGraphqlLink();
 mockLink.setResponse('Books', {
@@ -45,7 +47,7 @@ TestBed.configureTestingModule({
   ],
 });`;
 
-	protected readonly behaviorVerificationCode = `const mockLink = new MockGraphqlLink();
+  protected readonly behaviorVerificationCode = `const mockLink = new MockGraphqlLink();
 
 // After test runs:
 expect(mockLink.operations.length).toBe(1);

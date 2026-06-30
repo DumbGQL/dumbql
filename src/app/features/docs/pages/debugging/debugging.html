@@ -7,12 +7,22 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The debugging package provides developer tooling for inspecting GraphQL
-        queries, mutations, cache operations, and middleware flow. It includes
-        utilities for parsing query field trees, building mutation charts, and
+        The debugging package provides developer tooling for inspecting GraphQL queries, mutations, cache operations,
+        and middleware flow. It includes utilities for parsing query field trees, building mutation charts, and
         normalizing data for inspection.
       </p>
     </header>
@@ -27,27 +37,19 @@
     </div>
 
     <h2 appAnchor id="parse-field-tree">parseFieldTree()</h2>
-    <p>
-      Parse a GraphQL query into a structured field tree for visualization or
-      analysis:
-    </p>
+    <p>Parse a GraphQL query into a structured field tree for visualization or analysis:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; parseFieldTreeCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="mutation-chart">buildMutationChart()</h2>
-    <p>
-      Generate a structured graph of cache interactions for a given mutation:
-    </p>
+    <p>Generate a structured graph of cache interactions for a given mutation:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; mutationChartCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="normalize-data">normalizeData()</h2>
-    <p>
-      Normalize raw server data into the cache's internal format, useful for
-      debugging cache state:
-    </p>
+    <p>Normalize raw server data into the cache's internal format, useful for debugging cache state:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; normalizeDataCode &#125;&#125;</code></pre>
     </div>

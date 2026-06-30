@@ -6,22 +6,24 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-downloader',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './downloader.html',
-	styleUrl: './downloader.scss',
+  selector: 'app-docs-downloader',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './downloader.html',
+  styleUrl: './downloader.scss',
 })
 export class DocsDownloader {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'download-schema', title: 'downloadAndStoreSchema()' },
-		{ id: 'output-structure', title: 'Output Structure' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/downloader/src/lib';
 
-	protected readonly downloadSchemaCode = `import { downloadAndStoreSchema } from '@dumbql/downloader';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'download-schema', title: 'downloadAndStoreSchema()' },
+    { id: 'output-structure', title: 'Output Structure' },
+  ];
+
+  protected readonly downloadSchemaCode = `import { downloadAndStoreSchema } from '@dumbql/downloader';
 
 const result = await downloadAndStoreSchema({
   url: 'https://api.example.com/graphql',
@@ -36,7 +38,7 @@ console.log(result);
 //   timestamp: '2025-06-27T12:00:00Z',
 // }`;
 
-	protected readonly outputStructureCode = `// Output structure
+  protected readonly outputStructureCode = `// Output structure
 schema/
 ├── schema.json       # Raw introspection result
 ├── schema.graphql    # SDL format

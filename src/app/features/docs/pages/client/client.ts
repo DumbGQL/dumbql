@@ -6,26 +6,28 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-client',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './client.html',
-	styleUrl: './client.scss',
+  selector: 'app-docs-client',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './client.html',
+  styleUrl: './client.scss',
 })
 export class DocsClient {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'quick-start', title: 'Quick Start' },
-		{ id: 'api', title: 'API' },
-		{ id: 'middleware', title: 'Middleware' },
-		{ id: 'cache', title: 'Cache Integration' },
-		{ id: 'streaming', title: 'Streaming' },
-		{ id: 'file-upload', title: 'File Upload' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/client/src/lib';
 
-	protected readonly quickStartCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'quick-start', title: 'Quick Start' },
+    { id: 'api', title: 'API' },
+    { id: 'middleware', title: 'Middleware' },
+    { id: 'cache', title: 'Cache Integration' },
+    { id: 'streaming', title: 'Streaming' },
+    { id: 'file-upload', title: 'File Upload' },
+  ];
+
+  protected readonly quickStartCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
 
@@ -36,7 +38,7 @@ if (isSuccess(result)) {
   console.log(result.data.todos);
 }`;
 
-	protected readonly middlewareCode = `import { createClient, authMiddleware, loggingMiddleware } from '@dumbql/client';
+  protected readonly middlewareCode = `import { createClient, authMiddleware, loggingMiddleware } from '@dumbql/client';
 
 const client = createClient({
   endpoint: '/graphql',
@@ -46,7 +48,7 @@ const client = createClient({
   ],
 });`;
 
-	protected readonly cacheCode = `import { createClient } from '@dumbql/client';
+  protected readonly cacheCode = `import { createClient } from '@dumbql/client';
 import { createCache } from '@dumbql/cache';
 
 const cache = createCache();
@@ -54,7 +56,7 @@ const client = createClient({
   endpoint: '/graphql',
 }, cache);`;
 
-	protected readonly streamingCode = `const stream = client.queryStream(gql\`query Stream { ... }\`);
+  protected readonly streamingCode = `const stream = client.queryStream(gql\`query Stream { ... }\`);
 
 for await (const part of stream) {
   if (isSuccess(part)) {

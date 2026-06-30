@@ -6,23 +6,25 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-pagination',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './pagination.html',
-	styleUrl: './pagination.scss',
+  selector: 'app-docs-pagination',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './pagination.html',
+  styleUrl: './pagination.scss',
 })
 export class DocsPagination {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'offset-pagination', title: 'offsetPagination' },
-		{ id: 'cursor-pagination', title: 'cursorPagination' },
-		{ id: 'merge-functions', title: 'Merge Functions' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/pagination/src/lib';
 
-	protected readonly offsetPaginationCode = `import { offsetPagination } from '@dumbql/pagination';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'offset-pagination', title: 'offsetPagination' },
+    { id: 'cursor-pagination', title: 'cursorPagination' },
+    { id: 'merge-functions', title: 'Merge Functions' },
+  ];
+
+  protected readonly offsetPaginationCode = `import { offsetPagination } from '@dumbql/pagination';
 import { provideDumbqlCache } from '@dumbql/cache';
 
 provideDumbqlCache({
@@ -33,7 +35,7 @@ provideDumbqlCache({
   },
 });`;
 
-	protected readonly cursorPaginationCode = `import { cursorPagination } from '@dumbql/pagination';
+  protected readonly cursorPaginationCode = `import { cursorPagination } from '@dumbql/pagination';
 
 provideDumbqlCache({
   typePolicies: {
@@ -47,7 +49,7 @@ provideDumbqlCache({
   },
 });`;
 
-	protected readonly customMergeCode = `// Custom merge example
+  protected readonly customMergeCode = `// Custom merge example
 provideDumbqlCache({
   typePolicies: {
     Comments: {

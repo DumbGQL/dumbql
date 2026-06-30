@@ -14,60 +14,25 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "@dumbql/downloader": [
-        "./projects/dumbql/downloader/src/public-api.ts"
-      ],
-      "@dumbql/core": [
-        "./projects/dumbql/core/src/public-api.ts"
-      ],
-      "@dumbql/subscriptions": [
-        "./projects/dumbql/subscriptions/src/public-api.ts"
-      ],
-      "@dumbql/subscriptions/angular": [
-        "./projects/dumbql/subscriptions/src/angular.ts"
-      ],
-      "@dumbql/file-upload": [
-        "./projects/dumbql/file-upload/src/public-api.ts"
-      ],
-      "@dumbql/debugging": [
-        "./projects/dumbql/debugging/src/public-api.ts"
-      ],
-      "@dumbql/cache": [
-        "./projects/dumbql/cache/src/public-api.ts"
-      ],
-      "@dumbql/cache/angular": [
-        "./projects/dumbql/cache/src/angular.ts"
-      ],
-      "@dumbql/fragments": [
-        "./projects/dumbql/fragments/src/public-api.ts"
-      ],
-      "@dumbql/pagination": [
-        "./projects/dumbql/pagination/src/public-api.ts"
-      ],
-      "@dumbql/ssr": [
-        "./projects/dumbql/ssr/src/public-api.ts"
-      ],
-      "@dumbql/persisted-queries": [
-        "./projects/dumbql/persisted-queries/src/public-api.ts"
-      ],
-      "@dumbql/middlewares": [
-        "./projects/dumbql/middlewares/src/public-api.ts"
-      ],
-      "@dumbql/middlewares/angular": [
-        "./projects/dumbql/middlewares/src/angular.ts"
-      ],
-      "@dumbql/testing": [
-        "./projects/dumbql/testing/src/public-api.ts"
-      ],
-      "@dumbql/client": [
-        "./projects/dumbql/client/src/public-api.ts"
-      ],
-      "@dumbql/react": [
-        "./projects/dumbql/react/src/public-api.ts"
-      ],
-      "@dumbql/vue": [
-        "./projects/dumbql/vue/src/public-api.ts"
-      ]
+      "@dumbql/downloader": ["./projects/dumbql/downloader/src/public-api.ts"],
+      "@dumbql/core": ["./projects/dumbql/core/src/public-api.ts"],
+      "@dumbql/subscriptions": ["./projects/dumbql/subscriptions/src/public-api.ts"],
+      "@dumbql/subscriptions/angular": ["./projects/dumbql/subscriptions/src/angular.ts"],
+      "@dumbql/file-upload": ["./projects/dumbql/file-upload/src/public-api.ts"],
+      "@dumbql/dev-server": ["./projects/dumbql/dev-server/src/public-api.ts"],
+      "@dumbql/debugging": ["./projects/dumbql/debugging/src/public-api.ts"],
+      "@dumbql/cache": ["./projects/dumbql/cache/src/public-api.ts"],
+      "@dumbql/cache/angular": ["./projects/dumbql/cache/src/angular.ts"],
+      "@dumbql/fragments": ["./projects/dumbql/fragments/src/public-api.ts"],
+      "@dumbql/pagination": ["./projects/dumbql/pagination/src/public-api.ts"],
+      "@dumbql/ssr": ["./projects/dumbql/ssr/src/public-api.ts"],
+      "@dumbql/persisted-queries": ["./projects/dumbql/persisted-queries/src/public-api.ts"],
+      "@dumbql/middlewares": ["./projects/dumbql/middlewares/src/public-api.ts"],
+      "@dumbql/middlewares/angular": ["./projects/dumbql/middlewares/src/angular.ts"],
+      "@dumbql/testing": ["./projects/dumbql/testing/src/public-api.ts"],
+      "@dumbql/client": ["./projects/dumbql/client/src/public-api.ts"],
+      "@dumbql/react": ["./projects/dumbql/react/src/public-api.ts"],
+      "@dumbql/vue": ["./projects/dumbql/vue/src/public-api.ts"]
     }
   },
   "angularCompilerOptions": {

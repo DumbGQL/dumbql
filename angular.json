@@ -34,10 +34,10 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               {
-	              "glob": "**/*",
-	              "input": "node_modules/@taiga-ui/icons/src",
-	              "output": "assets/taiga-ui/icons"
-	            },
+                "glob": "**/*",
+                "input": "node_modules/@taiga-ui/icons/src",
+                "output": "assets/taiga-ui/icons"
+              },
               {
                 "glob": "**/*",
                 "input": "public"
@@ -45,7 +45,7 @@
             ],
             "styles": [
               "@taiga-ui/styles/taiga-ui-theme.less",
-	              "@taiga-ui/styles/taiga-ui-fonts.less",
+              "@taiga-ui/styles/taiga-ui-fonts.less",
               "src/styles.scss"
             ]
           },
@@ -79,6 +79,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.js"
+          },
           "configurations": {
             "production": {
               "buildTarget": "dumb-keystore:build:production"

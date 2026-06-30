@@ -1,0 +1,8 @@
+{
+  "mock": {
+    "schema": "type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }"
+  },
+  "proxy": {
+    "target": "http://localhost:4200"
+  }
+}

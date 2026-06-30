@@ -6,31 +6,33 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-middlewares',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './middlewares.html',
-	styleUrl: './middlewares.scss',
+  selector: 'app-docs-middlewares',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './middlewares.html',
+  styleUrl: './middlewares.scss',
 })
 export class DocsMiddlewares {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'auth-refresh', title: 'authRefreshMiddleware' },
-		{ id: 'retry-exchange', title: 'retryExchange' },
-		{ id: 'focus-refetch', title: 'focusRefetchMiddleware' },
-		{ id: 'offline-queue', title: 'offlineQueueMiddleware' },
-		{ id: 'composing', title: 'Composing Middlewares' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/middlewares/src/lib';
 
-	protected readonly authRefreshCode = `import { authRefreshMiddleware } from '@dumbql/middlewares';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'auth-refresh', title: 'authRefreshMiddleware' },
+    { id: 'retry-exchange', title: 'retryExchange' },
+    { id: 'focus-refetch', title: 'focusRefetchMiddleware' },
+    { id: 'offline-queue', title: 'offlineQueueMiddleware' },
+    { id: 'composing', title: 'Composing Middlewares' },
+  ];
+
+  protected readonly authRefreshCode = `import { authRefreshMiddleware } from '@dumbql/middlewares';
 
 const middleware = authRefreshMiddleware({
   refreshToken: () => fetch('/auth/refresh').then(r => r.json()),
 });`;
 
-	protected readonly retryExchangeCode = `import { retryExchange } from '@dumbql/middlewares';
+  protected readonly retryExchangeCode = `import { retryExchange } from '@dumbql/middlewares';
 
 const middleware = retryExchange({
   maxRetries: 3,
@@ -38,13 +40,13 @@ const middleware = retryExchange({
   maxDelay: 10000,
 });`;
 
-	protected readonly focusRefetchCode = `import { focusRefetchMiddleware } from '@dumbql/middlewares';
+  protected readonly focusRefetchCode = `import { focusRefetchMiddleware } from '@dumbql/middlewares';
 
 const middleware = focusRefetchMiddleware({
   minStaleSeconds: 30,
 });`;
 
-	protected readonly offlineQueueCode = `import { offlineQueueMiddleware } from '@dumbql/middlewares';
+  protected readonly offlineQueueCode = `import { offlineQueueMiddleware } from '@dumbql/middlewares';
 import { provideOfflineQueue } from '@dumbql/middlewares/angular';
 
 // Provider (Angular only):
@@ -54,7 +56,7 @@ export const appConfig = {
 
 const middleware = offlineQueueMiddleware();`;
 
-	protected readonly composingMiddlewaresCode = `import { composeMiddlewares, createHttpLink } from '@dumbql/core';
+  protected readonly composingMiddlewaresCode = `import { composeMiddlewares, createHttpLink } from '@dumbql/core';
 import { authRefreshMiddleware, retryExchange, focusRefetchMiddleware, offlineQueueMiddleware } from '@dumbql/middlewares';
 
 const link = composeMiddlewares(

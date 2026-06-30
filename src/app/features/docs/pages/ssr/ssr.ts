@@ -6,23 +6,25 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-ssr',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './ssr.html',
-	styleUrl: './ssr.scss',
+  selector: 'app-docs-ssr',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './ssr.html',
+  styleUrl: './ssr.scss',
 })
 export class DocsSsr {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'setup', title: 'SSR Setup' },
-		{ id: 'transfer-cache', title: 'Transfer Cache' },
-		{ id: 'chunked-transfer', title: 'Chunked Transfer' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/ssr/src/lib';
 
-	protected readonly ssrStreamServiceCode = `import { provideDumbqlSsr } from '@dumbql/ssr';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'setup', title: 'SSR Setup' },
+    { id: 'transfer-cache', title: 'Transfer Cache' },
+    { id: 'chunked-transfer', title: 'Chunked Transfer' },
+  ];
+
+  protected readonly ssrStreamServiceCode = `import { provideDumbqlSsr } from '@dumbql/ssr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,11 +33,11 @@ export const appConfig: ApplicationConfig = {
   ],
 };`;
 
-	protected readonly transferCacheCode = `// Server: results are embedded as <script> JSON
+  protected readonly transferCacheCode = `// Server: results are embedded as <script> JSON
 // Client: hydration happens automatically
 // No configuration needed beyond provideDumbqlSsr()`;
 
-	protected readonly chunkedTransferCode = `provideDumbqlSsr({
+  protected readonly chunkedTransferCode = `provideDumbqlSsr({
   chunked: true,
   chunkSize: 8192, // 8 kB per chunk
   flushOnNavigation: true, // flush pending queries on route change

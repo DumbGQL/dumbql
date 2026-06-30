@@ -10,15 +10,11 @@
     </header>
 
     <h2 appAnchor id="install">Install</h2>
-    <p>
-      Install the framework-agnostic client, plus bindings for your framework:
-    </p>
+    <p>Install the framework-agnostic client, plus bindings for your framework:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; installCode &#125;&#125;</code></pre>
     </div>
-    <p>
-      For framework-specific bindings, install the corresponding package:
-    </p>
+    <p>For framework-specific bindings, install the corresponding package:</p>
     <ul>
       <li>React: <code>npm install @dumbql/react @dumbql/cache</code></li>
       <li>Vue: <code>npm install @dumbql/vue</code></li>
@@ -26,57 +22,45 @@
     </ul>
 
     <h2 appAnchor id="configure">Configure</h2>
-    <p>
-      Create a client with <code>createClient</code> and pass it to your framework's
-      provider:
-    </p>
+    <p>Create a client with <code>createClient</code> and pass it to your framework's provider:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; configureCode &#125;&#125;</code></pre>
     </div>
     <p>
-      See <a routerLink="/docs/react">@dumbql/react</a>,
-      <a routerLink="/docs/vue">@dumbql/vue</a>, or
+      See <a routerLink="/docs/react">@dumbql/react</a>, <a routerLink="/docs/vue">@dumbql/vue</a>, or
       <a routerLink="/docs/core">@dumbql/core</a> (Angular) for framework-specific setup.
     </p>
 
     <h2 appAnchor id="first-query">Your First Query</h2>
     <div tuiNotification appearance="warning">
-      <p>
-        <strong>TIP:</strong> Use <code>createClient</code> + <code>gql</code> tag
-        for type-safe queries:
-      </p>
+      <p><strong>TIP:</strong> Use <code>createClient</code> + <code>gql</code> tag for type-safe queries:</p>
     </div>
     <div class="code-block">
       <pre><code>&#123;&#123; firstQueryCode &#125;&#125;</code></pre>
     </div>
     <p>
-      The <code>query()</code> method returns a Promise. Use <code>isSuccess</code> /
-      <code>isError</code> type guards to handle results.
+      The <code>query()</code> method returns a Promise. Use <code>isSuccess</code> / <code>isError</code> type guards
+      to handle results.
     </p>
 
     <h2 appAnchor id="starters">Starters</h2>
-    <p>
-      Kickstart a new project with one of our StackBlitz starters:
-    </p>
+    <p>Kickstart a new project with one of our StackBlitz starters:</p>
     <ul>
       <li>
         <strong>Angular 22+</strong> —
-        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular"
-           target="_blank" rel="noopener">Open in StackBlitz</a>
-        — standalone app with <code>@dumbql/client</code>, mock backend, and
-        <code>provideDumbql</code> + <code>DumbqlQuery</code> directive.
+        <a (click)="stackblitz.openAngular()" href="javascript:void(0)">Open in StackBlitz</a>
+        — standalone app with <code>@dumbql/client</code>, mock backend, and <code>provideDumbql</code> +
+        <code>DumbqlQuery</code> directive.
       </li>
       <li>
         <strong>React 18+</strong> —
-        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react"
-           target="_blank" rel="noopener">Open in StackBlitz</a>
+        <a (click)="stackblitz.openReact()" href="javascript:void(0)">Open in StackBlitz</a>
         — standalone app with <code>@dumbql/client</code>, <code>@dumbql/react</code>, mock backend, and
         <code>useQuery</code> hook.
       </li>
       <li>
         <strong>Vue 3+</strong> —
-        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue"
-           target="_blank" rel="noopener">Open in StackBlitz</a>
+        <a (click)="stackblitz.openVue()" href="javascript:void(0)">Open in StackBlitz</a>
         — standalone app with <code>@dumbql/client</code>, <code>@dumbql/vue</code>, mock backend, and
         <code>useQuery</code> composable.
       </li>

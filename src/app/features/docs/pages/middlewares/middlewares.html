@@ -7,12 +7,22 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        Pre-built middleware functions that plug into the DumbQL middleware pipeline.
-        Each middleware wraps the next link in the chain — auth refresh, retry,
-        focus refetch, and offline queue.
+        Pre-built middleware functions that plug into the DumbQL middleware pipeline. Each middleware wraps the next
+        link in the chain — auth refresh, retry, focus refetch, and offline queue.
       </p>
     </header>
 
@@ -26,18 +36,13 @@
     </div>
 
     <h2 appAnchor id="retry-exchange">retryExchange</h2>
-    <p>
-      Retries failed requests with exponential backoff and optional jitter:
-    </p>
+    <p>Retries failed requests with exponential backoff and optional jitter:</p>
     <div class="code-block">
       <pre><code>{{ retryExchangeCode }}</code></pre>
     </div>
 
     <h2 appAnchor id="focus-refetch">focusRefetchMiddleware</h2>
-    <p>
-      Refetches stale queries on <code>visibilitychange</code> or
-      <code>window.focus</code> events:
-    </p>
+    <p>Refetches stale queries on <code>visibilitychange</code> or <code>window.focus</code> events:</p>
     <div class="code-block">
       <pre><code>{{ focusRefetchCode }}</code></pre>
     </div>
@@ -53,8 +58,8 @@
 
     <h2 appAnchor id="composing">Composing Middlewares</h2>
     <p>
-      Combine multiple middlewares using <code>composeMiddlewares</code> from
-      <code>@dumbql/core</code>. Order determines execution order:
+      Combine multiple middlewares using <code>composeMiddlewares</code> from <code>@dumbql/core</code>. Order
+      determines execution order:
     </p>
     <div class="code-block">
       <pre><code>{{ composingMiddlewaresCode }}</code></pre>

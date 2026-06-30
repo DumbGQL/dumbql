@@ -15,6 +15,21 @@ on:
           - patch
           - minor
           - major
+      stable_tag:
+        description: 'npm dist-tag for all packages'
+        required: true
+        default: 'latest'
+        type: string
+      rc_packages:
+        description: 'Packages to publish with "rc" tag instead of stable (one per line). Example: @dumbql/dev-server'
+        required: false
+        default: ''
+        type: string
+      skip_packages:
+        description: 'Packages to skip entirely (one per line). Example: @dumbql/testing'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -66,20 +81,55 @@ jobs:
           done
 
       - name: Publish to npm
+        env:
+          RC_PKGS: ${{ inputs.rc_packages }}
+          SKIP_PKGS: ${{ inputs.skip_packages }}
+          STABLE_TAG: ${{ inputs.stable_tag }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          TAG=${{ inputs.type }}
-          if [ "$TAG" = "patch" ] || [ "$TAG" = "minor" ] || [ "$TAG" = "major" ]; then
-            TAG="latest"
+          # Read rc packages into array (strip whitespace, skip empty lines)
+          RC_LIST=()
+          if [ -n "$RC_PKGS" ]; then
+            while IFS= read -r line; do
+              line="$(echo "$line" | xargs)"
+              [ -z "$line" ] && continue
+              RC_LIST+=("$line")
+            done <<< "$RC_PKGS"
           fi
+
+          # Read skip packages into associative array
+          declare -A SKIP_MAP
+          if [ -n "$SKIP_PKGS" ]; then
+            while IFS= read -r line; do
+              line="$(echo "$line" | xargs)"
+              [ -z "$line" ] && continue
+              SKIP_MAP["$line"]=1
+            done <<< "$SKIP_PKGS"
+          fi
+
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
-              echo "Publishing $name with tag $TAG..."
-              npm publish "$pkg" --access public --tag "$TAG"
+
+              # Skip?
+              if [ "${SKIP_MAP[$name]}" = "1" ]; then
+                echo "  ⏭️  Skipping $name"
+                continue
+              fi
+
+              # Determine tag
+              tag="$STABLE_TAG"
+              for rc_pkg in "${RC_LIST[@]}"; do
+                if [ "$rc_pkg" = "$name" ]; then
+                  tag="rc"
+                  break
+                fi
+              done
+
+              echo "  Publishing $name → tag: $tag"
+              npm publish "$pkg" --access public --tag "$tag"
             fi
           done
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push version bump commit and tags
         run: |

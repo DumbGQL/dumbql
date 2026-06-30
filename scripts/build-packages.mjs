@@ -11,6 +11,7 @@ const BUILD_ORDER = [
   'errors',
   'core',
   'client',
+  'dev-server',
   'fragments',
   'downloader',
   'codegen',
@@ -28,7 +29,7 @@ const BUILD_ORDER = [
 ];
 
 // Packages compiled with tsc (not ng-packagr, not plain copy)
-const TSC_PACKAGES = ['react', 'vue'];
+const TSC_PACKAGES = ['react', 'vue', 'dev-server'];
 
 function linkPackage(pkg, distOut) {
   const nmLink = join(NM, pkg);
@@ -68,6 +69,11 @@ function build(pkg) {
     mkdirSync(distOut, { recursive: true });
     execSync(`npx tsc -p ${tsconfig}`, { cwd: ROOT, stdio: 'inherit' });
     cpSync(join(pkgDir, 'package.json'), join(distOut, 'package.json'));
+    // Copy bin/ directory if present (for CLI tools)
+    const binDir = join(pkgDir, 'bin');
+    if (existsSync(binDir)) {
+      execSync(`cp -r ${binDir} ${distOut}/`, { cwd: ROOT, stdio: 'inherit' });
+    }
     for (const f of ['README.md', 'LICENSE']) {
       const p = join(pkgDir, f);
       if (existsSync(p)) cpSync(p, join(distOut, f));

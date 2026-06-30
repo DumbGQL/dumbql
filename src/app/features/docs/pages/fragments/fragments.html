@@ -7,47 +7,50 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The fragments package provides utility functions for defining reusable GraphQL
-        fragment documents and composing them into full queries. This promotes
-        colocation of data requirements with the components that use them.
+        The fragments package provides utility functions for defining reusable GraphQL fragment documents and composing
+        them into full queries. This promotes colocation of data requirements with the components that use them.
       </p>
     </header>
 
     <h2 appAnchor id="fragment">fragment()</h2>
     <p>
-      Define a reusable fragment using the <code>fragment()</code> helper. This
-      creates a typed document reference that can be spread into queries:
+      Define a reusable fragment using the <code>fragment()</code> helper. This creates a typed document reference that
+      can be spread into queries:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; fragmentCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="spread">spread()</h2>
-    <p>
-      Use <code>spread()</code> to interpolate a fragment into a query document.
-      The spread is resolved at runtime:
-    </p>
+    <p>Use <code>spread()</code> to interpolate a fragment into a query document. The spread is resolved at runtime:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; spreadCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="compose">compose()</h2>
-    <p>
-      When fragments reference other fragments, use <code>compose()</code> to
-      assemble them into a single document:
-    </p>
+    <p>When fragments reference other fragments, use <code>compose()</code> to assemble them into a single document:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; composeCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="use-fragment">useFragment()</h2>
     <p>
-      The <code>useFragment()</code> helper extracts a subset of cached data that
-      matches a fragment definition. This ensures a component only re-renders when
-      the fields it cares about change:
+      The <code>useFragment()</code> helper extracts a subset of cached data that matches a fragment definition. This
+      ensures a component only re-renders when the fields it cares about change:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; useFragmentCode &#125;&#125;</code></pre>

@@ -79,4 +79,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 2rem 3rem;
+
+  pre code:not(.hljs) {
+    background: none;
+  }
 }

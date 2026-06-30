@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node mock/server.mjs & vite --host 0.0.0.0 --port 5173",
+    "start": "dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173",
     "build": "vite build"
   },
   "dependencies": {
-    "@dumbql/client": "^0.0.1",
-    "@dumbql/react": "^0.0.1",
-    "@dumbql/cache": "^0.0.1",
+    "@dumbql/client": "^0.0.3",
+    "@dumbql/react": "^0.0.3",
+    "@dumbql/cache": "^0.0.3",
+    "@dumbql/dev-server": "^0.0.3-rc.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

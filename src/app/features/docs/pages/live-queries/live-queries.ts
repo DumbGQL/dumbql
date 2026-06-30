@@ -6,26 +6,28 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-live-queries',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './live-queries.html',
-	styleUrl: './live-queries.scss',
+  selector: 'app-docs-live-queries',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './live-queries.html',
+  styleUrl: './live-queries.scss',
 })
 export class DocsLiveQueries {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'overview', title: 'Overview' },
-		{ id: 'react', title: 'React: useLiveQuery' },
-		{ id: 'vue', title: 'Vue: useLiveQuery' },
-		{ id: 'angular', title: 'Angular: Live Queries' },
-		{ id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
-		{ id: 'protocol', title: 'WebSocket Protocol' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/subscriptions/src/lib';
 
-	protected readonly reactCode = `import { useLiveQuery } from '@dumbql/react';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'overview', title: 'Overview' },
+    { id: 'react', title: 'React: useLiveQuery' },
+    { id: 'vue', title: 'Vue: useLiveQuery' },
+    { id: 'angular', title: 'Angular: Live Queries' },
+    { id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
+    { id: 'protocol', title: 'WebSocket Protocol' },
+  ];
+
+  protected readonly reactCode = `import { useLiveQuery } from '@dumbql/react';
 import { gql } from '@dumbql/client';
 
 const POSTS_LIVE = gql\`
@@ -56,7 +58,7 @@ function LivePosts() {
   );
 }`;
 
-	protected readonly vueCode = `import { useLiveQuery } from '@dumbql/vue';
+  protected readonly vueCode = `import { useLiveQuery } from '@dumbql/vue';
 import { gql } from '@dumbql/client';
 import { defineComponent } from 'vue';
 
@@ -81,7 +83,7 @@ export default defineComponent({
   },
 });`;
 
-	protected readonly angularCode = `import { Component, inject } from '@angular/core';
+  protected readonly angularCode = `import { Component, inject } from '@angular/core';
 import { GraphqlService } from '@dumbql/core';
 import { GraphqlLiveQuery } from '@dumbql/subscriptions';
 import { gql } from '@dumbql/client';
@@ -125,7 +127,7 @@ export class LivePosts {
   }
 }`;
 
-	protected readonly classCode = `import { GraphqlLiveQuery } from '@dumbql/subscriptions';
+  protected readonly classCode = `import { GraphqlLiveQuery } from '@dumbql/subscriptions';
 
 const live = new GraphqlLiveQuery('https://api.example.com/graphql');
 

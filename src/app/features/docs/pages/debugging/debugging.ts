@@ -6,24 +6,26 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-debugging',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './debugging.html',
-	styleUrl: './debugging.scss',
+  selector: 'app-docs-debugging',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './debugging.html',
+  styleUrl: './debugging.scss',
 })
 export class DocsDebugging {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'debug-service', title: 'Debug Service' },
-		{ id: 'parse-field-tree', title: 'parseFieldTree()' },
-		{ id: 'mutation-chart', title: 'buildMutationChart()' },
-		{ id: 'normalize-data', title: 'normalizeData()' },
-	];
+  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/debugging/src/lib';
 
-	protected readonly debugServiceCode = `import { provideDumbqlDebugging } from '@dumbql/debugging';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'debug-service', title: 'Debug Service' },
+    { id: 'parse-field-tree', title: 'parseFieldTree()' },
+    { id: 'mutation-chart', title: 'buildMutationChart()' },
+    { id: 'normalize-data', title: 'normalizeData()' },
+  ];
+
+  protected readonly debugServiceCode = `import { provideDumbqlDebugging } from '@dumbql/debugging';
 
 provideDumbqlDebugging({
   logQueries: true,
@@ -32,7 +34,7 @@ provideDumbqlDebugging({
   logMiddleware: true,
 });`;
 
-	protected readonly parseFieldTreeCode = `import { parseFieldTree } from '@dumbql/debugging';
+  protected readonly parseFieldTreeCode = `import { parseFieldTree } from '@dumbql/debugging';
 
 const tree = parseFieldTree(gql\`query {
   books(limit: 10) {
@@ -50,14 +52,14 @@ console.log(tree);
 //   }
 // }`;
 
-	protected readonly mutationChartCode = `import { buildMutationChart } from '@dumbql/debugging';
+  protected readonly mutationChartCode = `import { buildMutationChart } from '@dumbql/debugging';
 
 const chart = buildMutationChart(
   gql\`mutation LikePost($id: ID!) { likePost(id: $id) { id likes } }\`,
 );
 // Returns a structured graph of cache interactions`;
 
-	protected readonly normalizeDataCode = `import { normalizeData } from '@dumbql/debugging';
+  protected readonly normalizeDataCode = `import { normalizeData } from '@dumbql/debugging';
 
 const normalized = normalizeData(
   {

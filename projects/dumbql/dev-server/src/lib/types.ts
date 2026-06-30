@@ -1,0 +1,16 @@
+export type Resolvers = Record<string, Record<string, (parent: any, args: any, context: any, info: any) => any>>;
+
+export interface MockConfig {
+  schema?: string;
+  resolvers?: Resolvers;
+}
+
+export interface ProxyConfig {
+  target: string;
+}
+
+export interface DevServerConfig {
+  mock?: MockConfig;
+  proxy?: ProxyConfig;
+  port?: number;
+}

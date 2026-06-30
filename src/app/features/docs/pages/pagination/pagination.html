@@ -7,19 +7,30 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The pagination package provides helper functions for handling offset-based and
-        cursor-based pagination. These functions work with the cache's type policy
+        The pagination package provides helper functions for handling offset-based and cursor-based pagination. These
+        functions work with the cache's type policy
         <code>merge</code> configuration to append pages seamlessly.
       </p>
     </header>
 
     <h2 appAnchor id="offset-pagination">offsetPagination</h2>
     <p>
-      Use <code>offsetPagination</code> for traditional page-based pagination with
-      <code>page</code> and <code>limit</code> parameters:
+      Use <code>offsetPagination</code> for traditional page-based pagination with <code>page</code> and
+      <code>limit</code> parameters:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; offsetPaginationCode &#125;&#125;</code></pre>
@@ -27,8 +38,8 @@
 
     <h2 appAnchor id="cursor-pagination">cursorPagination</h2>
     <p>
-      Use <code>cursorPagination</code> for relay-style cursor-based pagination with
-      <code>after</code> / <code>before</code> cursors:
+      Use <code>cursorPagination</code> for relay-style cursor-based pagination with <code>after</code> /
+      <code>before</code> cursors:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; cursorPaginationCode &#125;&#125;</code></pre>
@@ -36,8 +47,8 @@
 
     <h2 appAnchor id="merge-functions">Merge Functions</h2>
     <p>
-      Both pagination helpers return a merge function that tells the cache how to
-      combine existing and incoming data. They handle:
+      Both pagination helpers return a merge function that tells the cache how to combine existing and incoming data.
+      They handle:
     </p>
     <ul>
       <li>Appending new items to the existing list</li>
@@ -45,9 +56,7 @@
       <li>Updating <code>pageInfo</code> with the latest cursors</li>
       <li>Respecting <code>__typename</code> for cache normalization</li>
     </ul>
-    <p>
-      You can also write custom merge functions for advanced use cases:
-    </p>
+    <p>You can also write custom merge functions for advanced use cases:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; customMergeCode &#125;&#125;</code></pre>
     </div>

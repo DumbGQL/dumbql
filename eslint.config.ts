@@ -31,7 +31,8 @@ export default tseslint.config(
            './projects/dumbql/testing/tsconfig.lib.json',
            './projects/dumbql/persisted-queries/tsconfig.lib.json',
             './projects/dumbql/middlewares/tsconfig.lib.json',
-            './projects/dumbql/codegen/tsconfig.lib.json',
+             './projects/dumbql/codegen/tsconfig.lib.json',
+             './projects/dumbql/dev-server/tsconfig.lib.json',
           ],
       },
     },
@@ -54,7 +55,7 @@ export default tseslint.config(
       'array-bracket-spacing': 1,
       indent: ['error', 'tab', { ignoredNodes: ['PropertyDefinition'] }],
       semi: 'error',
-      'max-len': ['error', 120],
+      'max-len': ['error', 120, { ignoreStrings: true, ignoreTemplateLiterals: true }],
       'no-trailing-spaces': 'error',
       'no-console': 'error',
       'no-alert': 'error',
@@ -92,6 +93,13 @@ export default tseslint.config(
         'error',
         { type: 'element', prefix: 'dumbql', style: 'kebab-case' },
       ],
+    },
+  },
+  {
+    files: ['projects/dumbql/dev-server/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {

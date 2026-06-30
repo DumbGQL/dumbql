@@ -7,20 +7,30 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The subscriptions package enables real-time data streaming over WebSocket using
-        the <code>graphql-transport-ws</code> protocol. It integrates fully with the
-        DumbQL middleware pipeline so authenticated subscriptions work out of the box.
+        The subscriptions package enables real-time data streaming over WebSocket using the
+        <code>graphql-transport-ws</code> protocol. It integrates fully with the DumbQL middleware pipeline so
+        authenticated subscriptions work out of the box.
       </p>
     </header>
 
     <h2 appAnchor id="graphql-subscription-service">GraphqlSubscriptionService</h2>
     <p>
-      <code>GraphqlSubscriptionService</code> manages WebSocket connections and
-      subscription lifecycles. Install it by calling
-      <code>provideDumbqlSubscriptions</code> with the WebSocket URL:
+      <code>GraphqlSubscriptionService</code> manages WebSocket connections and subscription lifecycles. Install it by
+      calling <code>provideDumbqlSubscriptions</code> with the WebSocket URL:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; provideSubscriptionsCode &#125;&#125;</code></pre>
@@ -28,8 +38,8 @@
 
     <h2 appAnchor id="subscribe">subscribe()</h2>
     <p>
-      Use <code>subscribe()</code> to listen for real-time events. It returns a
-      signal that updates whenever a new event arrives:
+      Use <code>subscribe()</code> to listen for real-time events. It returns a signal that updates whenever a new event
+      arrives:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; subscribeCode &#125;&#125;</code></pre>
@@ -37,15 +47,13 @@
 
     <h2 appAnchor id="graphql-transport-ws">graphql-transport-ws Protocol</h2>
     <p>
-      DumbQL subscriptions implement the <code>graphql-transport-ws</code> protocol
-      (the modern replacement for <code>subscriptions-transport-ws</code>). This
-      provides:
+      DumbQL subscriptions implement the <code>graphql-transport-ws</code> protocol (the modern replacement for
+      <code>subscriptions-transport-ws</code>). This provides:
     </p>
     <ul>
       <li><strong>Single connection multiplexing</strong> — one WebSocket handles many subscriptions</li>
       <li><strong>Auto-reconnect</strong> — with exponential backoff and jitter</li>
-      <li><strong>Connection params</strong> — send auth tokens during the
-        <code>connection_init</code> handshake</li>
+      <li><strong>Connection params</strong> — send auth tokens during the <code>connection_init</code> handshake</li>
       <li><strong>Complete / Error handling</strong> — per-subscription lifecycle callbacks</li>
     </ul>
     <div class="code-block">

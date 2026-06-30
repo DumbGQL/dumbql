@@ -7,29 +7,34 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The downloader package provides a utility for downloading GraphQL schemas
-        via introspection. It saves the result as both <code>schema.json</code>
-        (introspection result) and <code>schema.graphql</code> (SDL format) for use
+        The downloader package provides a utility for downloading GraphQL schemas via introspection. It saves the result
+        as both <code>schema.json</code> (introspection result) and <code>schema.graphql</code> (SDL format) for use
         with code generation tools and IDE support.
       </p>
     </header>
 
     <h2 appAnchor id="download-schema">downloadAndStoreSchema()</h2>
-    <p>
-      Use <code>downloadAndStoreSchema</code> to introspect any GraphQL endpoint
-      and save the schema locally:
-    </p>
+    <p>Use <code>downloadAndStoreSchema</code> to introspect any GraphQL endpoint and save the schema locally:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; downloadSchemaCode &#125;&#125;</code></pre>
     </div>
 
     <h2 appAnchor id="output-structure">Output Structure</h2>
-    <p>
-      The downloader creates the following directory structure:
-    </p>
+    <p>The downloader creates the following directory structure:</p>
     <div class="code-block">
       <pre><code>&#123;&#123; outputStructureCode &#125;&#125;</code></pre>
     </div>

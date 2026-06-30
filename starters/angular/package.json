@@ -2,15 +2,16 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "node mock/server.mjs & ng serve --host 0.0.0.0",
+    "start": "dumbql-dev --proxy http://localhost:4200 & ng serve --host 0.0.0.0",
     "build": "ng build"
   },
   "dependencies": {
     "@angular/core": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/platform-browser-dynamic": "^22.0.0",
-    "@dumbql/client": "^0.0.1",
-    "@dumbql/core": "^0.0.1",
+    "@dumbql/client": "^0.0.3",
+    "@dumbql/core": "^0.0.3",
+    "@dumbql/dev-server": "^0.0.3-rc.1",
     "graphql": "^17.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",

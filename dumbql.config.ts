@@ -2,7 +2,7 @@ import type { DumbqlConfig } from '@dumbql/core';
 
 const config: DumbqlConfig = {
 	// ── Core ────────────────────────────────────────────────────────────────────
-	endpoint: 'http://localhost:4000/graphql',
+	endpoint: '/graphql',
 	errorPolicy: 'none',
 	retryCount: 3,
 	retryDelay: 1000,
@@ -78,7 +78,7 @@ const config: DumbqlConfig = {
 	// ── Codegen (CLI-only, ignored at runtime) ──────────────────────────────────
 	codegen: {
 		schema: {
-			endpoint: 'http://localhost:4000/graphql',
+			endpoint: '/graphql',
 			dir: './graphql',
 			filename: 'schema.json',
 			autoDownload: true,

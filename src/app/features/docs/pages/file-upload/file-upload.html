@@ -7,21 +7,31 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        The file-upload package provides seamless file upload support for GraphQL
-        mutations using the GraphQL multipart request spec. It automatically detects
-        <code>File</code>, <code>Blob</code>, and <code>FileList</code> values in
-        mutation variables and serializes them as multipart/form-data.
+        The file-upload package provides seamless file upload support for GraphQL mutations using the GraphQL multipart
+        request spec. It automatically detects
+        <code>File</code>, <code>Blob</code>, and <code>FileList</code> values in mutation variables and serializes them
+        as multipart/form-data.
       </p>
     </header>
 
     <h2 appAnchor id="upload-service">UploadService</h2>
     <p>
-      <code>UploadService</code> extends the standard mutation pipeline to handle file
-      uploads. The service wraps <code>GraphqlService.mutate()</code> with automatic
-      multipart encoding:
+      <code>UploadService</code> extends the standard mutation pipeline to handle file uploads. The service wraps
+      <code>GraphqlService.mutate()</code> with automatic multipart encoding:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; uploadServiceCode &#125;&#125;</code></pre>
@@ -29,22 +39,22 @@
 
     <h2 appAnchor id="multipart-spec">GraphQL Multipart Request Spec</h2>
     <p>
-      DumbQL implements the <a href="https://github.com/jaydenseric/graphql-multipart-request-spec" target="_blank">GraphQL Multipart Request Spec</a>.
-      When DumbQL detects <code>File</code>, <code>Blob</code>, or
-      <code>FileList</code> values in variables, it automatically switches from
-      JSON <code>application/json</code> to <code>multipart/form-data</code>
+      DumbQL implements the
+      <a href="https://github.com/jaydenseric/graphql-multipart-request-spec" target="_blank"
+        >GraphQL Multipart Request Spec</a
+      >. When DumbQL detects <code>File</code>, <code>Blob</code>, or <code>FileList</code> values in variables, it
+      automatically switches from JSON <code>application/json</code> to <code>multipart/form-data</code>
       encoding.
     </p>
     <p>
-      Each file is mapped to a <code>null</code> placeholder in the operations
-      JSON and appended as a separate part in the multipart body, exactly as the
-      spec requires.
+      Each file is mapped to a <code>null</code> placeholder in the operations JSON and appended as a separate part in
+      the multipart body, exactly as the spec requires.
     </p>
 
     <h2 appAnchor id="auto-detection">Auto File / Blob Detection</h2>
     <p>
-      The detection walks the variables object tree recursively. Nested objects,
-      arrays, and <code>FileList</code> are handled transparently:
+      The detection walks the variables object tree recursively. Nested objects, arrays, and <code>FileList</code> are
+      handled transparently:
     </p>
     <div class="code-block">
       <pre><code>&#123;&#123; autoFileDetectionCode &#125;&#125;</code></pre>

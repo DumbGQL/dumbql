@@ -6,22 +6,25 @@ import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-persisted-queries',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './persisted-queries.html',
-	styleUrl: './persisted-queries.scss',
+  selector: 'app-docs-persisted-queries',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './persisted-queries.html',
+  styleUrl: './persisted-queries.scss',
 })
 export class DocsPersistedQueries {
-	protected readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
 
-	protected readonly tocSections: TocSection[] = [
-		{ id: 'apq-middleware', title: 'APQ Middleware' },
-		{ id: 'wire-format', title: 'Wire Format' },
-	];
+  protected readonly githubUrl =
+    'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/persisted-queries/src/lib';
 
-	protected readonly apqMiddlewareCode = `import { apqMiddleware } from '@dumbql/persisted-queries';
+  protected readonly tocSections: TocSection[] = [
+    { id: 'apq-middleware', title: 'APQ Middleware' },
+    { id: 'wire-format', title: 'Wire Format' },
+  ];
+
+  protected readonly apqMiddlewareCode = `import { apqMiddleware } from '@dumbql/persisted-queries';
 import { composeMiddlewares, createHttpLink } from '@dumbql/core';
 
 const link = composeMiddlewares(
@@ -29,7 +32,7 @@ const link = composeMiddlewares(
   createHttpLink({ uri: '/graphql' }),
 );`;
 
-	protected readonly sha256HashCode = `// What gets sent on the wire:
+  protected readonly sha256HashCode = `// What gets sent on the wire:
 {
   "operationName": "Books",
   "extensions": {

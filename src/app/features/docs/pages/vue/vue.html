@@ -7,12 +7,22 @@
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Vue 3+</span>
           <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            tuiLink
+            appearance="icon"
+            class="github-link"
+            style="margin-left: 0.5rem; font-size: 0.8125rem"
+          >
+            Source
+          </a>
         </div>
       </div>
       <p class="lead">
-        Vue composables for <code>@dumbql/client</code>. Provides <code>useQuery</code>,
-        <code>useMutation</code>, <code>useSubscription</code>, and a Vue plugin
-        (<code>createDumbqlPlugin</code>) for global client registration.
+        Vue composables for <code>@dumbql/client</code>. Provides <code>useQuery</code>, <code>useMutation</code>,
+        <code>useSubscription</code>, and a Vue plugin (<code>createDumbqlPlugin</code>) for global client registration.
       </p>
     </header>
 
@@ -25,8 +35,8 @@
 
     <h3>useQuery</h3>
     <p>
-      Reactive query composable. Returns <code>&#123; data, loading, error, refetch &#125;</code>.
-      All values are Vue <code>ref</code>s. Supports <code>onServerPrefetch</code> for SSR.
+      Reactive query composable. Returns <code>&#123; data, loading, error, refetch &#125;</code>. All values are Vue
+      <code>ref</code>s. Supports <code>onServerPrefetch</code> for SSR.
     </p>
 
     <h3>useMutation</h3>
@@ -40,21 +50,39 @@
     </div>
 
     <h2 appAnchor id="plugin">Vue Plugin</h2>
-    <p>
-      Register <code>@dumbql/client</code> globally with <code>createDumbqlPlugin</code>:
-    </p>
+    <p>Register <code>@dumbql/client</code> globally with <code>createDumbqlPlugin</code>:</p>
     <div class="code-block">
       <pre><code>{{ pluginCode }}</code></pre>
     </div>
 
     <table>
-      <thead><tr><th>Export</th><th>Description</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Export</th>
+          <th>Description</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td><code>createDumbqlPlugin(client)</code></td><td>Vue plugin — installs client globally</td></tr>
-        <tr><td><code>useClient()</code></td><td>Access <code>DumbqlClient</code> from composition API</td></tr>
-        <tr><td><code>useQuery(doc, vars?, opts?)</code></td><td>Reactive query</td></tr>
-        <tr><td><code>useMutation(doc)</code></td><td>Mutation composable</td></tr>
-        <tr><td><code>useSubscription(doc, vars?, opts?)</code></td><td>Subscription composable</td></tr>
+        <tr>
+          <td><code>createDumbqlPlugin(client)</code></td>
+          <td>Vue plugin — installs client globally</td>
+        </tr>
+        <tr>
+          <td><code>useClient()</code></td>
+          <td>Access <code>DumbqlClient</code> from composition API</td>
+        </tr>
+        <tr>
+          <td><code>useQuery(doc, vars?, opts?)</code></td>
+          <td>Reactive query</td>
+        </tr>
+        <tr>
+          <td><code>useMutation(doc)</code></td>
+          <td>Mutation composable</td>
+        </tr>
+        <tr>
+          <td><code>useSubscription(doc, vars?, opts?)</code></td>
+          <td>Subscription composable</td>
+        </tr>
       </tbody>
     </table>
   </div>

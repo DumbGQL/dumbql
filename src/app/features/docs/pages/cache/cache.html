@@ -14,20 +14,31 @@
             <span tuiBadge appearance="primary" size="s">Stable</span>
             <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
             <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
+            <a
+              [href]="githubUrl"
+              target="_blank"
+              rel="noopener"
+              tuiLink
+              appearance="icon"
+              class="github-link"
+              style="margin-left: 0.5rem; font-size: 0.8125rem"
+            >
+              Source
+            </a>
           </div>
         </div>
         <p class="lead">
-          The cache package provides a normalized, in-memory cache for GraphQL data.
-          It uses a key-value document store where every object is normalized by its
-          <code>__typename</code> + <code>id</code> (or a custom key function), avoiding
-          data duplication and enabling automatic updates.
+          The cache package provides a normalized, in-memory cache for GraphQL data. It uses a key-value document store
+          where every object is normalized by its
+          <code>__typename</code> + <code>id</code> (or a custom key function), avoiding data duplication and enabling
+          automatic updates.
         </p>
       </header>
 
       <h2 appAnchor id="normalized-cache">NormalizedCache</h2>
       <p>
-        <code>NormalizedCache</code> is the low-level store. It stores entities in a flat
-        dictionary keyed by <code>TypeName:id</code> and references them from query results:
+        <code>NormalizedCache</code> is the low-level store. It stores entities in a flat dictionary keyed by
+        <code>TypeName:id</code> and references them from query results:
       </p>
       <div class="code-block">
         <pre><code>&#123;&#123; normalizedCacheCode &#125;&#125;</code></pre>
@@ -35,9 +46,8 @@
 
       <h2 appAnchor id="cache-service">CacheService</h2>
       <p>
-        <code>CacheService</code> wraps <code>NormalizedCache</code> as an Angular
-        injectable and integrates with <code>GraphqlService</code> automatically.
-        Install it using <code>provideDumbqlCache</code>:
+        <code>CacheService</code> wraps <code>NormalizedCache</code> as an Angular injectable and integrates with
+        <code>GraphqlService</code> automatically. Install it using <code>provideDumbqlCache</code>:
       </p>
       <div class="code-block">
         <pre><code>&#123;&#123; cacheServiceCode &#125;&#125;</code></pre>
@@ -53,27 +63,22 @@
       </div>
 
       <h2 appAnchor id="persistence">Persistence</h2>
-      <p>
-        Cache data can be persisted to <code>localStorage</code>,
-        <code>sessionStorage</code>, or a custom store:
-      </p>
+      <p>Cache data can be persisted to <code>localStorage</code>, <code>sessionStorage</code>, or a custom store:</p>
       <div class="code-block">
         <pre><code>&#123;&#123; persistenceCode &#125;&#125;</code></pre>
       </div>
 
       <h2 appAnchor id="optimistic-updates">Optimistic Updates</h2>
       <p>
-        Mutations can provide an optimistic response that is immediately reflected in
-        the cache and rolled back if the server returns an error:
+        Mutations can provide an optimistic response that is immediately reflected in the cache and rolled back if the
+        server returns an error:
       </p>
       <div class="code-block">
         <pre><code>&#123;&#123; optimisticCode &#125;&#125;</code></pre>
       </div>
 
       <h2 appAnchor id="type-policies">Type Policies</h2>
-      <p>
-        Customize how specific types are normalized, merged, or read from cache:
-      </p>
+      <p>Customize how specific types are normalized, merged, or read from cache:</p>
       <div class="code-block">
         <pre><code>&#123;&#123; typePoliciesCode &#125;&#125;</code></pre>
       </div>

@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, afterEveryRender, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, ChangeDetectionStrategy, afterEveryRender, computed, effect, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import hljs from 'highlight.js';
 import { VersionService } from '../../shared/services/version.service';
 
@@ -19,12 +19,22 @@ interface NavItem {
 })
 export class DocsPage {
   private readonly versionService = inject(VersionService);
+  private readonly router = inject(Router);
 
   constructor() {
     afterEveryRender(() => {
       const blocks = document.querySelectorAll('.docs-content pre code:not(.hljs)');
       if (blocks.length) {
         blocks.forEach((b) => hljs.highlightElement(b as HTMLElement));
+      }
+    });
+
+    effect(() => {
+      this.versionService.currentVersion();
+      const child = this.router.routerState.root.firstChild?.firstChild?.firstChild;
+      const since = child?.snapshot.data['since'] as string | undefined;
+      if (since && !this.versionService.isVersionAtLeast(since)) {
+        this.router.navigateByUrl('/docs/overview');
       }
     });
   }

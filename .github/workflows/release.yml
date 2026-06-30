@@ -16,17 +16,27 @@ on:
           - minor
           - major
       stable_tag:
-        description: 'npm dist-tag for all packages'
+        description: 'npm dist-tag for packages not published as rc'
         required: true
         default: 'latest'
         type: string
-      rc_packages:
-        description: 'Packages to publish with "rc" tag instead of stable (one per line). Example: @dumbql/dev-server'
+      rc_dev_server:
+        description: 'Publish @dumbql/dev-server with "rc" tag'
+        required: false
+        default: true
+        type: boolean
+      rc_testing:
+        description: 'Publish @dumbql/testing with "rc" tag'
+        required: false
+        default: false
+        type: boolean
+      rc_custom:
+        description: 'Other packages to publish as rc (one per line, e.g. @dumbql/cache)'
         required: false
         default: ''
         type: string
       skip_packages:
-        description: 'Packages to skip entirely (one per line). Example: @dumbql/testing'
+        description: 'Packages to skip entirely (one per line)'
         required: false
         default: ''
         type: string
@@ -82,19 +92,27 @@ jobs:
 
       - name: Publish to npm
         env:
-          RC_PKGS: ${{ inputs.rc_packages }}
+          RC_DEV_SERVER: ${{ inputs.rc_dev_server }}
+          RC_TESTING: ${{ inputs.rc_testing }}
+          RC_CUSTOM: ${{ inputs.rc_custom }}
           SKIP_PKGS: ${{ inputs.skip_packages }}
           STABLE_TAG: ${{ inputs.stable_tag }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Read rc packages into array (strip whitespace, skip empty lines)
+          # Build rc package name list from boolean + custom inputs
           RC_LIST=()
-          if [ -n "$RC_PKGS" ]; then
+          if [ "$RC_DEV_SERVER" = "true" ]; then
+            RC_LIST+=("@dumbql/dev-server")
+          fi
+          if [ "$RC_TESTING" = "true" ]; then
+            RC_LIST+=("@dumbql/testing")
+          fi
+          if [ -n "$RC_CUSTOM" ]; then
             while IFS= read -r line; do
               line="$(echo "$line" | xargs)"
               [ -z "$line" ] && continue
               RC_LIST+=("$line")
-            done <<< "$RC_PKGS"
+            done <<< "$RC_CUSTOM"
           fi
 
           # Read skip packages into associative array
@@ -111,13 +129,11 @@ jobs:
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
 
-              # Skip?
               if [ "${SKIP_MAP[$name]}" = "1" ]; then
                 echo "  ⏭️  Skipping $name"
                 continue
               fi
 
-              # Determine tag
               tag="$STABLE_TAG"
               for rc_pkg in "${RC_LIST[@]}"; do
                 if [ "$rc_pkg" = "$name" ]; then

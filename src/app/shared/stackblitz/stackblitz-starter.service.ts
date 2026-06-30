@@ -129,7 +129,8 @@ const angularProject: Project = {
     'src/index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Angular</title>\n  <base href="/">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>',
     'src/styles.css': 'body { font-family: system-ui, sans-serif; padding: 1rem; }',
-    'src/main.ts': `import { bootstrapApplication } from '@angular/platform-browser';
+    'src/main.ts': `import 'zone.js';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 

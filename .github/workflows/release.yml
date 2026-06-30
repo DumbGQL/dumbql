@@ -214,23 +214,23 @@ jobs:
 
       - name: Extract changelog entry
         id: changelog
-        env:
-          TAG: ${{ steps.tag.outputs.name }}
         run: |
-          VER="${TAG#v}"
-          node -e "
-            const fs = require('fs');
-            const c = fs.readFileSync('CHANGELOG.md','utf-8').split('\n');
-            let s = false;
-            const b = [];
-            const re = new RegExp('^##\\\\s+\\\\[$VER\\\\]');
-            for (const l of c) {
-              const n = l.match(/^##\s+\[/);
-              if (l.match(re)) { s = true; continue; }
-              if (s && n) break;
-              if (s) b.push(l);
+          TAG="${{ steps.tag.outputs.name }}"
+          export VER="${TAG#v}"
+          node --input-type=module -e "
+            import { readFileSync, writeFileSync } from 'node:fs';
+            const ver = process.env.VER;
+            const lines = readFileSync('CHANGELOG.md','utf-8').split('\n');
+            let inside = false;
+            const body = [];
+            const headerRe = /^##\s+\[/;
+            const versionRe = new RegExp('^##\\\\s+\\\\[' + ver.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\]');
+            for (const l of lines) {
+              if (l.match(versionRe)) { inside = true; continue; }
+              if (inside && l.match(headerRe)) break;
+              if (inside) body.push(l);
             }
-            fs.writeFileSync('release_body.md', b.join('\n').trim());
+            writeFileSync('release_body.md', (body.join('\n').trim()) || 'No changelog entry found for ' + ver);
           "
 
       - name: Create GitHub Release

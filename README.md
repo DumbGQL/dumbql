@@ -3,6 +3,7 @@
 > **Framework-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, React, and Vue — not ported from another framework. Zero-boilerplate. Signals-ready.**
 
 **If you're tired of:**
+
 > - Framework bindings that lag 6 months behind every major release
 > - Fighting React idioms (`MockedProvider`, render props) in Angular tests
 > - Installing 3 third-party packages just to upload a file
@@ -26,6 +27,7 @@
 ## Quick Start
 
 **Angular:**
+
 ```bash
 ng new my-app --standalone
 ng add @dumbql/core
@@ -33,6 +35,7 @@ npm start
 ```
 
 **React:**
+
 ```bash
 git clone https://github.com/DumbGQL/dumbql
 cd dumbql/starters/react
@@ -40,6 +43,7 @@ npm install && npm start
 ```
 
 **Vue:**
+
 ```bash
 git clone https://github.com/DumbGQL/dumbql
 cd dumbql/starters/vue
@@ -47,6 +51,7 @@ npm install && npm start
 ```
 
 **Or open in StackBlitz:**
+
 - [Angular](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular)
 - [React](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react)
 - [Vue](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue)
@@ -57,10 +62,7 @@ import { provideDumbql } from '@dumbql/core';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig = {
-  providers: [
-    provideHttpClient(),
-    provideDumbql({ endpoint: '/graphql' }),
-  ],
+  providers: [provideHttpClient(), provideDumbql({ endpoint: '/graphql' })],
 };
 ```
 
@@ -68,7 +70,15 @@ export const appConfig = {
 // user.component.ts
 import { GraphqlService, gql, isSuccess } from '@dumbql/core';
 
-const GET_USER = gql`{ getUser { id name email } }`;
+const GET_USER = gql`
+  {
+    getUser {
+      id
+      name
+      email
+    }
+  }
+`;
 
 @Component({
   selector: 'app-user',
@@ -83,6 +93,7 @@ export class UserComponent {
 > **That's it.** No `ApolloModule.forRoot()`. No `graphql-tag` dependency. No framework wrappers. Just your framework.
 
 **Why developers add DumbQL:**
+
 > - **Auto mock** — prototype without a backend. `autoMockMiddleware()` generates realistic data from your schema
 > - **Prefetch** — `prefetchedRoute()` resolves GraphQL data **before** Angular activates the route
 > - **Playground** — built-in GraphQL query editor at `/playground` in the docs site
@@ -95,6 +106,7 @@ export class UserComponent {
 Most GraphQL clients are built for one framework and awkwardly ported to others. DumbQL started as a framework-native library from day one — Angular-first, then React and Vue.
 
 **You should choose DumbQL if you value:**
+
 - **Zero boilerplate normalized cache** — no `typePolicies`, no `keyFields`, no `merge` functions. Just `__typename` + `id` and it works.
 - **Built-in middleware ecosystem** — auth refresh, retry, offline queue, auto mock, APQ, batching. No third-party packages needed.
 - **Framework-native design** — Angular Signals, React hooks v2 with options object, Vue composables. Not wrappers around a core — each framework gets its own ergonomic API.
@@ -104,6 +116,7 @@ Most GraphQL clients are built for one framework and awkwardly ported to others.
 - **Live Queries** — `useLiveQuery` for real-time data with WebSocket fallback. First-class support across all frameworks.
 
 **And you should NOT choose DumbQL if:**
+
 - You need a mature ecosystem with 1000+ community packages (Apollo has this)
 - You're tied to Relay's compiler-based data masking
 - You prefer one massive all-in-one package over modular composition
@@ -112,54 +125,54 @@ Most GraphQL clients are built for one framework and awkwardly ported to others.
 
 ## What DumbQL Does That Others Can't
 
-| Feature | Apollo Angular | `graphql-request` | URQL | Relay | **DumbQL** | Why it matters |
-|---|---|---|---|---|---|---|---|
-| **Angular-native (not a React port)** | ❌ Port of `@apollo/client` — lags behind React releases | ❌ Fetch-based, no framework integration | ❌ React-first — Angular is community-maintained | ❌ React-only — no Angular support at all | **✅ Built for Angular from day one** | Same-day Angular 22+ support. No waiting for React compatibility fixes |
-| **Signals support** | ❌ RxJS only — no Signals integration | ❌ Not applicable | ❌ Wonka streams only | ❌ No reactive primitives | **✅ `query()` returns `Signal<T>`** | Zone-less Angular. Fine-grained reactivity. Less boilerplate |
-| **File uploads** | ❌ Requires `apollo-upload-client` (unmaintained) | ❌ Manual FormData | ❌ Requires `@urql/exchange-multipart` | ❌ Not supported | **✅ `@dumbql/file-upload`** | One `npm install`. Auto `File`/`Blob` detection |
-| **Offline mutation queue** | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ `offlineQueueMiddleware`** | Queue to localStorage. Auto-replay on reconnect |
-| **Auth refresh middleware** | ❌ Manual custom Link | ❌ Not built-in | ⚠️ `@urql/exchange-auth` | ❌ Custom network layer | **✅ `authRefreshMiddleware`** | Queues pending requests during refresh. Retry support |
-| **Testing utilities** | ❌ `MockedProvider` (React wrapper in Angular tests) | ❌ Manual mock | ❌ No Angular test utils | ❌ No Angular test utils | **✅ `@dumbql/testing`** | `MockGraphqlService` plugs into `TestBed`. FIFO queue |
-| **Built-in debugging (no browser extension)** | ❌ Requires Chrome Apollo DevTools | ❌ Not built-in | ❌ Requires URQL DevTools | ❌ Requires Relay DevTools | **✅ `@dumbql/debugging`** | Query tree, timing chart, entity inspector — in-app. No extension needed |
-| **Schema downloader CLI** | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ `@dumbql/downloader`** | `npm run schema:download` — one command |
-| **Persisted queries (SHA-256 APQ)** | ❌ Requires `apollo-link-persisted-queries` | ❌ Not built-in | ⚠️ Built-in | ✅ Built-in | **✅ Built-in** | Smaller network payloads. Automatic fallback on hash miss |
-| **Zero-config normalized cache** | ❌ Complex `typePolicies` setup needed | ❌ No cache | ❌ Document cache by default | ❌ Requires `Node` interface + `Connection` spec | **✅ Auto `__typename:id` normalization** | Works out of the box. No schema changes required |
-| **Request batching** | ❌ Requires separate link | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ Built-in (configurable window)** | Fewer HTTP requests. 50ms default batch window |
-| **Optimistic updates with snapshot rollback** | ❌ Complex with cache.evict | ❌ Not built-in | ❌ Not built-in | ✅ Built-in | **✅ Cache snapshot/commit/rollback** | Safe optimistic UI. One method to roll back all changes |
-| **CLI setup (`ng add`)** | ✅ Since Apollo Angular v9 | ❌ Not applicable | ❌ Not applicable | ❌ Not applicable | **✅ `ng add @dumbql/core`** | Interactive prompts. Auto-generates config file |
-| **Auto mock (no backend needed)** | ❌ Not built-in. Manual mocking per test | ❌ Not built-in | ❌ Not built-in | ❌ Not built-in | **✅ `autoMockMiddleware`** | Schema → mock data. Zero-config prototyping. Optional passthrough |
-| **Router data prefetch** | ❌ Complex custom resolvers | ❌ Not built-in | ❌ Not built-in | ✅ Relay compiler handles this | **✅ `prefetchedRoute()`** | Angular Router resolver. Data ready before component renders |
-| **GraphQL Playground (in-app)** | ❌ Separate Apollo Studio | ❌ Not built-in | ❌ Separate GraphQL playground | ❌ Requires separate tools | **✅ `/playground` route** | Interactive query editor with history. Built into docs site |
-| **React + Vue + Angular** | ⚠️ Angular port lags behind React | ❌ Fetch API only (no framework binding) | ❌ React-first, Angular community-maintained | ❌ React-only | **✅ First-class bindings** | Same core, same DX across all frameworks. One StackBlitz per framework |
+| Feature                                       | Apollo Angular                                           | `graphql-request`                        | URQL                                             | Relay                                            | **DumbQL**                                | Why it matters                                                           |
+| --------------------------------------------- | -------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------ | ------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------ |
+| **Angular-native (not a React port)**         | ❌ Port of `@apollo/client` — lags behind React releases | ❌ Fetch-based, no framework integration | ❌ React-first — Angular is community-maintained | ❌ React-only — no Angular support at all        | **✅ Built for Angular from day one**     | Same-day Angular 22+ support. No waiting for React compatibility fixes   |
+| **Signals support**                           | ❌ RxJS only — no Signals integration                    | ❌ Not applicable                        | ❌ Wonka streams only                            | ❌ No reactive primitives                        | **✅ `query()` returns `Signal<T>`**      | Zone-less Angular. Fine-grained reactivity. Less boilerplate             |
+| **File uploads**                              | ❌ Requires `apollo-upload-client` (unmaintained)        | ❌ Manual FormData                       | ❌ Requires `@urql/exchange-multipart`           | ❌ Not supported                                 | **✅ `@dumbql/file-upload`**              | One `npm install`. Auto `File`/`Blob` detection                          |
+| **Offline mutation queue**                    | ❌ Not built-in                                          | ❌ Not built-in                          | ❌ Not built-in                                  | ❌ Not built-in                                  | **✅ `offlineQueueMiddleware`**           | Queue to localStorage. Auto-replay on reconnect                          |
+| **Auth refresh middleware**                   | ❌ Manual custom Link                                    | ❌ Not built-in                          | ⚠️ `@urql/exchange-auth`                         | ❌ Custom network layer                          | **✅ `authRefreshMiddleware`**            | Queues pending requests during refresh. Retry support                    |
+| **Testing utilities**                         | ❌ `MockedProvider` (React wrapper in Angular tests)     | ❌ Manual mock                           | ❌ No Angular test utils                         | ❌ No Angular test utils                         | **✅ `@dumbql/testing`**                  | `MockGraphqlService` plugs into `TestBed`. FIFO queue                    |
+| **Built-in debugging (no browser extension)** | ❌ Requires Chrome Apollo DevTools                       | ❌ Not built-in                          | ❌ Requires URQL DevTools                        | ❌ Requires Relay DevTools                       | **✅ `@dumbql/debugging`**                | Query tree, timing chart, entity inspector — in-app. No extension needed |
+| **Schema downloader CLI**                     | ❌ Not built-in                                          | ❌ Not built-in                          | ❌ Not built-in                                  | ❌ Not built-in                                  | **✅ `@dumbql/downloader`**               | `npm run schema:download` — one command                                  |
+| **Persisted queries (SHA-256 APQ)**           | ❌ Requires `apollo-link-persisted-queries`              | ❌ Not built-in                          | ⚠️ Built-in                                      | ✅ Built-in                                      | **✅ Built-in**                           | Smaller network payloads. Automatic fallback on hash miss                |
+| **Zero-config normalized cache**              | ❌ Complex `typePolicies` setup needed                   | ❌ No cache                              | ❌ Document cache by default                     | ❌ Requires `Node` interface + `Connection` spec | **✅ Auto `__typename:id` normalization** | Works out of the box. No schema changes required                         |
+| **Request batching**                          | ❌ Requires separate link                                | ❌ Not built-in                          | ❌ Not built-in                                  | ❌ Not built-in                                  | **✅ Built-in (configurable window)**     | Fewer HTTP requests. 50ms default batch window                           |
+| **Optimistic updates with snapshot rollback** | ❌ Complex with cache.evict                              | ❌ Not built-in                          | ❌ Not built-in                                  | ✅ Built-in                                      | **✅ Cache snapshot/commit/rollback**     | Safe optimistic UI. One method to roll back all changes                  |
+| **CLI setup (`ng add`)**                      | ✅ Since Apollo Angular v9                               | ❌ Not applicable                        | ❌ Not applicable                                | ❌ Not applicable                                | **✅ `ng add @dumbql/core`**              | Interactive prompts. Auto-generates config file                          |
+| **Auto mock (no backend needed)**             | ❌ Not built-in. Manual mocking per test                 | ❌ Not built-in                          | ❌ Not built-in                                  | ❌ Not built-in                                  | **✅ `autoMockMiddleware`**               | Schema → mock data. Zero-config prototyping. Optional passthrough        |
+| **Router data prefetch**                      | ❌ Complex custom resolvers                              | ❌ Not built-in                          | ❌ Not built-in                                  | ✅ Relay compiler handles this                   | **✅ `prefetchedRoute()`**                | Angular Router resolver. Data ready before component renders             |
+| **GraphQL Playground (in-app)**               | ❌ Separate Apollo Studio                                | ❌ Not built-in                          | ❌ Separate GraphQL playground                   | ❌ Requires separate tools                       | **✅ `/playground` route**                | Interactive query editor with history. Built into docs site              |
+| **React + Vue + Angular**                     | ⚠️ Angular port lags behind React                        | ❌ Fetch API only (no framework binding) | ❌ React-first, Angular community-maintained     | ❌ React-only                                    | **✅ First-class bindings**               | Same core, same DX across all frameworks. One StackBlitz per framework   |
 
 ---
 
 ## Comparison: Why Not Apollo, URQL, or Relay?
 
-| Problem | Apollo Client | `graphql-request` | URQL | Relay | **DumbQL** |
-|---|---|---|---|---|---|---|
-| **Bundle Size** | ~50KB+ gzipped — heavy default with `graphql-tag` re-exports preventing tree-shaking | **~5KB** — minimal, fetch-only | ~10KB base, but normalized cache is separate (+8KB) | ~45KB (66KB with React bindings) | **~10KB core**. Modular packages — only load what you use. No tree-shaking issues |
+| Problem                         | Apollo Client                                                                                      | `graphql-request`                                 | URQL                                                                                                             | Relay                                                                                      | **DumbQL**                                                                                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Bundle Size**                 | ~50KB+ gzipped — heavy default with `graphql-tag` re-exports preventing tree-shaking               | **~5KB** — minimal, fetch-only                    | ~10KB base, but normalized cache is separate (+8KB)                                                              | ~45KB (66KB with React bindings)                                                           | **~10KB core**. Modular packages — only load what you use. No tree-shaking issues                                                                         |
 | **Cache Update After Mutation** | Manual `cache.modify`/`update`/`refetchQueries` on every mutation. Easy to forget, causes stale UI | ❌ No cache — manual refetch after every mutation | Auto-invalidates queries with same types — but can over-invalidate (v7 bug) causing unnecessary network requests | Automatic via updaters + compiler — but requires strict Connection/Node schema conventions | **Dual strategy**: cache middleware auto-extracts entities and merges them. Mutations evict related cache keys forcing refetch. No manual `update` needed |
-| **Normalized Cache Setup** | Complex `typePolicies` with `keyFields`, `merge` functions for every type | ❌ No cache | Document cache default is too simple. Graphcache requires separate package + schema config | Built-in but requires global ID (Node interface) + Connection spec | **Zero-config**: `__typename` + `id`/`_id` auto-detection. Automatic entity normalization and merge. Optional `typePolicies` for advanced cases |
-| **Pagination** | Manual `relayStylePagination()` + custom merge logic per field | ❌ Not built-in | No built-in pagination — custom logic required | Connection spec only — rigid, non-negotiable | **Built-in cursor + offset pagination** helpers with merge functions. Configurable limit, debounce |
-| **Offline Support** | Requires `apollo-cache-persist` (third-party). No mutation queue | ❌ Not built-in | Requires `@urql/exchange-graphcache` + storage layer. Mutation queue needs custom logic | `react-relay-offline` adds 16KB. Best offline mutations | **Built-in offline queue middleware**. Queue persistence to localStorage. Auto-replay on reconnect. Configurable max queue size |
-| **Auth Token Refresh** | No built-in refresh flow. Requires custom `Link` | ❌ Not built-in | `@urql/exchange-auth` | Custom network layer | **Built-in `authRefreshMiddleware`**. Queues pending requests during refresh. Customizable trigger statuses, retry attempts, header name |
-| **DevTools** | Apollo DevTools (Google Chrome extension). Requires GraphOS for advanced features | ❌ Not built-in | URQL DevTools (basic) | Relay DevTools (basic) | **Built-in browser extension** (Chrome + Firefox). Schema visualization, request timeline, entity inspection, field tree parsing |
-| **File Uploads** | Requires `apollo-upload-client` (third-party) | ❌ Manual FormData | Built-in via `@urql/exchange-multipart` | Not supported | **Built-in `UploadService`**. Full GraphQL multipart request spec. Auto-detection of `File`/`Blob` in variables |
-| **Type Safety** | Optional codegen. Runtime type inference | ❌ Manual typing | Optional codegen. Simple generics | Compiler-generated (best-in-class but requires build step) | **Typed `DocumentNode`**. Phantom types for result + variables. Custom codegen CLI. Generated types from introspection JSON |
-| **SSR** | Full support but manual transfer state setup | ❌ Not built-in | Good support | Built-in but React-only | **SSR streaming + `TransferState` integration**. Server-to-browser cache transfer. Platform-aware save/restore |
-| **Subscriptions** | Supported via WebSocket (`subscriptions-transport-ws`/`graphql-ws`) | ❌ Not built-in | Separate `@urql/exchange-subscriptions` | Limited | **Built-in `GraphqlSubscriptionService`**. `graphql-transport-ws` protocol. Standalone `subscribe()` function. DevTools integration |
-| **Error Handling** | `errorPolicy` (`none`/`all`/`ignore`) — but type narrowing is tricky (`data` can be `undefined`) | ❌ Manual try/catch | Error policy via exchanges. `data: null` on schema mismatch | Error boundaries + Suspense | **Three error policies**. Optional notification service integration (Taiga UI, Material, etc.). Type-safe `GraphQLResult<T>` discriminated union |
-| **Reactive Local State** | Reactive variables (since v3) | ❌ Not built-in | No built-in. Must use external state | `RelayStore` but server-data only | **`ReactiveVar` / `makeVar()`** — wraps `BehaviorSubject`. Client directive middleware for `@client` fields. Local resolver support |
-| **Persisted Queries (APQ)** | `apollo-link-persisted-queries` (third-party) | ❌ Not built-in | `@urql/exchange-persisted` | Built-in (auto-generated by compiler) | **Built-in `apqMiddleware`**. SHA-256 hashing with fallback. Automatic hash registration on `PersistedQueryNotFound` |
-| **Retry Logic** | Built-in `RetryLink` (exponential backoff) | ❌ Not built-in | `@urql/exchange-retry` | Built-in | **Built-in `retryExchange`** with exponential backoff + jitter. Custom `shouldRetry` callback. Configurable exponent, max delay |
-| **Focus Refetch** | Not built-in. Requires custom implementation | ❌ Not built-in | `@urql/exchange-refocus` | Not built-in | **Built-in `focusRefetchMiddleware`**. `visibilitychange` + `window.focus` support. Configurable stale time |
-| **Request Batching** | `apollo-link-batch-http` | ❌ Not built-in | Not built-in | Third-party | **Built-in batching**. Configurable `batchWindow` (default 50ms). Automatic batch flush |
-| **Request Deduplication** | Built-in | ❌ Not built-in | Not built-in | Not needed (compiler) | **Built-in dedup**. `shareReplay(1)`-based. Automatic cache key management |
-| **Testing** | `MockedProvider` + `MockLink` — complex setup | ❌ Manual mocking | `mockExchange` | `RelayMockEnvironment` — steep learning curve | **`MockGraphqlService`**. Simple `when(query, result)` API. FIFO response queue. Optional simulated delay |
-| **Angular Integration** | React-first port (Apollo Angular is a wrapper). Lags behind React version | ❌ Not applicable (fetch-only) | React-only | React-only | **Angular-native**. Standalone components, Signals-compatible, SSR with `TransferState`, `@Injectable` services, pipes, `ng add` schematics |
-| **CLI Setup** | Create client manually (ng-add added in v9) | ❌ Not applicable | Create client manually | Requires compiler setup | **`ng add @dumbql/core`**. Interactive prompts. Auto-generates `dumbql.config.ts` |
-| **Learning Curve** | Moderate (basic) → Steep (advanced cache) | **Lowest** — just fetch() calls | Low — most approachable | Very steep (3-5x Apollo) | **Low**. Familiar `HttpClient`-based. Intuitive discriminated union results |
+| **Normalized Cache Setup**      | Complex `typePolicies` with `keyFields`, `merge` functions for every type                          | ❌ No cache                                       | Document cache default is too simple. Graphcache requires separate package + schema config                       | Built-in but requires global ID (Node interface) + Connection spec                         | **Zero-config**: `__typename` + `id`/`_id` auto-detection. Automatic entity normalization and merge. Optional `typePolicies` for advanced cases           |
+| **Pagination**                  | Manual `relayStylePagination()` + custom merge logic per field                                     | ❌ Not built-in                                   | No built-in pagination — custom logic required                                                                   | Connection spec only — rigid, non-negotiable                                               | **Built-in cursor + offset pagination** helpers with merge functions. Configurable limit, debounce                                                        |
+| **Offline Support**             | Requires `apollo-cache-persist` (third-party). No mutation queue                                   | ❌ Not built-in                                   | Requires `@urql/exchange-graphcache` + storage layer. Mutation queue needs custom logic                          | `react-relay-offline` adds 16KB. Best offline mutations                                    | **Built-in offline queue middleware**. Queue persistence to localStorage. Auto-replay on reconnect. Configurable max queue size                           |
+| **Auth Token Refresh**          | No built-in refresh flow. Requires custom `Link`                                                   | ❌ Not built-in                                   | `@urql/exchange-auth`                                                                                            | Custom network layer                                                                       | **Built-in `authRefreshMiddleware`**. Queues pending requests during refresh. Customizable trigger statuses, retry attempts, header name                  |
+| **DevTools**                    | Apollo DevTools (Google Chrome extension). Requires GraphOS for advanced features                  | ❌ Not built-in                                   | URQL DevTools (basic)                                                                                            | Relay DevTools (basic)                                                                     | **Built-in browser extension** (Chrome + Firefox). Schema visualization, request timeline, entity inspection, field tree parsing                          |
+| **File Uploads**                | Requires `apollo-upload-client` (third-party)                                                      | ❌ Manual FormData                                | Built-in via `@urql/exchange-multipart`                                                                          | Not supported                                                                              | **Built-in `UploadService`**. Full GraphQL multipart request spec. Auto-detection of `File`/`Blob` in variables                                           |
+| **Type Safety**                 | Optional codegen. Runtime type inference                                                           | ❌ Manual typing                                  | Optional codegen. Simple generics                                                                                | Compiler-generated (best-in-class but requires build step)                                 | **Typed `DocumentNode`**. Phantom types for result + variables. Custom codegen CLI. Generated types from introspection JSON                               |
+| **SSR**                         | Full support but manual transfer state setup                                                       | ❌ Not built-in                                   | Good support                                                                                                     | Built-in but React-only                                                                    | **SSR streaming + `TransferState` integration**. Server-to-browser cache transfer. Platform-aware save/restore                                            |
+| **Subscriptions**               | Supported via WebSocket (`subscriptions-transport-ws`/`graphql-ws`)                                | ❌ Not built-in                                   | Separate `@urql/exchange-subscriptions`                                                                          | Limited                                                                                    | **Built-in `GraphqlSubscriptionService`**. `graphql-transport-ws` protocol. Standalone `subscribe()` function. DevTools integration                       |
+| **Error Handling**              | `errorPolicy` (`none`/`all`/`ignore`) — but type narrowing is tricky (`data` can be `undefined`)   | ❌ Manual try/catch                               | Error policy via exchanges. `data: null` on schema mismatch                                                      | Error boundaries + Suspense                                                                | **Three error policies**. Optional notification service integration (Taiga UI, Material, etc.). Type-safe `GraphQLResult<T>` discriminated union          |
+| **Reactive Local State**        | Reactive variables (since v3)                                                                      | ❌ Not built-in                                   | No built-in. Must use external state                                                                             | `RelayStore` but server-data only                                                          | **`ReactiveVar` / `makeVar()`** — wraps `BehaviorSubject`. Client directive middleware for `@client` fields. Local resolver support                       |
+| **Persisted Queries (APQ)**     | `apollo-link-persisted-queries` (third-party)                                                      | ❌ Not built-in                                   | `@urql/exchange-persisted`                                                                                       | Built-in (auto-generated by compiler)                                                      | **Built-in `apqMiddleware`**. SHA-256 hashing with fallback. Automatic hash registration on `PersistedQueryNotFound`                                      |
+| **Retry Logic**                 | Built-in `RetryLink` (exponential backoff)                                                         | ❌ Not built-in                                   | `@urql/exchange-retry`                                                                                           | Built-in                                                                                   | **Built-in `retryExchange`** with exponential backoff + jitter. Custom `shouldRetry` callback. Configurable exponent, max delay                           |
+| **Focus Refetch**               | Not built-in. Requires custom implementation                                                       | ❌ Not built-in                                   | `@urql/exchange-refocus`                                                                                         | Not built-in                                                                               | **Built-in `focusRefetchMiddleware`**. `visibilitychange` + `window.focus` support. Configurable stale time                                               |
+| **Request Batching**            | `apollo-link-batch-http`                                                                           | ❌ Not built-in                                   | Not built-in                                                                                                     | Third-party                                                                                | **Built-in batching**. Configurable `batchWindow` (default 50ms). Automatic batch flush                                                                   |
+| **Request Deduplication**       | Built-in                                                                                           | ❌ Not built-in                                   | Not built-in                                                                                                     | Not needed (compiler)                                                                      | **Built-in dedup**. `shareReplay(1)`-based. Automatic cache key management                                                                                |
+| **Testing**                     | `MockedProvider` + `MockLink` — complex setup                                                      | ❌ Manual mocking                                 | `mockExchange`                                                                                                   | `RelayMockEnvironment` — steep learning curve                                              | **`MockGraphqlService`**. Simple `when(query, result)` API. FIFO response queue. Optional simulated delay                                                 |
+| **Angular Integration**         | React-first port (Apollo Angular is a wrapper). Lags behind React version                          | ❌ Not applicable (fetch-only)                    | React-only                                                                                                       | React-only                                                                                 | **Angular-native**. Standalone components, Signals-compatible, SSR with `TransferState`, `@Injectable` services, pipes, `ng add` schematics               |
+| **CLI Setup**                   | Create client manually (ng-add added in v9)                                                        | ❌ Not applicable                                 | Create client manually                                                                                           | Requires compiler setup                                                                    | **`ng add @dumbql/core`**. Interactive prompts. Auto-generates `dumbql.config.ts`                                                                         |
+| **Learning Curve**              | Moderate (basic) → Steep (advanced cache)                                                          | **Lowest** — just fetch() calls                   | Low — most approachable                                                                                          | Very steep (3-5x Apollo)                                                                   | **Low**. Familiar `HttpClient`-based. Intuitive discriminated union results                                                                               |
 
 ---
 
@@ -167,29 +180,31 @@ Most GraphQL clients are built for one framework and awkwardly ported to others.
 
 DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each package lives in `projects/dumbql/<name>` and has its own README.
 
-| Package | Description | README |
-|---------|-------------|--------|
-| `@dumbql/core` | Central GraphQL client — query, mutate, middleware, pipes, directives, config | [README](projects/dumbql/core/README.md) |
-| `@dumbql/cache` | Normalized entity cache with GC, persistence, optimistic updates | [README](projects/dumbql/cache/README.md) |
-| `@dumbql/ssr` | Server-Side Rendering — TransferState cache transfer + streaming | [README](projects/dumbql/ssr/README.md) |
-| `@dumbql/subscriptions` | WebSocket GraphQL subscriptions (graphql-transport-ws) | [README](projects/dumbql/subscriptions/README.md) |
-| `@dumbql/fragments` | Type-safe fragment definitions, composition, data access | [README](projects/dumbql/fragments/README.md) |
-| `@dumbql/middlewares` | Auth refresh, retry, focus refetch, offline queue, auto mock | [README](projects/dumbql/middlewares/README.md) |
-| `@dumbql/pagination` | Cursor + offset pagination helpers with merge functions | [README](projects/dumbql/pagination/README.md) |
-| `@dumbql/persisted-queries` | Automatic Persisted Queries (APQ) with SHA-256 hashing | [README](projects/dumbql/persisted-queries/README.md) |
-| `@dumbql/file-upload` | Multipart file upload (graphql-multipart-request-spec) | [README](projects/dumbql/file-upload/README.md) |
-| `@dumbql/debugging` | Operation recording, field tree parsing, timing charts | [README](projects/dumbql/debugging/README.md) |
-| `@dumbql/testing` | Mock GraphQL backend for unit tests | [README](projects/dumbql/testing/README.md) |
-| `@dumbql/downloader` | Schema introspection downloader (Node.js CLI) | [README](projects/dumbql/downloader/README.md) |
-| `@dumbql/codegen` | TypeScript codegen from GraphQL schema + `.graphql` files | [README](projects/dumbql/codegen/README.md) |
-| `@dumbql/react` | React bindings — `useQuery`, `DumbqlProvider` | [README](projects/dumbql/react/README.md) |
-| `@dumbql/vue` | Vue 3 bindings — `useQuery`, `createDumbqlPlugin` | [README](projects/dumbql/vue/README.md) |
+| Package                     | Description                                                                   | README                                                |
+| --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `@dumbql/core`              | Central GraphQL client — query, mutate, middleware, pipes, directives, config | [README](projects/dumbql/core/README.md)              |
+| `@dumbql/cache`             | Normalized entity cache with GC, persistence, optimistic updates              | [README](projects/dumbql/cache/README.md)             |
+| `@dumbql/ssr`               | Server-Side Rendering — TransferState cache transfer + streaming              | [README](projects/dumbql/ssr/README.md)               |
+| `@dumbql/subscriptions`     | WebSocket GraphQL subscriptions (graphql-transport-ws)                        | [README](projects/dumbql/subscriptions/README.md)     |
+| `@dumbql/fragments`         | Type-safe fragment definitions, composition, data access                      | [README](projects/dumbql/fragments/README.md)         |
+| `@dumbql/middlewares`       | Auth refresh, retry, focus refetch, offline queue, auto mock                  | [README](projects/dumbql/middlewares/README.md)       |
+| `@dumbql/pagination`        | Cursor + offset pagination helpers with merge functions                       | [README](projects/dumbql/pagination/README.md)        |
+| `@dumbql/persisted-queries` | Automatic Persisted Queries (APQ) with SHA-256 hashing                        | [README](projects/dumbql/persisted-queries/README.md) |
+| `@dumbql/file-upload`       | Multipart file upload (graphql-multipart-request-spec)                        | [README](projects/dumbql/file-upload/README.md)       |
+| `@dumbql/debugging`         | Operation recording, field tree parsing, timing charts                        | [README](projects/dumbql/debugging/README.md)         |
+| `@dumbql/testing`           | Mock GraphQL backend for unit tests                                           | [README](projects/dumbql/testing/README.md)           |
+| `@dumbql/downloader`        | Schema introspection downloader (Node.js CLI)                                 | [README](projects/dumbql/downloader/README.md)        |
+| `@dumbql/codegen`           | TypeScript codegen from GraphQL schema + `.graphql` files                     | [README](projects/dumbql/codegen/README.md)           |
+| `@dumbql/dev-server`        | Unified mock GraphQL + proxy dev server (CLI + API)                           | [README](projects/dumbql/dev-server/README.md)        |
+| `@dumbql/react`             | React bindings — `useQuery`, `DumbqlProvider`                                 | [README](projects/dumbql/react/README.md)             |
+| `@dumbql/vue`               | Vue 3 bindings — `useQuery`, `createDumbqlPlugin`                             | [README](projects/dumbql/vue/README.md)               |
 
 ---
 
 ## Features Overview
 
 ### `@dumbql/core` — Core (~10KB)
+
 - `GraphqlService` — query, mutate, refetch, poll, setEndpoint
 - Middleware pipeline — auth, logging, devtools, cache
 - Standalone functions — `query()`, `mutate()`, `refetch()`, `poll()` (inject-free)
@@ -210,6 +225,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - `ng add` schematics — interactive setup
 
 ### `@dumbql/cache` — Normalized Cache
+
 - `NormalizedCache` — in-memory entity store keyed by `__typename:id`
 - `CacheService` — Angular service with CRUD + local reactive state
 - Entity auto-extraction — `extractEntities()` recursively walks response data
@@ -219,6 +235,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - Optimistic updates — snapshot/rollback/commit
 
 ### `@dumbql/subscriptions` — WebSocket Subscriptions
+
 - `GraphqlSubscriptionService` — `graphql-transport-ws` protocol
 - Standalone `subscribe()` function
 - Auto WebSocket URL derivation from HTTP endpoint
@@ -227,12 +244,14 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - Lazy connect, reconnect support
 
 ### `@dumbql/file-upload` — Multipart File Uploads
+
 - `UploadService` — GraphQL multipart request spec
 - Auto-detection of `File`/`Blob` in nested variables
 - FormData construction with operations + map
 - Configurable max file count and size
 
 ### `@dumbql/middlewares` — Middleware Plugins
+
 - `authRefreshMiddleware` — 401 intercept + token refresh + request queue
 - `retryExchange` — exponential backoff with jitter
 - `focusRefetchMiddleware` — refetch on tab focus
@@ -240,53 +259,60 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 - `autoMockMiddleware` — schema-based mock data generation for rapid prototyping (no backend needed)
 
 ### `@dumbql/pagination` — Pagination Helpers
+
 - `offsetPagination()` — stateful offset-based pagination with loadMore/refresh
 - `cursorPagination()` — relay-style cursor pagination
 - Merge functions — `offsetMerge()`, `cursorMerge()` for type policies
 
 ### `@dumbql/persisted-queries` — Automatic Persisted Queries
+
 - `apqMiddleware` — SHA-256 hash, automatic registration
 - Simple hash fallback when `crypto.subtle` unavailable
 
 ### `@dumbql/fragments` — Fragment Utilities
+
 - `fragment()` template tag — typed FragmentDefinition
 - `spread()` / `compose()` — fragment composition
 - `useFragment()` — type-safe data accessor
 
 ### `@dumbql/ssr` — Server-Side Rendering
+
 - `SsrStreamService` — chunked TransferState with configurable prefix
 - `TransferCacheService` — server-to-browser cache transfer
 - Platform-aware save/restore
 
 ### `@dumbql/debugging` — Debug & Inspection
+
 - `GraphqlDebugService` — automatic operation recording (500 entry ring buffer)
 - `parseFieldTree()` — query string → field tree
 - `buildMutationChart()` — timing visualization data
 - `normalizeData()` / `groupEntities()` — entity inspection
 
 ### `@dumbql/downloader` — Schema Download
+
 - `downloadAndStoreSchema()` — introspection → JSON + SDL files
 - CLI integration via `tools/download-schema.mjs`
 - Custom headers support
 
 ### `@dumbql/testing` — Testing Mock Backend
+
 - `MockGraphqlService` — register responses with `when(request, result)`
 - FIFO response queue, optional simulated delay
 - `provideDumbqlTesting()` — test provider setup
 
 ---
-  
+
 ## Starters & Playground
 
-Jumpstart development with pre-configured StackBlitz starters for each framework:
+Jumpstart development with one-click StackBlitz starters for each framework (opens in a new tab):
 
-| Framework | StackBlitz |
-|-----------|-----------|
-| Angular 22+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular) |
-| React 18+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/react) |
-| Vue 3+ | [Open in StackBlitz](https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/vue) |
+| Framework   | StackBlitz                                             |
+| ----------- | ------------------------------------------------------ |
+| Angular 22+ | [Open in StackBlitz](https://dumbql.github.io/dumbql/) |
+| React 18+   | [Open in StackBlitz](https://dumbql.github.io/dumbql/) |
+| Vue 3+      | [Open in StackBlitz](https://dumbql.github.io/dumbql/) |
 
-Each starter includes `@dumbql/client`, a mock GraphQL backend, and a working query example — no backend required. Run locally with `npm start` from `starters/<framework>/`.
+Each starter uses `@dumbql/client` + `@dumbql/dev-server` for the mock backend. Run locally with `npm start` from `starters/<framework>/`.
 
 The **GraphQL Playground** is available at `/playground` in the docs site — interactive query editor with variables, headers, JSON response viewer, and execution history.
 
@@ -330,20 +356,20 @@ The **GraphQL Playground** is available at `/playground` in the docs site — in
 
 ## Packages
 
-| Package | Size | Description |
-|---|---|---|
-| `@dumbql/core` | ~10KB | Core client, middleware, pipes, config |
-| `@dumbql/cache` | ~3KB | Normalized cache, persistence, GC |
-| `@dumbql/subscriptions` | ~2KB | WebSocket subscriptions |
-| `@dumbql/file-upload` | ~1KB | Multipart file uploads |
-| `@dumbql/middlewares` | ~3KB | Auth refresh, retry, offline queue, focus refetch |
-| `@dumbql/pagination` | ~2KB | Cursor + offset pagination |
-| `@dumbql/persisted-queries` | ~1KB | APQ support |
-| `@dumbql/fragments` | ~1KB | Fragment utilities |
-| `@dumbql/ssr` | ~1KB | SSR streaming + transfer cache |
-| `@dumbql/debugging` | ~2KB | Debug service + deep inspection |
-| `@dumbql/downloader` | ~1KB | Schema introspection downloader |
-| `@dumbql/testing` | ~1KB | Mock GraphQL backend |
+| Package                     | Size  | Description                                       |
+| --------------------------- | ----- | ------------------------------------------------- |
+| `@dumbql/core`              | ~10KB | Core client, middleware, pipes, config            |
+| `@dumbql/cache`             | ~3KB  | Normalized cache, persistence, GC                 |
+| `@dumbql/subscriptions`     | ~2KB  | WebSocket subscriptions                           |
+| `@dumbql/file-upload`       | ~1KB  | Multipart file uploads                            |
+| `@dumbql/middlewares`       | ~3KB  | Auth refresh, retry, offline queue, focus refetch |
+| `@dumbql/pagination`        | ~2KB  | Cursor + offset pagination                        |
+| `@dumbql/persisted-queries` | ~1KB  | APQ support                                       |
+| `@dumbql/fragments`         | ~1KB  | Fragment utilities                                |
+| `@dumbql/ssr`               | ~1KB  | SSR streaming + transfer cache                    |
+| `@dumbql/debugging`         | ~2KB  | Debug service + deep inspection                   |
+| `@dumbql/downloader`        | ~1KB  | Schema introspection downloader                   |
+| `@dumbql/testing`           | ~1KB  | Mock GraphQL backend                              |
 
 ---
 
@@ -356,14 +382,14 @@ import type { DumbqlConfig } from '@dumbql/core';
 const config: DumbqlConfig = {
   // ── Core ──
   endpoint: 'http://localhost:4000/graphql',
-  errorPolicy: 'none',        // 'none' | 'all' | 'ignore'
+  errorPolicy: 'none', // 'none' | 'all' | 'ignore'
   retryCount: 3,
-  retryDelay: 1000,           // ms (exponential: 1s, 2s, 4s...)
-  dedup: true,                // Deduplicate in-flight queries
-  batchWindow: 50,            // Batch window in ms (0 = disabled)
+  retryDelay: 1000, // ms (exponential: 1s, 2s, 4s...)
+  dedup: true, // Deduplicate in-flight queries
+  batchWindow: 50, // Batch window in ms (0 = disabled)
   headers: { Authorization: 'Bearer ...' },
-  middleware: [],              // Custom middleware array
-  plugins: [],                 // DumbqlPlugin array
+  middleware: [], // Custom middleware array
+  plugins: [], // DumbqlPlugin array
   devAuth: { enabled: false },
 
   // ── Subscriptions ──
@@ -388,14 +414,14 @@ const config: DumbqlConfig = {
   // ── Persisted Queries ──
   persistedQueries: {
     enabled: false,
-    hash: 'simple',            // 'sha256' | 'simple'
+    hash: 'simple', // 'sha256' | 'simple'
     autoPersist: false,
   },
 
   // ── File Upload ──
   upload: {
     maxFiles: 10,
-    maxFileSize: 10_485_760,   // 10MB
+    maxFileSize: 10_485_760, // 10MB
   },
 
   // ── Debug ──
@@ -446,15 +472,15 @@ export default config;
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `npm start` | Start dev server |
-| `npm run build` | Production build |
-| `npm test` | Run unit tests (Vitest) |
-| `npm run lint` | Run ESLint |
-| `npm run schema:download` | Download GraphQL schema |
-| `npm run codegen` | Generate TypeScript types |
-| `npm run ext:build:chrome` | Build Chrome DevTools extension |
+| Command                     | Description                      |
+| --------------------------- | -------------------------------- |
+| `npm start`                 | Start dev server                 |
+| `npm run build`             | Production build                 |
+| `npm test`                  | Run unit tests (Vitest)          |
+| `npm run lint`              | Run ESLint                       |
+| `npm run schema:download`   | Download GraphQL schema          |
+| `npm run codegen`           | Generate TypeScript types        |
+| `npm run ext:build:chrome`  | Build Chrome DevTools extension  |
 | `npm run ext:build:firefox` | Build Firefox DevTools extension |
 
 ---
@@ -470,6 +496,7 @@ npm run codegen
 ```
 
 Generated types:
+
 ```typescript
 // graphql/types/index.ts
 export const enum NoteType { NOTE = 'NOTE', PASSWORD = 'PASSWORD' }
@@ -488,6 +515,7 @@ DumbQL includes a full DevTools browser extension:
 - **Firefox**: `browser-extension/manifest.firefox.json`
 
 Build with `npm run ext:build` or individually. The extension connects to the DevTools middleware, displaying:
+
 - Real-time request log
 - Schema visualization (SDL tree)
 - Field tree inspector
@@ -501,7 +529,7 @@ Build with `npm run ext:build` or individually. The extension connects to the De
 ```typescript
 import { isSuccess, isError, unwrap, unwrapOrThrow } from '@dumbql/core';
 
-service.query<{ user: User }>(GET_USER).subscribe(result => {
+service.query<{ user: User }>(GET_USER).subscribe((result) => {
   if (isSuccess(result)) {
     // result.data is typed
     console.log(unwrapOrThrow(result).user);
@@ -513,6 +541,7 @@ service.query<{ user: User }>(GET_USER).subscribe(result => {
 ```
 
 Or with pipes:
+
 ```html
 <!-- graphql-data pipe extracts data, null on error -->
 <div>{{ result | graphqlData | json }}</div>
@@ -530,11 +559,7 @@ import { MockGraphqlService, provideDumbqlTesting } from '@dumbql/testing';
 import { GET_USER } from './queries';
 
 TestBed.configureTestingModule({
-  providers: [
-    provideHttpClientTesting(),
-    provideDumbqlTesting(),
-    MockGraphqlService,
-  ],
+  providers: [provideHttpClientTesting(), provideDumbqlTesting(), MockGraphqlService],
 });
 
 const mock = TestBed.inject(MockGraphqlService);
@@ -583,19 +608,19 @@ src/
 
 Real GitHub issues from Apollo, URQL, and Relay that DumbQL addresses by design.
 
-| Project | Issue | Problem | DumbQL Fix |
-|---|---|---|---|
-| Apollo | [#9319](https://github.com/apollographql/apollo-client/issues/9319) | `INVALIDATE` in `cache.modify` does not evict data — stale data persists with no refetch | Cache middleware auto-evicts entities on mutation. No manual `modify`/`evict` needed |
-| Apollo | [#10289](https://github.com/apollographql/apollo-client/issues/10289) | `cache.evict` silently no-ops inside optimistic UI — open since 2022 | Optimistic updates are snapshots with explicit commit/rollback — eviction always works |
-| Apollo | [#11804](https://github.com/apollographql/apollo-client/issues/11804) | Skipped query returns outdated data after `clearStore()` — cache reset is ignored by skipped hooks | No skip concept. Queries are imperative — reset always returns fresh state |
-| Apollo | [#9735](https://github.com/apollographql/apollo-client/issues/9735) | Production-only bug: internal results cache merges stale data into `readFromStore` output | No internal result cache — every read goes directly to the normalized store |
-| Apollo | [#8958](https://github.com/apollographql/apollo-client/issues/8958) | `@apollo/client` requires `react` as dependency even in non-React projects | Framework-agnostic core (`@dumbql/client`) has zero framework dependencies |
-| Apollo Angular | [#2371](https://github.com/the-guild-org/apollo-angular/issues/2371) | apollo-angular incompatible with `@apollo/client` v4.0 — Angular version lags behind React | Angular packages track core in lockstep — no React version to wait for |
-| URQL | [#2414](https://github.com/urql-graphql/urql/issues/2414) | `relayPagination` does not reset data when non-relay params change — shows stale results | Pagination helpers are stateless — variable changes always produce a clean slate |
-| URQL | [#668](https://github.com/urql-graphql/urql/issues/668) | Query with `relayPagination` does not refetch when variables change — returns stale data | Query refetch on variable change is guaranteed — no stale data regression |
-| URQL | [#3877](https://github.com/urql-graphql/urql/pull/3877) | `relayPagination` concatenates pages in cache-write order, causing flickering mis-ordered items | Cursor merge functions use explicit ordering — no dependency on write timing |
-| Relay | [#3406](https://github.com/facebook/relay/issues/3406) | Relay is React-only. No Angular, Vue, or Svelte support — framework lock-in | DumbQL ships first-class bindings for Angular, React, and Vue from day one |
-| Relay | [#183](https://github.com/facebook/relay/issues/183) | Relay mandates `Node` interface + `Connection` spec — backend must conform | Supports offset, cursor, and relay-style pagination — no backend changes required |
+| Project        | Issue                                                                 | Problem                                                                                            | DumbQL Fix                                                                             |
+| -------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Apollo         | [#9319](https://github.com/apollographql/apollo-client/issues/9319)   | `INVALIDATE` in `cache.modify` does not evict data — stale data persists with no refetch           | Cache middleware auto-evicts entities on mutation. No manual `modify`/`evict` needed   |
+| Apollo         | [#10289](https://github.com/apollographql/apollo-client/issues/10289) | `cache.evict` silently no-ops inside optimistic UI — open since 2022                               | Optimistic updates are snapshots with explicit commit/rollback — eviction always works |
+| Apollo         | [#11804](https://github.com/apollographql/apollo-client/issues/11804) | Skipped query returns outdated data after `clearStore()` — cache reset is ignored by skipped hooks | No skip concept. Queries are imperative — reset always returns fresh state             |
+| Apollo         | [#9735](https://github.com/apollographql/apollo-client/issues/9735)   | Production-only bug: internal results cache merges stale data into `readFromStore` output          | No internal result cache — every read goes directly to the normalized store            |
+| Apollo         | [#8958](https://github.com/apollographql/apollo-client/issues/8958)   | `@apollo/client` requires `react` as dependency even in non-React projects                         | Framework-agnostic core (`@dumbql/client`) has zero framework dependencies             |
+| Apollo Angular | [#2371](https://github.com/the-guild-org/apollo-angular/issues/2371)  | apollo-angular incompatible with `@apollo/client` v4.0 — Angular version lags behind React         | Angular packages track core in lockstep — no React version to wait for                 |
+| URQL           | [#2414](https://github.com/urql-graphql/urql/issues/2414)             | `relayPagination` does not reset data when non-relay params change — shows stale results           | Pagination helpers are stateless — variable changes always produce a clean slate       |
+| URQL           | [#668](https://github.com/urql-graphql/urql/issues/668)               | Query with `relayPagination` does not refetch when variables change — returns stale data           | Query refetch on variable change is guaranteed — no stale data regression              |
+| URQL           | [#3877](https://github.com/urql-graphql/urql/pull/3877)               | `relayPagination` concatenates pages in cache-write order, causing flickering mis-ordered items    | Cursor merge functions use explicit ordering — no dependency on write timing           |
+| Relay          | [#3406](https://github.com/facebook/relay/issues/3406)                | Relay is React-only. No Angular, Vue, or Svelte support — framework lock-in                        | DumbQL ships first-class bindings for Angular, React, and Vue from day one             |
+| Relay          | [#183](https://github.com/facebook/relay/issues/183)                  | Relay mandates `Node` interface + `Connection` spec — backend must conform                         | Supports offset, cursor, and relay-style pagination — no backend changes required      |
 
 ---
 

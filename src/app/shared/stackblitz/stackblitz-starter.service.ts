@@ -20,6 +20,7 @@ const angularProject: Project = {
           '@angular/platform-browser': '^22.0.0',
           '@angular/platform-browser-dynamic': '^22.0.0',
           '@angular/router': '^22.0.0',
+          '@dumbql/cache': '^1.0.0',
           '@dumbql/client': '^1.0.0',
           '@dumbql/core': '^1.0.0',
           graphql: '^17.0.0',

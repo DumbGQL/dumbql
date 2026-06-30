@@ -135,6 +135,9 @@ export async function startDevServer(config: DevServerConfig & { port?: number }
   const frontend = config.proxy?.target ?? 'http://localhost:4200';
   const server = createDevServer(config);
 
+  // Print URL early so StackBlitz picks up the proxy port for preview
+  console.log(`DumbQL Dev Server: http://localhost:${port}/`);
+
   try {
     await waitForTarget(frontend);
   } catch {
@@ -146,7 +149,6 @@ export async function startDevServer(config: DevServerConfig & { port?: number }
       console.log(`DumbQL Dev Server running at http://localhost:${port}`);
       console.log(`  GraphQL:   http://localhost:${port}/graphql`);
       console.log(`  Frontend:  ${frontend}`);
-      console.log(`  Open:      http://localhost:${port}`);
       resolve(server);
     });
   });

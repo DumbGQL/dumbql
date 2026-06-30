@@ -1,5 +1,5 @@
 {
   "description": "Vue 3 app with @dumbql/vue and @dumbql/dev-server",
   "installCommand": "npm install && node scripts/build-packages.mjs",
-  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:5173 & npm --prefix demos/vue run dev -- --host 0.0.0.0"
+  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:5173 --config demos/vue/dumbql.config.json & npm --prefix demos/vue run dev -- --host 0.0.0.0"
 }

@@ -1,5 +1,5 @@
 {
   "description": "DumbQL + Angular starter with mock GraphQL backend",
   "installCommand": "npm install && node scripts/build-packages.mjs",
-  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:4200 & cd starters/angular && npx --yes ng serve --host 0.0.0.0"
+  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:4200 --config starters/angular/dumbql.config.json & cd starters/angular && npx --yes ng serve --host 0.0.0.0"
 }

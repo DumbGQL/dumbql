@@ -1,10 +1,10 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink } from '@taiga-ui/core';
+import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink, TuiTextfield } from '@taiga-ui/core';
 import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
 import { Logo } from './shared/ui/logo/logo';
 import { VersionService } from './shared/services/version.service';
-import { TuiChevron, TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
+import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -22,10 +22,9 @@ import { FormsModule } from '@angular/forms';
     TuiButton,
     TuiRoot,
     Logo,
-
-    TuiChevron,
-    TuiComboBox,
     TuiDropdown,
+    TuiComboBox,
+    ...TuiTextfield,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

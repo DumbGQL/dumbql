@@ -1,5 +1,4 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink } from '@taiga-ui/core';
 import { TuiDataList } from '@taiga-ui/core/components/data-list';
@@ -14,7 +13,6 @@ import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiLink,
-    FormsModule,
     RouterOutlet,
     RouterLink,
     ...TuiDataListWrapper,
@@ -22,7 +20,7 @@ import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
     TuiButton,
     TuiRoot,
     Logo,
-    TuiComboBox,
+    ...TuiComboBox,
     ...TuiDropdown,
     ...TuiDataList,
   ],

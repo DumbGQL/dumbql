@@ -2,11 +2,11 @@ import { inject } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
 import type { DocumentNode, TypedDocumentNode } from './gql';
-import type { CacheService } from '@dumbql/cache/angular';
+import type { GraphqlCacheLike } from './dumbql-config';
 
 export interface MutateOptions {
   /** Apply optimistic cache update. Return a unique ID for the update. */
-  optimistic?: (cache: CacheService) => string;
+  optimistic?: (cache: GraphqlCacheLike) => string;
 }
 
 export function mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(

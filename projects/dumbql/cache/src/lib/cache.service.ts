@@ -2,6 +2,8 @@ import { BehaviorSubject, type Observable } from 'rxjs';
 import { type CacheEntity, type OptimisticUpdate, type TypePolicy } from './normalized-cache';
 import { CacheStore } from './cache-store';
 import { CachePersistenceService } from './cache-persist-ng';
+import { type Provider } from '@angular/core';
+import { GRAPHQL_CACHE } from '@dumbql/core';
 
 export class CacheService {
   private store = new CacheStore();
@@ -118,9 +120,10 @@ export class CacheService {
   }
 }
 
-import { type Provider } from '@angular/core';
-
 export function provideCacheService(persistSvc?: CachePersistenceService): Provider[] {
   const service = new CacheService(persistSvc);
-  return [{ provide: CacheService, useValue: service }];
+  return [
+    { provide: CacheService, useValue: service },
+    { provide: GRAPHQL_CACHE, useExisting: CacheService },
+  ];
 }

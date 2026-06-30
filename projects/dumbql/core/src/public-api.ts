@@ -12,7 +12,7 @@ export type {
   CodegenConfig,
 } from './lib/dumbql-config';
 export { DumbqlConfigService, provideDumbql } from './lib/config.service';
-export { DUMBQL_CONFIG, GRAPHQL_CONFIG } from './lib/dumbql-config';
+export { DUMBQL_CONFIG, GRAPHQL_CONFIG, GRAPHQL_CACHE, type GraphqlCacheLike } from './lib/dumbql-config';
 export type { OnErrorServiceConfig, SchemaConfig, DumbqlPlugin } from './lib/dumbql-config';
 export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCode } from './lib/graphql.service';
 export { gql, print } from './lib/gql';
@@ -22,7 +22,16 @@ export { GraphqlEndpoint, provideEndpoint, injectEndpoint, type MutateEndpointOp
 export { mutate, type MutateOptions } from './lib/mutate';
 export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
-export { isSuccess, isError, unwrap, unwrapOrThrow, mapResult, hasPartialErrors, getGraphQLErrors, getNetworkError } from './lib/helpers';
+export {
+  isSuccess,
+  isError,
+  unwrap,
+  unwrapOrThrow,
+  mapResult,
+  hasPartialErrors,
+  getGraphQLErrors,
+  getNetworkError,
+} from './lib/helpers';
 export {
   GqlPipe,
   GraphqlDataPipe,

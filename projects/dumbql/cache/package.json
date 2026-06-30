@@ -29,10 +29,14 @@
   "sideEffects": false,
   "peerDependencies": {
     "@angular/core": "^22.0.0",
+    "@dumbql/core": "^1.0.0",
     "rxjs": "~7.8.0"
   },
   "peerDependenciesMeta": {
     "@angular/core": {
+      "optional": true
+    },
+    "@dumbql/core": {
       "optional": true
     },
     "rxjs": {

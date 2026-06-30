@@ -2,10 +2,10 @@ import { inject, InjectionToken, type Provider } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
 import type { DocumentNode, TypedDocumentNode } from './gql';
-import type { CacheService } from '@dumbql/cache/angular';
+import type { GraphqlCacheLike } from './dumbql-config';
 
 export interface MutateEndpointOptions {
-  optimistic?: (cache: CacheService) => string;
+  optimistic?: (cache: GraphqlCacheLike) => string;
 }
 
 export class GraphqlEndpoint {

@@ -21,7 +21,7 @@ const angularProject: Project = {
           '@angular/platform-browser-dynamic': '^22.0.0',
           '@angular/router': '^22.0.0',
           '@dumbql/client': '^1.0.2',
-          '@dumbql/core': '^1.0.2',
+          '@dumbql/core': '^1.0.3',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
@@ -209,7 +209,7 @@ const reactProject: Project = {
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/react': '^1.0.0',
-          '@dumbql/cache': '^1.0.2',
+          '@dumbql/cache': '^1.0.3',
           '@dumbql/dev-server': '^1.0.0',
           react: '^18.2.0',
           'react-dom': '^18.2.0',

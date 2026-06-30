@@ -152,8 +152,16 @@ if (dryRun) {
 } else if (noCommit) {
   console.log(`\n  [NO COMMIT] Version files updated, skipping git ops`);
 } else {
-  execSync(`git add -A && git commit -m "chore: bump to ${next}"`, { cwd: ROOT, stdio: 'inherit' });
-  execSync(`git tag v${next}`, { cwd: ROOT, stdio: 'inherit' });
-  console.log(`\n  Tagged: v${next}`);
-  console.log(`  Run: git push origin v${next} --no-verify`);
+  try {
+    execSync(`git add -A && git commit -m "chore: bump to ${next}"`, { cwd: ROOT, stdio: 'inherit' });
+  } catch {
+    console.log(`\n  No changes to commit (already at ${next})`);
+  }
+  try {
+    execSync(`git tag v${next}`, { cwd: ROOT, stdio: 'inherit' });
+    console.log(`\n  Tagged: v${next}`);
+  } catch {
+    console.log(`\n  Tag v${next} already exists`);
+  }
+  console.log(`\n  Run: git push origin v${next} --no-verify`);
 }

@@ -3,14 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "dumbql-dev",
+    "start": "node graphql-server.mjs & vite --port 5173",
     "build": "vite build"
   },
   "dependencies": {
     "@dumbql/client": "^1.0.0",
     "@dumbql/react": "^1.0.0",
     "@dumbql/cache": "^1.0.0",
-    "@dumbql/dev-server": "^1.1.7",
+    "graphql": "^17.0.0",
+    "graphql-yoga": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

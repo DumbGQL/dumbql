@@ -51,15 +51,15 @@
     </table>
 
     <p>
-      Every sandbox automatically runs <code>dumbql-dev</code> (GraphQL mock backend with integrated proxy to the
-      framework dev server on port 4200/5173). The &#64;dumbql/* packages are built from source and linked locally — no
-      npm publish needed.
+      Every sandbox runs a <code>graphql-yoga</code> mock backend on port 4000; the framework dev server proxies
+      <code>/graphql</code> to it. The &#64;dumbql/* packages are built from source and linked locally — no npm publish
+      needed.
     </p>
 
     <h2>Starters</h2>
     <p>
       Minimal scaffold projects to kickstart a new app. Each starter includes
-      <code>&#64;dumbql/*</code> packages pre-configured with <code>dumbql-dev</code>:
+      <code>&#64;dumbql/*</code> packages and a <code>graphql-yoga</code> mock backend:
     </p>
 
     <table>

@@ -2,7 +2,7 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "dumbql-dev",
+    "start": "node graphql-server.mjs & ng serve --port 4200",
     "build": "ng build"
   },
   "dependencies": {
@@ -13,8 +13,8 @@
     "@dumbql/client": "^1.0.2",
     "@dumbql/core": "^1.0.4",
     "@dumbql/cache": "^1.0.3",
-    "@dumbql/dev-server": "^1.1.7",
     "graphql": "^17.0.0",
+    "graphql-yoga": "^5.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"
   },

@@ -2,6 +2,22 @@ import { Injectable } from '@angular/core';
 import sdk from '@stackblitz/sdk';
 import type { Project } from '@stackblitz/sdk';
 
+const GRAPHQL_SERVER = `import { createYoga, createSchema } from 'graphql-yoga';
+import { createServer } from 'http';
+
+createServer(
+  createYoga({
+    schema: createSchema({
+      typeDefs: \`
+        type Query { getNotes: [Note!]! }
+        type Note { id: ID! title: String! content: String! }
+      \`,
+    }),
+    graphqlEndpoint: '/graphql',
+  }),
+).listen(4000, () => console.log('Mock GraphQL: http://localhost:4000/graphql'));
+`;
+
 const angularProject: Project = {
   title: 'Angular DumbQL Starter',
   description: 'Standalone Angular app with @dumbql/client',
@@ -12,7 +28,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'dumbql-dev --port 4200',
+          start: 'node graphql-server.mjs & ng serve --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -23,8 +39,8 @@ const angularProject: Project = {
           '@dumbql/client': '^1.0.2',
           '@dumbql/core': '^1.0.4',
           '@dumbql/cache': '^1.0.3',
-          '@dumbql/dev-server': '^1.1.7',
           graphql: '^17.0.0',
+          'graphql-yoga': '^5.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
         },
@@ -38,16 +54,12 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
+    'graphql-server.mjs': GRAPHQL_SERVER,
+    'proxy.conf.json': JSON.stringify(
       {
-        mock: {
-          schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
-        },
-        proxy: {
-          target: 'http://localhost:4200',
-        },
-        spawn: {
-          cmd: 'ng serve --host 0.0.0.0 --port 4200',
+        '/graphql': {
+          target: 'http://localhost:4000',
+          secure: false,
         },
       },
       null,
@@ -80,7 +92,10 @@ const angularProject: Project = {
               },
               serve: {
                 builder: '@angular/build:dev-server',
-                options: { buildTarget: 'starter:build' },
+                options: {
+                  buildTarget: 'starter:build',
+                  proxyConfig: 'proxy.conf.json',
+                },
                 configurations: { production: { buildTarget: 'starter:build:production' } },
               },
             },
@@ -201,7 +216,7 @@ export class AppComponent {
 
 const reactProject: Project = {
   title: 'React DumbQL Starter',
-  description: 'Vite + React app with @dumbql/react and @dumbql/dev-server',
+  description: 'Vite + React app with @dumbql/react',
   template: 'node',
   files: {
     'package.json': JSON.stringify(
@@ -210,14 +225,15 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --port 5173',
+          start: 'node graphql-server.mjs & vite --port 5173',
           build: 'vite build',
         },
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/react': '^1.0.0',
           '@dumbql/cache': '^1.0.3',
-          '@dumbql/dev-server': '^1.1.7',
+          'graphql-yoga': '^5.0.0',
+          graphql: '^17.0.0',
           react: '^18.2.0',
           'react-dom': '^18.2.0',
         },
@@ -232,28 +248,7 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
-      {
-        mock: {
-          schema: `type Query {
-  getNotes: [Note!]!
-}
-type Note {
-  id: ID!
-  title: String!
-  content: String!
-}`,
-        },
-        proxy: {
-          target: 'http://localhost:5173',
-        },
-        spawn: {
-          cmd: 'vite --host 0.0.0.0 --port 5173',
-        },
-      },
-      null,
-      2,
-    ),
+    'graphql-server.mjs': GRAPHQL_SERVER,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + React</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="module" src="/src/main.tsx"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(
@@ -276,7 +271,12 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 5173 },
+  server: {
+    port: 5173,
+    proxy: {
+      '/graphql': 'http://localhost:4000',
+    },
+  },
 });`,
     'src/main.tsx': `import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -338,7 +338,7 @@ export default function App() {
 
 const vueProject: Project = {
   title: 'Vue DumbQL Starter',
-  description: 'Vite + Vue 3 app with @dumbql/vue and @dumbql/dev-server',
+  description: 'Vite + Vue 3 app with @dumbql/vue',
   template: 'node',
   files: {
     'package.json': JSON.stringify(
@@ -347,13 +347,14 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --port 5173',
+          start: 'node graphql-server.mjs & vite --port 5173',
           build: 'vite build',
         },
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/vue': '^1.0.0',
-          '@dumbql/dev-server': '^1.1.7',
+          'graphql-yoga': '^5.0.0',
+          graphql: '^17.0.0',
           vue: '^3.4.0',
         },
         devDependencies: {
@@ -366,28 +367,7 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
-      {
-        mock: {
-          schema: `type Query {
-  getNotes: [Note!]!
-}
-type Note {
-  id: ID!
-  title: String!
-  content: String!
-}`,
-        },
-        proxy: {
-          target: 'http://localhost:5173',
-        },
-        spawn: {
-          cmd: 'vite --host 0.0.0.0 --port 5173',
-        },
-      },
-      null,
-      2,
-    ),
+    'graphql-server.mjs': GRAPHQL_SERVER,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Vue</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="/src/main.ts"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(
@@ -408,7 +388,12 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
-  server: { port: 5173 },
+  server: {
+    port: 5173,
+    proxy: {
+      '/graphql': 'http://localhost:4000',
+    },
+  },
 });`,
     'src/main.ts': `import { createApp } from 'vue';
 import { createDumbqlPlugin } from '@dumbql/vue';
@@ -463,14 +448,23 @@ body { font-family: sans-serif; padding: 2rem; }
 @Injectable({ providedIn: 'root' })
 export class StackblitzStarterService {
   openAngular() {
-    sdk.openProject(angularProject, { newWindow: true });
+    sdk.openProject(angularProject, {
+      newWindow: true,
+      openFile: 'src/app/app.component.ts',
+    });
   }
 
   openReact() {
-    sdk.openProject(reactProject, { newWindow: true });
+    sdk.openProject(reactProject, {
+      newWindow: true,
+      openFile: 'src/App.tsx',
+    });
   }
 
   openVue() {
-    sdk.openProject(vueProject, { newWindow: true });
+    sdk.openProject(vueProject, {
+      newWindow: true,
+      openFile: 'src/App.vue',
+    });
   }
 }

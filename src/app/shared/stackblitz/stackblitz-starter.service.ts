@@ -2,25 +2,7 @@ import { Injectable } from '@angular/core';
 import sdk from '@stackblitz/sdk';
 import type { Project } from '@stackblitz/sdk';
 
-const MOCK_CODE = `const http = require('http');
-const notes = [
-  { id: '1', title: 'Hello DumbQL', content: 'Your first GraphQL query works!' },
-  { id: '2', title: 'Tip', content: 'Try changing this mock data' },
-];
-http.createServer((req, res) => {
-  if (req.method === 'POST' && req.url === '/graphql') {
-    let body = '';
-    req.on('data', c => body += c);
-    req.on('end', () => {
-      const q = JSON.parse(body).query;
-      if (q && q.includes('getNotes')) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ data: { getNotes: notes } }));
-      }
-    });
-  } else res.writeHead(404).end();
-}).listen(4000, () => console.log('Mock GraphQL: http://localhost:4000/graphql'));
-`;
+const INLINE_MOCK = `node -e "const http=require('http');const n=[{id:'1',title:'Hello DumbQL',content:'Your first GraphQL query works!'},{id:'2',title:'Tip',content:'Try changing this mock data'}];http.createServer((q,r)=>{if(q.method=='POST'&&q.url=='/graphql'){let b='';q.on('data',c=>b+=c);q.on('end',()=>{const p=JSON.parse(b).query;if(p&&p.includes('getNotes')){r.writeHead(200,{'Content-Type':'application/json'});r.end(JSON.stringify({data:{getNotes:n}}))}})}else r.writeHead(404).end()}).listen(4000)"`;
 
 const angularProject: Project = {
   title: 'Angular DumbQL Starter',
@@ -32,7 +14,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'node mock.js & ng serve --port 4200',
+          start: INLINE_MOCK + ' & ng serve --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -57,7 +39,6 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'mock.js': MOCK_CODE,
     'proxy.conf.json': JSON.stringify(
       {
         '/graphql': {
@@ -226,9 +207,8 @@ const reactProject: Project = {
       {
         name: 'dumbql-react-starter',
         private: true,
-        type: 'module',
         scripts: {
-          start: 'node mock.js & vite --port 5173',
+          start: INLINE_MOCK + ' & vite --port 5173',
           build: 'vite build',
         },
         dependencies: {
@@ -250,7 +230,6 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'mock.js': MOCK_CODE,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + React</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="module" src="/src/main.tsx"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(
@@ -347,9 +326,8 @@ const vueProject: Project = {
       {
         name: 'dumbql-vue-starter',
         private: true,
-        type: 'module',
         scripts: {
-          start: 'node mock.js & vite --port 5173',
+          start: INLINE_MOCK + ' & vite --port 5173',
           build: 'vite build',
         },
         dependencies: {
@@ -368,7 +346,6 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'mock.js': MOCK_CODE,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Vue</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="/src/main.ts"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(

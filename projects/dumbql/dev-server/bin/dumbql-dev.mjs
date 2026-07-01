@@ -63,6 +63,9 @@ await startDevServer({
 	},
 	proxy: {
 		target: flags.proxy ?? config.proxy?.target ?? 'http://localhost:4200',
+		rewrite: flags.rewrite !== undefined
+			? flags.rewrite !== 'false'
+			: config.proxy?.rewrite,
 	},
 	spawn,
 });

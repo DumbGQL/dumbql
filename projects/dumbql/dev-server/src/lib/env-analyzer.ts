@@ -8,29 +8,15 @@ export interface EnvInfo {
   publicFrontendHost: string | null;
 }
 
-export function analyzeEnvironment(): EnvInfo {
+export function analyzeEnvironment(rewriteOverride?: boolean): EnvInfo {
   const isStackBlitz = !!process.env.STACKBLITZ;
   const isCodespaces = !!process.env.CODESPACES;
 
-  if (isStackBlitz) {
-    return {
-      runtime: 'stackblitz',
-      needsUrlRewrite: true,
-      publicFrontendHost: null,
-    };
-  }
-
-  if (isCodespaces) {
-    return {
-      runtime: 'codespaces',
-      needsUrlRewrite: true,
-      publicFrontendHost: null,
-    };
-  }
+  const autoRewrite = isStackBlitz || isCodespaces;
 
   return {
-    runtime: 'local',
-    needsUrlRewrite: false,
+    runtime: isStackBlitz ? 'stackblitz' : isCodespaces ? 'codespaces' : 'local',
+    needsUrlRewrite: rewriteOverride ?? autoRewrite,
     publicFrontendHost: null,
   };
 }

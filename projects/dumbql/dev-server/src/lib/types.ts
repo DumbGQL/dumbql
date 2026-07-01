@@ -7,6 +7,8 @@ export interface MockConfig {
 
 export interface ProxyConfig {
   target: string;
+  /** Force-enable URL rewriting (localhost → public host) in proxied responses */
+  rewrite?: boolean;
 }
 
 export interface SpawnConfig {

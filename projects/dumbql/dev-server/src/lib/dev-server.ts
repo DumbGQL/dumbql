@@ -165,7 +165,7 @@ function createProxyHandler(frontendTarget: string, env: EnvInfo, devServerPort:
 export function createDevServer(config: DevServerConfig & { port?: number } = {}): Server {
   const schema = loadSchema(config.mock);
   const frontendTarget = config.proxy?.target ?? 'http://localhost:4200';
-  const env = analyzeEnvironment();
+  const env = analyzeEnvironment(config.proxy?.rewrite);
   const port = config.port ?? 4000;
 
   const yoga = createYoga({

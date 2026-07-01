@@ -2,20 +2,29 @@ import { Injectable } from '@angular/core';
 import sdk from '@stackblitz/sdk';
 import type { Project } from '@stackblitz/sdk';
 
-const GRAPHQL_SERVER = `import { createYoga, createSchema } from 'graphql-yoga';
-import { createServer } from 'http';
+const GRAPHQL_MOCK = `import { createServer } from 'http';
 
-createServer(
-  createYoga({
-    schema: createSchema({
-      typeDefs: \`
-        type Query { getNotes: [Note!]! }
-        type Note { id: ID! title: String! content: String! }
-      \`,
-    }),
-    graphqlEndpoint: '/graphql',
-  }),
-).listen(4000, () => console.log('Mock GraphQL: http://localhost:4000/graphql'));
+const notes = [
+  { id: '1', title: 'Hello DumbQL', content: 'Your first GraphQL query works!' },
+  { id: '2', title: 'Tip', content: 'Try changing this mock data' },
+];
+
+createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/graphql') {
+    let body = '';
+    req.on('data', (c) => (body += c));
+    req.on('end', () => {
+      const { query } = JSON.parse(body);
+      if (query && query.includes('getNotes')) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ data: { getNotes: notes } }));
+        return;
+      }
+    });
+    return;
+  }
+  res.writeHead(404).end();
+}).listen(4000, () => console.log('Mock GraphQL: http://localhost:4000/graphql'));
 `;
 
 const angularProject: Project = {
@@ -40,7 +49,6 @@ const angularProject: Project = {
           '@dumbql/core': '^1.0.4',
           '@dumbql/cache': '^1.0.3',
           graphql: '^17.0.0',
-          'graphql-yoga': '^5.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
         },
@@ -54,7 +62,7 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'graphql-server.mjs': GRAPHQL_SERVER,
+    'graphql-server.mjs': GRAPHQL_MOCK,
     'proxy.conf.json': JSON.stringify(
       {
         '/graphql': {
@@ -232,7 +240,6 @@ const reactProject: Project = {
           '@dumbql/client': '^1.0.2',
           '@dumbql/react': '^1.0.0',
           '@dumbql/cache': '^1.0.3',
-          'graphql-yoga': '^5.0.0',
           graphql: '^17.0.0',
           react: '^18.2.0',
           'react-dom': '^18.2.0',
@@ -248,7 +255,7 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'graphql-server.mjs': GRAPHQL_SERVER,
+    'graphql-server.mjs': GRAPHQL_MOCK,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + React</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="module" src="/src/main.tsx"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(
@@ -353,7 +360,6 @@ const vueProject: Project = {
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/vue': '^1.0.0',
-          'graphql-yoga': '^5.0.0',
           graphql: '^17.0.0',
           vue: '^3.4.0',
         },
@@ -367,7 +373,7 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'graphql-server.mjs': GRAPHQL_SERVER,
+    'graphql-server.mjs': GRAPHQL_MOCK,
     'index.html':
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Vue</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="/src/main.ts"></script>\n</body>\n</html>',
     'tsconfig.json': JSON.stringify(

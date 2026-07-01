@@ -7,6 +7,7 @@ import { spawn as spawnChild } from 'node:child_process';
 import { createYoga, createSchema } from 'graphql-yoga';
 import type { GraphQLSchema } from 'graphql';
 import type { DevServerConfig } from './types.js';
+import { analyzeEnvironment, resolvePublicFrontendHost, type EnvInfo } from './env-analyzer.js';
 
 function isInlineSchema(s: string): boolean {
   return /^\s*(type|schema|enum|input|interface|scalar|union|extend|directive)\b/.test(s);
@@ -78,7 +79,9 @@ const LOADING_PAGE = `<!DOCTYPE html>
 </body>
 </html>`;
 
-function createProxyHandler(frontendTarget: string) {
+function createProxyHandler(frontendTarget: string, env: EnvInfo, devServerPort: number) {
+  const needsRewrite = env.needsUrlRewrite;
+
   return (req: IncomingMessage, res: ServerResponse) => {
     if (req.method === 'OPTIONS') {
       handleCors(res);
@@ -109,7 +112,41 @@ function createProxyHandler(frontendTarget: string) {
       for (const [k, v] of Object.entries(proxyRes.headers)) {
         flatHeaders[k] = Array.isArray(v) ? (v as string[]).join(', ') : (v as string);
       }
-      const combinedHeaders = { ...flatHeaders, ...CORS_HEADERS };
+      const combinedHeaders: Record<string, string> = { ...flatHeaders, ...CORS_HEADERS };
+
+      if (needsRewrite) {
+        const contentType = combinedHeaders['content-type'] ?? '';
+        if (
+          contentType.startsWith('text/html') ||
+          contentType.startsWith('text/javascript') ||
+          contentType.startsWith('application/javascript') ||
+          contentType.startsWith('text/css')
+        ) {
+          const hostHeader = req.headers['host'];
+          let publicHost: string | null = null;
+          if (hostHeader) {
+            const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
+            const frontendPort = Number(new URL(frontendTarget).port) || 4200;
+            publicHost = resolvePublicFrontendHost(host, frontendPort, devServerPort);
+          }
+          if (publicHost) {
+            const targetOrigin = frontendTarget.replace(/\/$/, '');
+            const chunks: Buffer[] = [];
+            proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk));
+            proxyRes.on('end', () => {
+              let body = Buffer.concat(chunks).toString('utf-8');
+              body = body.replace(
+                new RegExp(targetOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+                `https://${publicHost}`,
+              );
+              res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
+              res.end(body);
+            });
+            return;
+          }
+        }
+      }
+
       res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
       proxyRes.pipe(res, { end: true });
     });
@@ -125,9 +162,11 @@ function createProxyHandler(frontendTarget: string) {
   };
 }
 
-export function createDevServer(config: DevServerConfig = {}): Server {
+export function createDevServer(config: DevServerConfig & { port?: number } = {}): Server {
   const schema = loadSchema(config.mock);
   const frontendTarget = config.proxy?.target ?? 'http://localhost:4200';
+  const env = analyzeEnvironment();
+  const port = config.port ?? 4000;
 
   const yoga = createYoga({
     schema,
@@ -139,7 +178,7 @@ export function createDevServer(config: DevServerConfig = {}): Server {
     },
   });
 
-  const proxy = createProxyHandler(frontendTarget);
+  const proxy = createProxyHandler(frontendTarget, env, port);
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
@@ -209,7 +248,12 @@ function waitForTarget(url: string, timeout = 300_000, interval = 1_000): Promis
 export async function startDevServer(config: DevServerConfig & { port?: number }): Promise<Server> {
   const port = config.port ?? 4000;
   const frontend = config.proxy?.target ?? 'http://localhost:4200';
-  const server = createDevServer(config);
+  const env = analyzeEnvironment();
+  const server = createDevServer({ ...config, port });
+
+  if (env.runtime !== 'local') {
+    console.log(`  Environment: ${env.runtime} (URL rewrite enabled)`);
+  }
 
   if (config.spawn) {
     const [cmd, ...args] = config.spawn.cmd.split(/\s+/);

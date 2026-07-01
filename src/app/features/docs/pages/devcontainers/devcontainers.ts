@@ -1,5 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { StackblitzStarterService } from '../../../../shared/stackblitz/stackblitz-starter.service';
+import { CodeSandboxStarterService } from '../../../../shared/codesandbox/codesandbox-starter.service';
 
 @Component({
   selector: 'app-docs-devcontainers',
@@ -9,5 +9,5 @@ import { StackblitzStarterService } from '../../../../shared/stackblitz/stackbli
   styleUrl: './devcontainers.scss',
 })
 export class DocsDevcontainers {
-  protected readonly stackblitz = inject(StackblitzStarterService);
+  protected readonly sandbox = inject(CodeSandboxStarterService);
 }

@@ -1,5 +1,0 @@
-{
-  "description": "Angular 22 app with @dumbql/client and @dumbql/dev-server",
-  "installCommand": "npm install && node scripts/build-packages.mjs",
-  "startCommand": "node node_modules/@dumbql/dev-server/bin/dumbql-dev.mjs --proxy http://localhost:4200 --config demos/angular/dumbql.config.json & npm --prefix demos/angular run dev"
-}

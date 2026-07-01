@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import sdk from '@stackblitz/sdk';
-import type { Project } from '@stackblitz/sdk';
+import { Injectable, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { compressToBase64 } from 'lz-string';
 
-const angularProject: Project = {
-  title: 'Angular DumbQL Starter',
-  description: 'Standalone Angular 22 app with @dumbql/client',
-  template: 'node',
-  files: {
-    'package.json': JSON.stringify(
+interface SandboxFiles {
+  [path: string]: { content: string };
+}
+
+const ANGULAR_FILES: SandboxFiles = {
+  'package.json': {
+    content: JSON.stringify(
       {
         name: 'dumbql-angular-starter',
         private: true,
@@ -38,7 +39,9 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
+  },
+  'dumbql.config.json': {
+    content: JSON.stringify(
       {
         mock: {
           schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
@@ -49,7 +52,9 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'angular.json': JSON.stringify(
+  },
+  'angular.json': {
+    content: JSON.stringify(
       {
         $schema: './node_modules/@angular/cli/lib/config/schema.json',
         version: 1,
@@ -86,7 +91,9 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'tsconfig.json': JSON.stringify(
+  },
+  'tsconfig.json': {
+    content: JSON.stringify(
       {
         compileOnSave: false,
         compilerOptions: {
@@ -118,7 +125,9 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'tsconfig.app.json': JSON.stringify(
+  },
+  'tsconfig.app.json': {
+    content: JSON.stringify(
       {
         extends: './tsconfig.json',
         compilerOptions: { outDir: './out-tsc/app', types: [] },
@@ -127,15 +136,21 @@ const angularProject: Project = {
       null,
       2,
     ),
-    'src/index.html':
+  },
+  'src/index.html': {
+    content:
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Angular</title>\n  <base href="/">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>',
-    'src/styles.css': 'body { font-family: system-ui, sans-serif; padding: 1rem; }',
-    'src/main.ts': `import { bootstrapApplication } from '@angular/platform-browser';
+  },
+  'src/styles.css': { content: 'body { font-family: system-ui, sans-serif; padding: 1rem; }' },
+  'src/main.ts': {
+    content: `import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 
 bootstrapApplication(AppComponent, appConfig);`,
-    'src/app/app.config.ts': `import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+  },
+  'src/app/app.config.ts': {
+    content: `import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideDumbql } from '@dumbql/core';
 import { provideCacheService } from '@dumbql/cache/angular';
 
@@ -148,7 +163,9 @@ export const appConfig: ApplicationConfig = {
     provideCacheService(),
   ],
 };`,
-    'src/app/app.component.ts': `import { Component } from '@angular/core';
+  },
+  'src/app/app.component.ts': {
+    content: `import { Component } from '@angular/core';
 import { gql } from '@dumbql/client';
 import { DumbqlQueryDirective } from '@dumbql/core';
 
@@ -194,12 +211,9 @@ export class AppComponent {
   },
 };
 
-const reactProject: Project = {
-  title: 'React DumbQL Starter',
-  description: 'Vite + React app with @dumbql/react and @dumbql/dev-server',
-  template: 'node',
-  files: {
-    'package.json': JSON.stringify(
+const REACT_FILES: SandboxFiles = {
+  'package.json': {
+    content: JSON.stringify(
       {
         name: 'dumbql-react-starter',
         private: true,
@@ -227,19 +241,19 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
+  },
+  'dumbql.config.json': {
+    content: JSON.stringify(
       {
         mock: {
-          schema: /* GraphQL */ `
-            type Query {
-              getNotes: [Note!]!
-            }
-            type Note {
-              id: ID!
-              title: String!
-              content: String!
-            }
-          `,
+          schema: `type Query {
+  getNotes: [Note!]!
+}
+type Note {
+  id: ID!
+  title: String!
+  content: String!
+}`,
         },
         spawn: { cmd: 'vite build' },
         staticDir: 'dist',
@@ -247,9 +261,13 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'index.html':
+  },
+  'index.html': {
+    content:
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + React</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="module" src="/src/main.tsx"></script>\n</body>\n</html>',
-    'tsconfig.json': JSON.stringify(
+  },
+  'tsconfig.json': {
+    content: JSON.stringify(
       {
         compilerOptions: {
           target: 'ES2020',
@@ -264,14 +282,17 @@ const reactProject: Project = {
       null,
       2,
     ),
-    'vite.config.ts': `import { defineConfig } from 'vite';
+  },
+  'vite.config.ts': {
+    content: `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 5173 },
 });`,
-    'src/main.tsx': `import React from 'react';
+  },
+  'src/main.tsx': {
+    content: `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { DumbqlProvider } from '@dumbql/react';
 import { createClient } from '@dumbql/client';
@@ -288,8 +309,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </DumbqlProvider>
   </React.StrictMode>,
 );`,
-    'src/styles.css': 'body { font-family: system-ui, sans-serif; padding: 1rem; }',
-    'src/App.tsx': `import { useQuery, gql } from '@dumbql/react';
+  },
+  'src/styles.css': { content: 'body { font-family: system-ui, sans-serif; padding: 1rem; }' },
+  'src/App.tsx': {
+    content: `import { useQuery, gql } from '@dumbql/react';
 
 const GET_NOTES = gql\`
   query {
@@ -329,12 +352,9 @@ export default function App() {
   },
 };
 
-const vueProject: Project = {
-  title: 'Vue DumbQL Starter',
-  description: 'Vite + Vue 3 app with @dumbql/vue and @dumbql/dev-server',
-  template: 'node',
-  files: {
-    'package.json': JSON.stringify(
+const VUE_FILES: SandboxFiles = {
+  'package.json': {
+    content: JSON.stringify(
       {
         name: 'dumbql-vue-starter',
         private: true,
@@ -359,19 +379,19 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'dumbql.config.json': JSON.stringify(
+  },
+  'dumbql.config.json': {
+    content: JSON.stringify(
       {
         mock: {
-          schema: /* GraphQL */ `
-            type Query {
-              getNotes: [Note!]!
-            }
-            type Note {
-              id: ID!
-              title: String!
-              content: String!
-            }
-          `,
+          schema: `type Query {
+  getNotes: [Note!]!
+}
+type Note {
+  id: ID!
+  title: String!
+  content: String!
+}`,
         },
         spawn: { cmd: 'vite build' },
         staticDir: 'dist',
@@ -379,9 +399,13 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'index.html':
+  },
+  'index.html': {
+    content:
       '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Vue</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="/src/main.ts"></script>\n</body>\n</html>',
-    'tsconfig.json': JSON.stringify(
+  },
+  'tsconfig.json': {
+    content: JSON.stringify(
       {
         compilerOptions: {
           target: 'ES2020',
@@ -394,14 +418,17 @@ const vueProject: Project = {
       null,
       2,
     ),
-    'vite.config.ts': `import { defineConfig } from 'vite';
+  },
+  'vite.config.ts': {
+    content: `import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
-  server: { port: 5173 },
 });`,
-    'src/main.ts': `import { createApp } from 'vue';
+  },
+  'src/main.ts': {
+    content: `import { createApp } from 'vue';
 import { createDumbqlPlugin } from '@dumbql/vue';
 import { createClient } from '@dumbql/client';
 import App from './App.vue';
@@ -411,8 +438,10 @@ const client = createClient({ endpoint: '/graphql' });
 const app = createApp(App);
 app.use(createDumbqlPlugin(client));
 app.mount('#app');`,
-    'src/env.d.ts': '/// <reference types="vite/client" />',
-    'src/App.vue': `<script setup lang="ts">
+  },
+  'src/env.d.ts': { content: '/// <reference types="vite/client" />' },
+  'src/App.vue': {
+    content: `<script setup lang="ts">
 import { useQuery, gql } from '@dumbql/vue';
 
 interface Note {
@@ -452,16 +481,26 @@ body { font-family: sans-serif; padding: 2rem; }
 };
 
 @Injectable({ providedIn: 'root' })
-export class StackblitzStarterService {
+export class CodeSandboxStarterService {
+  private readonly doc = inject(DOCUMENT);
+  private readonly BASE = 'https://codesandbox.io/api/v1/sandboxes/define';
+
+  private open(files: SandboxFiles) {
+    const json = JSON.stringify({ files });
+    const parameters = compressToBase64(json);
+    const url = `${this.BASE}?parameters=${encodeURIComponent(parameters)}`;
+    this.doc.defaultView?.open(url, '_blank');
+  }
+
   openAngular() {
-    sdk.openProject(angularProject, { newWindow: true });
+    this.open(ANGULAR_FILES);
   }
 
   openReact() {
-    sdk.openProject(reactProject, { newWindow: true });
+    this.open(REACT_FILES);
   }
 
   openVue() {
-    sdk.openProject(vueProject, { newWindow: true });
+    this.open(VUE_FILES);
   }
 }

@@ -6,7 +6,7 @@ import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../../../shared/services/version.service';
-import { StackblitzStarterService } from '../../../../shared/stackblitz/stackblitz-starter.service';
+import { CodeSandboxStarterService } from '../../../../shared/codesandbox/codesandbox-starter.service';
 
 @Component({
   selector: 'app-docs-getting-started',
@@ -18,7 +18,7 @@ import { StackblitzStarterService } from '../../../../shared/stackblitz/stackbli
 })
 export class DocsGettingStarted {
   protected readonly versionService = inject(VersionService);
-  protected readonly stackblitz = inject(StackblitzStarterService);
+  protected readonly sandbox = inject(CodeSandboxStarterService);
 
   protected readonly tocSections: TocSection[] = [
     { id: 'install', title: 'Install' },

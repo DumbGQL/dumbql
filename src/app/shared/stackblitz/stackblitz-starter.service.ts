@@ -12,7 +12,7 @@ const angularProject: Project = {
         name: 'dumbql-angular-starter',
         private: true,
         scripts: {
-          start: 'dumbql-dev & ng serve --host 0.0.0.0 --port 4200',
+          start: 'dumbql-dev --port 4200',
           build: 'ng build',
         },
         dependencies: {
@@ -23,7 +23,7 @@ const angularProject: Project = {
           '@dumbql/client': '^1.0.2',
           '@dumbql/core': '^1.0.4',
           '@dumbql/cache': '^1.0.3',
-          '@dumbql/dev-server': '^1.1.3',
+          '@dumbql/dev-server': '^1.1.7',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
           rxjs: '^7.8.0',
@@ -43,7 +43,8 @@ const angularProject: Project = {
         mock: {
           schema: 'type Query { getNotes: [Note!]! } type Note { id: ID! title: String! content: String! }',
         },
-        proxy: { target: 'http://localhost:4200' },
+        spawn: { cmd: 'ng build' },
+        staticDir: 'dist/browser',
       },
       null,
       2,
@@ -142,7 +143,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideDumbql({
-      endpoint: 'http://localhost:4000/graphql',
+      endpoint: '/graphql',
     }),
     provideCacheService(),
   ],
@@ -204,14 +205,14 @@ const reactProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start: 'dumbql-dev --port 5173',
           build: 'vite build',
         },
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/react': '^1.0.0',
           '@dumbql/cache': '^1.0.3',
-          '@dumbql/dev-server': '^1.1.3',
+          '@dumbql/dev-server': '^1.1.7',
           react: '^18.2.0',
           'react-dom': '^18.2.0',
         },
@@ -240,10 +241,8 @@ const reactProject: Project = {
             }
           `,
         },
-        proxy: {
-          target: 'http://localhost:5173',
-        },
-        spawn: { cmd: 'vite --host 0.0.0.0 --port 5173' },
+        spawn: { cmd: 'vite build' },
+        staticDir: 'dist',
       },
       null,
       2,
@@ -341,13 +340,13 @@ const vueProject: Project = {
         private: true,
         type: 'module',
         scripts: {
-          start: 'dumbql-dev --proxy http://localhost:5173 & vite --host 0.0.0.0 --port 5173',
+          start: 'dumbql-dev --port 5173',
           build: 'vite build',
         },
         dependencies: {
           '@dumbql/client': '^1.0.2',
           '@dumbql/vue': '^1.0.0',
-          '@dumbql/dev-server': '^1.1.3',
+          '@dumbql/dev-server': '^1.1.7',
           vue: '^3.4.0',
         },
         devDependencies: {
@@ -374,10 +373,8 @@ const vueProject: Project = {
             }
           `,
         },
-        proxy: {
-          target: 'http://localhost:5173',
-        },
-        spawn: { cmd: 'vite --host 0.0.0.0 --port 5173' },
+        spawn: { cmd: 'vite build' },
+        staticDir: 'dist',
       },
       null,
       2,

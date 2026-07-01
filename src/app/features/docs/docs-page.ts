@@ -61,6 +61,7 @@ export class DocsPage {
     { path: '/docs/comparison', label: 'vs Other Solutions', since: '0.0.1' },
     { path: '/docs/migration', label: 'Migration from Apollo', since: '0.0.2-alpha.1' },
     { path: '/docs/api', label: 'API Reference', since: '0.0.1' },
+    { path: '/docs/dev-server', label: '@dumbql/dev-server', since: '1.1.0' },
     { path: '/docs/devcontainers', label: 'Sandboxes', since: '0.0.1' },
   ];
 

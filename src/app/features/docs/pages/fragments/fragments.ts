@@ -16,6 +16,8 @@ import { VersionService } from '../../../../shared/services/version.service';
 export class DocsFragments {
   protected readonly versionService = inject(VersionService);
 
+  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/fragments');
+
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/fragments/src/lib';
 
   protected readonly tocSections: TocSection[] = [

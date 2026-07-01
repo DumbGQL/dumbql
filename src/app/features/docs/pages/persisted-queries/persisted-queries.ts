@@ -16,6 +16,8 @@ import { VersionService } from '../../../../shared/services/version.service';
 export class DocsPersistedQueries {
   protected readonly versionService = inject(VersionService);
 
+  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/persisted-queries');
+
   protected readonly githubUrl =
     'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/persisted-queries/src/lib';
 

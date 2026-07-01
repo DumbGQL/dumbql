@@ -8,6 +8,11 @@ on:
         required: false
         default: ''
         type: string
+      version_dev_server:
+        description: 'Exact version for @dumbql/dev-server (e.g. 1.0.0). Overrides main version.'
+        required: false
+        default: ''
+        type: string
       type:
         description: 'Version bump type (used only if "version" is empty)'
         required: true
@@ -146,6 +151,17 @@ jobs:
           else
             node scripts/version.mjs ${{ inputs.type }}
           fi
+
+      - name: Set dev-server version (if specified)
+        if: inputs.version_dev_server != ''
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('projects/dumbql/dev-server/package.json', 'utf-8'));
+            pkg.version = '${{ inputs.version_dev_server }}';
+            fs.writeFileSync('projects/dumbql/dev-server/package.json', JSON.stringify(pkg, null, 2) + '\n');
+            console.log('  @dumbql/dev-server → ' + pkg.version);
+          "
 
       - name: Read tag
         id: tag

@@ -16,6 +16,8 @@ import { VersionService } from '../../../../shared/services/version.service';
 export class DocsCore {
   protected readonly versionService = inject(VersionService);
 
+  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/core');
+
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/core/src/lib';
 
   protected readonly graphqlServiceCode = `const posts = this.graphql.query(

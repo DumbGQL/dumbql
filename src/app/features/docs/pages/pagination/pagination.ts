@@ -16,6 +16,8 @@ import { VersionService } from '../../../../shared/services/version.service';
 export class DocsPagination {
   protected readonly versionService = inject(VersionService);
 
+  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/pagination');
+
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/pagination/src/lib';
 
   protected readonly tocSections: TocSection[] = [

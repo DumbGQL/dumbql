@@ -16,6 +16,8 @@ import { VersionService } from '../../../../shared/services/version.service';
 export class DocsTesting {
   protected readonly versionService = inject(VersionService);
 
+  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/testing');
+
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/testing/src/lib';
 
   protected readonly tocSections: TocSection[] = [

@@ -55,6 +55,8 @@ if (flags.spawn) {
 	spawn.cmd = flags.spawn;
 }
 
+const staticDir = flags.static ?? config.staticDir;
+
 await startDevServer({
 	port,
 	mock: {
@@ -68,4 +70,5 @@ await startDevServer({
 			: config.proxy?.rewrite,
 	},
 	spawn,
+	staticDir: staticDir || undefined,
 });

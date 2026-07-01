@@ -21,4 +21,6 @@ export interface DevServerConfig {
   proxy?: ProxyConfig;
   port?: number;
   spawn?: SpawnConfig;
+  /** Directory to serve static files from (overrides proxy when set) */
+  staticDir?: string;
 }

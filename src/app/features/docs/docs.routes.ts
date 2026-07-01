@@ -95,6 +95,11 @@ export const docsRoutes: Routes = [
         loadComponent: () => import('./pages/api/api').then((m) => m.DocsApi),
       },
       {
+        path: 'dev-server',
+        data: { since: '1.1.0' },
+        loadComponent: () => import('./pages/dev-server/dev-server').then((m) => m.DocsDevServer),
+      },
+      {
         path: 'devcontainers',
         loadComponent: () => import('./pages/devcontainers/devcontainers').then((m) => m.DocsDevcontainers),
       },

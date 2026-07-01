@@ -30,6 +30,14 @@ function compareVersions(a: string, b: string): number {
 @Injectable({ providedIn: 'root' })
 export class VersionService {
   readonly allVersions: readonly string[] = [
+    '1.1.7',
+    '1.1.6',
+    '1.1.5',
+    '1.1.4',
+    '1.1.3',
+    '1.1.2',
+    '1.1.1',
+    '1.1.0',
     '1.0.1',
     '1.0.0',
     '0.0.10',
@@ -43,6 +51,25 @@ export class VersionService {
     '0.0.2-alpha.1',
     '0.0.1',
   ];
+
+  private readonly packageSinceMap: Record<string, string> = {
+    '@dumbql/client': '0.0.1',
+    '@dumbql/react': '0.0.1',
+    '@dumbql/vue': '0.0.1',
+    '@dumbql/core': '0.0.1',
+    '@dumbql/cache': '0.0.1',
+    '@dumbql/subscriptions': '0.0.1',
+    '@dumbql/file-upload': '0.0.1',
+    '@dumbql/middlewares': '0.0.1',
+    '@dumbql/pagination': '0.0.1',
+    '@dumbql/persisted-queries': '0.0.1',
+    '@dumbql/fragments': '0.0.1',
+    '@dumbql/ssr': '0.0.1',
+    '@dumbql/debugging': '0.0.1',
+    '@dumbql/downloader': '0.0.1',
+    '@dumbql/testing': '0.0.1',
+    '@dumbql/dev-server': '1.1.0',
+  };
   private readonly storageKey = 'dumbql-docs-version';
 
   readonly currentVersion = signal(this.load());
@@ -52,6 +79,10 @@ export class VersionService {
       this.currentVersion.set(v);
       localStorage.setItem(this.storageKey, v);
     }
+  }
+
+  getPackageSince(packageName: string): string {
+    return this.packageSinceMap[packageName] ?? '—';
   }
 
   isVersionAtLeast(since: string): boolean {

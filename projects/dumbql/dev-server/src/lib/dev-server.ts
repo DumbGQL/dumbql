@@ -1,8 +1,8 @@
 import { createServer, type Server, type IncomingMessage, type ServerResponse } from 'node:http';
 import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, existsSync, statSync } from 'node:fs';
+import { resolve, join, extname } from 'node:path';
 import { spawn as spawnChild } from 'node:child_process';
 import { createYoga, createSchema } from 'graphql-yoga';
 import type { GraphQLSchema } from 'graphql';
@@ -48,7 +48,43 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
   'Access-Control-Max-Age': '86400',
+  'Access-Control-Allow-Private-Network': 'true',
 };
+
+const MIME_TYPES: Record<string, string> = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.map': 'application/json',
+};
+
+function serveStatic(req: IncomingMessage, res: ServerResponse, staticDir: string): void {
+  let pathname = new URL(req.url ?? '/', 'http://localhost').pathname;
+  if (pathname === '/') pathname = '/index.html';
+  const filePath = join(staticDir, pathname);
+  try {
+    if (!existsSync(filePath) || !statSync(filePath).isFile()) {
+      res.writeHead(404, { 'Content-Type': 'text/plain', ...CORS_HEADERS });
+      res.end('Not Found');
+      return;
+    }
+    const ext = extname(filePath);
+    res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] ?? 'application/octet-stream', ...CORS_HEADERS });
+    res.end(readFileSync(filePath));
+  } catch {
+    res.writeHead(500, { 'Content-Type': 'text/plain', ...CORS_HEADERS });
+    res.end('Internal Server Error');
+  }
+}
 
 function handleCors(res: ServerResponse): boolean {
   res.writeHead(204, CORS_HEADERS);
@@ -78,6 +114,19 @@ const LOADING_PAGE = `<!DOCTYPE html>
   </div>
 </body>
 </html>`;
+
+function isMeaningfulHtml(html: string): boolean {
+  const meaningfulIndicators = [
+    '<app-root',
+    'id="root"',
+    'id="app"',
+    'id="__next"',
+    '<div id="',
+    '<router-outlet',
+    '<ng-component',
+  ];
+  return html.length > 200 && meaningfulIndicators.some((ind) => html.includes(ind));
+}
 
 function createProxyHandler(frontendTarget: string, env: EnvInfo, devServerPort: number) {
   const needsRewrite = env.needsUrlRewrite;
@@ -114,37 +163,47 @@ function createProxyHandler(frontendTarget: string, env: EnvInfo, devServerPort:
       }
       const combinedHeaders: Record<string, string> = { ...flatHeaders, ...CORS_HEADERS };
 
-      if (needsRewrite) {
-        const contentType = combinedHeaders['content-type'] ?? '';
-        if (
-          contentType.startsWith('text/html') ||
+      const contentType = combinedHeaders['content-type'] ?? '';
+      const shouldBuffer = needsRewrite
+        ? contentType.startsWith('text/html') ||
           contentType.startsWith('text/javascript') ||
           contentType.startsWith('application/javascript') ||
           contentType.startsWith('text/css')
-        ) {
-          const hostHeader = req.headers['host'];
-          let publicHost: string | null = null;
-          if (hostHeader) {
-            const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
-            const frontendPort = Number(new URL(frontendTarget).port) || 4200;
-            publicHost = resolvePublicFrontendHost(host, frontendPort, devServerPort);
+        : contentType.startsWith('text/html');
+
+      if (shouldBuffer) {
+        const chunks: Buffer[] = [];
+        proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk));
+        proxyRes.on('end', () => {
+          let body = Buffer.concat(chunks).toString('utf-8');
+
+          if (contentType.startsWith('text/html') && !isMeaningfulHtml(body)) {
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', ...CORS_HEADERS });
+            res.end(LOADING_PAGE);
+            return;
           }
-          if (publicHost) {
-            const targetOrigin = frontendTarget.replace(/\/$/, '');
-            const chunks: Buffer[] = [];
-            proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk));
-            proxyRes.on('end', () => {
-              let body = Buffer.concat(chunks).toString('utf-8');
+
+          if (needsRewrite) {
+            const hostHeader = req.headers['host'];
+            let publicHost: string | null = null;
+            if (hostHeader) {
+              const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
+              const frontendPort = Number(new URL(frontendTarget).port) || 4200;
+              publicHost = resolvePublicFrontendHost(host, frontendPort, devServerPort);
+            }
+            if (publicHost) {
+              const targetOrigin = frontendTarget.replace(/\/$/, '');
               body = body.replace(
                 new RegExp(targetOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
                 `https://${publicHost}`,
               );
-              res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
-              res.end(body);
-            });
-            return;
+            }
           }
-        }
+
+          res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
+          res.end(body);
+        });
+        return;
       }
 
       res.writeHead(proxyRes.statusCode ?? 200, combinedHeaders);
@@ -167,6 +226,7 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
   const frontendTarget = config.proxy?.target ?? 'http://localhost:4200';
   const env = analyzeEnvironment(config.proxy?.rewrite);
   const port = config.port ?? 4000;
+  const staticDir = config.staticDir;
 
   const yoga = createYoga({
     schema,
@@ -190,6 +250,20 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
 
     if (url.pathname === '/graphql') {
       yoga(req, res);
+      return;
+    }
+
+    if (staticDir) {
+      const resolvedStatic = resolve(staticDir);
+      const indexHtml = ['index.html', 'browser/index.html'].find((p) =>
+        existsSync(join(resolvedStatic, p)),
+      );
+      if (indexHtml) {
+        serveStatic(req, res, resolvedStatic);
+      } else {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', ...CORS_HEADERS });
+        res.end(LOADING_PAGE);
+      }
       return;
     }
 

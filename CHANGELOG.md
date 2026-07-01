@@ -1,5 +1,63 @@
 # Changelog
 
+## [1.1.6] — 2026-07-01
+
+### Added
+- **`@dumbql/dev-server` `--static` flag** — serve pre-built static files instead of proxying to a dev server.
+  - Usage: `dumbql-dev --port 4200 --static dist/browser`
+  - All PNA/CORS headers are applied to static responses
+
+### Changed
+- **StackBlitz starters** — `dumbql-dev` starts immediately, loads loading page while `ng build` / `vite build` runs in background via `spawn.cmd` config. When build completes, static files are served automatically.
+  - `package.json` start: just `dumbql-dev --port 4200`
+  - `dumbql.config.json`: `{ spawn: { cmd: "ng build" }, staticDir: "dist/browser" }`
+  - No dev server (ng serve/vite) involved — prevents the "port answers before build ready" race condition
+  - No hardcoded localhost URLs — all traffic through StackBlitz public HTTPS URL, no PNA block
+
+### Fixed
+- **StackBlitz preview white page** — credentialless iframe blocks all `localhost:*` requests at the browser level (PNA). Build + static approach keeps all traffic on a single container port through StackBlitz's HTTPS proxy. dumbql-dev starts immediately so the port is always open, serving loading page until build finishes.
+
+## [1.1.7] — 2026-07-01
+
+### Changed
+- **`staticDir` auto-detection** — when `staticDir` is set, the server now checks both `index.html` and `browser/index.html` inside the directory. Handles both Angular output structures (`dist/` or `dist/browser/`).
+
+## [1.1.5] — 2026-07-01
+
+### Added
+- **Proxy content-aware buffering** — proxy now buffers HTML responses and checks for meaningful content before forwarding. If `ng serve`/Vite returns an empty stub page (as happens during initial build), the proxy shows the loading page instead.
+
+## [1.1.4] — 2026-07-01
+
+### Added
+- **`@dumbql/dev-server` `--static` flag** — initial implementation.
+
+## [1.1.3] — 2026-07-01
+
+### Added
+- **`@dumbql/dev-server`** — unified development server with mock GraphQL backend + proxy to any frontend dev server:
+  - CLI — `npx dumbql-dev --proxy http://localhost:4200`
+  - Configuration via `dumbql.config.json` with inline schema support
+  - `createDevServer()` / `startDevServer()` programmatic API
+  - `--rewrite` flag for URL rewriting in StackBlitz/Codespaces/WebContainers (PNA fix)
+  - Auto-detection of StackBlitz, Codespaces, and local environments via `env-analyzer.ts`
+- **`@dumbql/dev-server` docs page** — `/docs/dev-server` with CLI options, config example, and API reference
+- **Per-package "since" badge** — each package page now shows the version it was introduced (e.g., `since v0.0.1` or `since v1.1.0`)
+- **Zoneless Angular starter** — switched from `provideZoneChangeDetection` to `provideZonelessChangeDetection()`, removed `zone.js` dependency
+- **Improved starters** — `start` command simplified to just `dumbql-dev` (spawn.cmd handles frontend server), version ranges bumped to latest
+
+### Changed
+- File-based starters (angular/react/vue) now use `dumbql-dev` as the sole start command instead of separate terminals
+- Version dropdown migrated to `tuiComboBox` with read-only input, docs-themed styling
+- Non-existent versions removed from version selector (0.0.9, 0.0.11, 0.0.12, 0.0.2-rc.1, 0.0.2-rc.2)
+- `@dumbql/dev-server` version bumped `^1.0.0` → `^1.1.3` in all starters
+
+### Fixed
+- **CI `package-lock.json`** — regenerated lock file to remove stale workspace symlink entries that caused `npm ci` to fail with "Missing: @dumbql/cache@1.0.3 from lock file"
+- **StackBlitz preview fix** — all three StackBlitz starters (Angular, React, Vue) now start with just `dumbql-dev` and spawn the frontend dev server internally via `spawn.cmd`. StackBlitz auto-detects port 4000 first, so the preview opens through the proxy with URL rewriting enabled (`proxy.rewrite: true`), avoiding PNA/CORS blocks from `credentialless` iframes
+- **URL rewriting** — proxy now uses `ProxyConfig.target` dynamically instead of hardcoded `localhost:4200`, works for any frontend framework (React/Vue/Angular)
+- **Version service** — `allVersions` list updated to include `1.1.x` releases
+
 ## [0.0.3-rc.1] — 2026-06-30
 
 ### Added

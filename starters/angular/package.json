@@ -2,7 +2,7 @@
   "name": "@dumbql/starter-angular",
   "private": true,
   "scripts": {
-    "start": "node graphql-server.mjs & ng serve --port 4200",
+    "start": "node mock.js & ng serve --port 4200",
     "build": "ng build"
   },
   "dependencies": {

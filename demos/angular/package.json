@@ -2,7 +2,7 @@
   "name": "@dumbql/demo-angular",
   "private": true,
   "scripts": {
-    "start": "node graphql-server.mjs & ng serve --host 0.0.0.0",
+    "start": "node mock.js & ng serve --host 0.0.0.0",
     "build": "ng build"
   },
   "dependencies": {
@@ -13,7 +13,6 @@
     "@dumbql/client": "*",
     "@dumbql/core": "*",
     "graphql": "^17.0.0",
-    "graphql-yoga": "^5.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",
     "zone.js": "^0.15.0"

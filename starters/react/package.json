@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node graphql-server.mjs & vite --port 5173",
+    "start": "node mock.js & vite --port 5173",
     "build": "vite build"
   },
   "dependencies": {

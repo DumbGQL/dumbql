@@ -13,7 +13,7 @@
     "@dumbql/client": "^1.0.2",
     "@dumbql/core": "^1.0.4",
     "@dumbql/cache": "^1.0.3",
-    "@dumbql/dev-server": "^1.0.0",
+    "@dumbql/dev-server": "^1.1.3",
     "graphql": "^17.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"

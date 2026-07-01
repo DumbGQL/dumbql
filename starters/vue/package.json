@@ -9,7 +9,7 @@
   "dependencies": {
     "@dumbql/client": "^1.0.0",
     "@dumbql/vue": "^1.0.0",
-    "@dumbql/dev-server": "^1.0.0",
+    "@dumbql/dev-server": "^1.1.3",
     "vue": "^3.4.0"
   },
   "devDependencies": {

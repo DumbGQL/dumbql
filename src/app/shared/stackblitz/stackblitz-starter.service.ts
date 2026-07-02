@@ -15,6 +15,25 @@ window.fetch = (input, init) => {
   return origFetch(input, init);
 };`;
 
+const MINIMAL_ANGULAR: Project = {
+  title: 'Minimal Angular 22',
+  description: 'Vanilla Angular 22 — no @dumbql',
+  template: 'angular-cli',
+  files: {
+    'src/main.ts': `import { bootstrapApplication } from '@angular/platform-browser';
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: '<h1>Hello Angular 22!</h1>',
+})
+export class App {}
+
+bootstrapApplication(App);`,
+  },
+};
+
 const angularProject: Project = {
 	title: 'Angular DumbQL Starter',
 	description: 'Standalone Angular app with @dumbql/client',
@@ -419,8 +438,17 @@ body { font-family: sans-serif; padding: 2rem; }
 	},
 };
 
+if (typeof window !== 'undefined') {
+	(window as any).__MINIMAL_ANGULAR = MINIMAL_ANGULAR;
+	(window as any).__OPEN_SB = (p: Project) => sdk.openProject(p, { newWindow: true });
+}
+
 @Injectable({ providedIn: 'root' })
 export class StackblitzStarterService {
+	openMinimal() {
+		sdk.openProject(MINIMAL_ANGULAR, { newWindow: true, openFile: 'src/main.ts' });
+	}
+
 	openAngular() {
 		sdk.openProject(angularProject, {
 			newWindow: true,

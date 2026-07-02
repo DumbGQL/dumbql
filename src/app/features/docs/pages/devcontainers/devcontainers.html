@@ -51,15 +51,14 @@
     </table>
 
     <p>
-      Every sandbox runs a <code>graphql-yoga</code> mock backend on port 4000; the framework dev server proxies
-      <code>/graphql</code> to it. The &#64;dumbql/* packages are built from source and linked locally — no npm publish
-      needed.
+      Every sandbox includes a mock GraphQL endpoint at <code>/graphql</code>. The &#64;dumbql/* packages are
+      installed from npm.
     </p>
 
     <h2>Starters</h2>
     <p>
       Minimal scaffold projects to kickstart a new app. Each starter includes
-      <code>&#64;dumbql/*</code> packages and a <code>graphql-yoga</code> mock backend:
+      <code>&#64;dumbql/*</code> packages and a mock GraphQL endpoint:
     </p>
 
     <table>
@@ -75,7 +74,7 @@
           <td>Angular</td>
           <td>Standalone Angular 22 + <code>provideDumbql</code> + <code>DumbqlQuery</code></td>
           <td>
-            <a (click)="sandbox.openAngular()" href="javascript:void(0)">Open in StackBlitz</a>
+            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular?file=src%2Fapp%2Fapp.component.ts" target="_blank">Open in StackBlitz</a>
           </td>
         </tr>
         <tr>
@@ -136,9 +135,9 @@ code .devcontainer/react/
     <h2>Source Code</h2>
     <p>Demo apps live in the <code>demos/</code> directory:</p>
     <ul>
+      <li><code>demos/angular/</code> — Angular + standalone components demo</li>
       <li><code>demos/react/</code> — React + Vite demo</li>
       <li><code>demos/vue/</code> — Vue + Vite demo</li>
     </ul>
-    <p>For Angular, the monorepo itself (<code>src/</code>) serves as the demo app.</p>
   </div>
 </div>

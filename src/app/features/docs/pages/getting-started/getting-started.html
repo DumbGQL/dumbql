@@ -48,21 +48,27 @@
     <ul>
       <li>
         <strong>Angular 22+</strong> —
-        <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/angular?file=src%2Fapp%2Fapp.component.ts" target="_blank">Open in StackBlitz</a>
-        — standalone app with <code>@dumbql/client</code>, mock backend, and <code>provideDumbql</code> +
-        <code>DumbqlQuery</code> directive.
+        <a (click)="sandbox.openAngular()" href="javascript:void(0)">Open in StackBlitz</a>
+        &middot;
+        <a
+          href="https://codespaces.new/DumbGQL/dumbql?devcontainer_path=.devcontainer%2Fangular%2Fdevcontainer.json"
+          target="_blank"
+          >Open in Codespaces</a
+        >
+        &middot; <code>git clone</code> + <code>cd starters/angular && npm start</code> — standalone app with
+        <code>@dumbql/client</code>, mock backend, and <code>provideDumbql</code> + <code>DumbqlQuery</code> directive.
       </li>
       <li>
         <strong>React 18+</strong> —
         <a (click)="sandbox.openReact()" href="javascript:void(0)">Open in StackBlitz</a>
-        — standalone app with <code>@dumbql/client</code>, <code>@dumbql/react</code>, mock backend, and
-        <code>useQuery</code> hook.
+        &middot; <code>git clone</code> + <code>cd starters/react && npm start</code> — standalone app with
+        <code>@dumbql/client</code>, <code>@dumbql/react</code>, mock backend, and <code>useQuery</code> hook.
       </li>
       <li>
         <strong>Vue 3+</strong> —
         <a (click)="sandbox.openVue()" href="javascript:void(0)">Open in StackBlitz</a>
-        — standalone app with <code>@dumbql/client</code>, <code>@dumbql/vue</code>, mock backend, and
-        <code>useQuery</code> composable.
+        &middot; <code>git clone</code> + <code>cd starters/vue && npm start</code> — standalone app with
+        <code>@dumbql/client</code>, <code>@dumbql/vue</code>, mock backend, and <code>useQuery</code> composable.
       </li>
     </ul>
 

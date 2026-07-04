@@ -3,57 +3,43 @@
     <header class="page-header">
       <h1>Sandboxes</h1>
       <p class="subtitle">
-        Try DumbQL instantly — online via StackBlitz or locally with Dev Containers. Each sandbox includes a running
-        mock GraphQL backend and a minimal app that queries it using <code>&#64;dumbql/*</code> packages.
+        Try DumbQL online (React/Vue) or locally via Dev Containers. Each sandbox includes a mock GraphQL endpoint and a
+        minimal app that queries it using <code>&#64;dumbql/*</code> packages.
       </p>
     </header>
 
-    <h2>StackBlitz (Online)</h2>
-    <p>Click a link below to open a fully-configured sandbox in your browser. No installation required.</p>
+    <h2>Demos</h2>
+    <p>Demo apps are available on GitHub. Clone the repo and run the demo of your choice locally:</p>
 
     <table>
       <thead>
         <tr>
-          <th>Sandbox</th>
+          <th>Demo</th>
           <th>Stack</th>
-          <th>Link</th>
+          <th>Run</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Angular</td>
-          <td>Angular 22 + all &#64;dumbql/* packages</td>
-          <td>
-            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/angular" target="_blank"
-              >stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/angular</a
-            >
-          </td>
-        </tr>
-        <tr>
           <td>React</td>
           <td>Vite + React 19 + &#64;dumbql/react</td>
           <td>
-            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/react" target="_blank"
-              >stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/react</a
-            >
+            <a (click)="sandbox.openReact()" href="javascript:void(0)">Open in StackBlitz</a>
+            &middot;
+            <code>git clone</code> + <code>cd demos/react && npm start</code>
           </td>
         </tr>
         <tr>
           <td>Vue</td>
           <td>Vite + Vue 3 + &#64;dumbql/vue</td>
           <td>
-            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/vue" target="_blank"
-              >stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/demos/vue</a
-            >
+            <a (click)="sandbox.openVue()" href="javascript:void(0)">Open in StackBlitz</a>
+            &middot;
+            <code>git clone</code> + <code>cd demos/vue && npm start</code>
           </td>
         </tr>
       </tbody>
     </table>
-
-    <p>
-      Every sandbox includes a mock GraphQL endpoint at <code>/graphql</code>. The &#64;dumbql/* packages are
-      installed from npm.
-    </p>
 
     <h2>Starters</h2>
     <p>
@@ -66,7 +52,7 @@
         <tr>
           <th>Starter</th>
           <th>Stack</th>
-          <th>Link</th>
+          <th>Run</th>
         </tr>
       </thead>
       <tbody>
@@ -74,7 +60,15 @@
           <td>Angular</td>
           <td>Standalone Angular 22 + <code>provideDumbql</code> + <code>DumbqlQuery</code></td>
           <td>
-            <a href="https://stackblitz.com/~/github.com/DumbGQL/dumbql/tree/main/starters/angular?file=src%2Fapp%2Fapp.component.ts" target="_blank">Open in StackBlitz</a>
+            <a (click)="sandbox.openAngular()" href="javascript:void(0)">Open in StackBlitz</a>
+            &middot;
+            <a href="https://github.com/DumbGQL/dumbql/tree/main/starters/angular" target="_blank">View on GitHub</a>
+            &middot;
+            <a
+              href="https://codespaces.new/DumbGQL/dumbql?devcontainer_path=.devcontainer%2Fangular%2Fdevcontainer.json"
+              target="_blank"
+              >Open in Codespaces</a
+            >
           </td>
         </tr>
         <tr>
@@ -82,6 +76,12 @@
           <td>React 18 + <code>@dumbql/react</code> + <code>useQuery</code></td>
           <td>
             <a (click)="sandbox.openReact()" href="javascript:void(0)">Open in StackBlitz</a>
+            &middot;
+            <a
+              href="https://codespaces.new/DumbGQL/dumbql?devcontainer_path=.devcontainer%2Freact%2Fdevcontainer.json"
+              target="_blank"
+              >Open in Codespaces</a
+            >
           </td>
         </tr>
         <tr>
@@ -89,13 +89,19 @@
           <td>Vue 3 + <code>@dumbql/vue</code> + <code>useQuery</code></td>
           <td>
             <a (click)="sandbox.openVue()" href="javascript:void(0)">Open in StackBlitz</a>
+            &middot;
+            <a
+              href="https://codespaces.new/DumbGQL/dumbql?devcontainer_path=.devcontainer%2Fvue%2Fdevcontainer.json"
+              target="_blank"
+              >Open in Codespaces</a
+            >
           </td>
         </tr>
       </tbody>
     </table>
 
     <h2>VS Code Dev Containers</h2>
-    <p>For local development with Docker, each sandbox is available as a Dev Container configuration:</p>
+    <p>For local development with Docker, open in GitHub Codespaces or use VS Code Dev Containers:</p>
 
     <table>
       <thead>
@@ -125,8 +131,12 @@
     </table>
 
     <div class="code-block">
-      <pre><code># 1. Open the config directory in VS Code
-code .devcontainer/react/
+      <pre><code># Open in GitHub Codespaces (just add "codespaces.new/" before the repo URL):
+# https://codespaces.new/DumbGQL/dumbql
+
+# Or use VS Code Dev Containers locally:
+# 1. Open the config directory in VS Code
+code .devcontainer/angular/
 
 # 2. Press Ctrl+Shift+P → "Dev Containers: Reopen in Container"
 # VS Code builds the container, installs deps, and starts both servers.</code></pre>

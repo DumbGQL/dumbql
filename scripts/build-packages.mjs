@@ -7,9 +7,9 @@ const DIST = join(ROOT, 'dist', 'dumbql');
 const NM = join(ROOT, 'node_modules', '@dumbql');
 
 const BUILD_ORDER = [
-  'cache',
   'errors',
   'core',
+  'cache',
   'client',
   'dev-server',
   'fragments',

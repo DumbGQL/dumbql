@@ -71,3 +71,18 @@ tui-data-list-wrapper {
   color: var(--tui-text-secondary);
   font-size: 0.8125rem;
 }
+
+@media (width <= 768px) {
+  .app-header {
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .app-nav {
+    display: none;
+  }
+
+  .version-select {
+    display: none;
+  }
+}

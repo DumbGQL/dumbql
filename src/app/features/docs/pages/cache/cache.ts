@@ -1,20 +1,21 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip, TuiTab, TuiTabs } from '@taiga-ui/kit';
-import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { DocsApiTable, type ApiEntry } from '../../../../shared/ui/docs-api-table/docs-api-table';
-import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-cache',
   standalone: true,
-  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable],
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, AnchorDirective, DocsApiTable],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cache.html',
   styleUrl: './cache.scss',
 })
 export class DocsCache {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly packageSince = this.versionService.getPackageSince('@dumbql/cache');
@@ -25,14 +26,16 @@ export class DocsCache {
 
   protected readonly tabs = ['Docs', 'API'];
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'normalized-cache', title: 'NormalizedCache' },
-    { id: 'cache-service', title: 'CacheService' },
-    { id: 'garbage-collection', title: 'Garbage Collection' },
-    { id: 'persistence', title: 'Persistence' },
-    { id: 'optimistic-updates', title: 'Optimistic Updates' },
-    { id: 'type-policies', title: 'Type Policies' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'normalized-cache', title: 'NormalizedCache' },
+      { id: 'cache-service', title: 'CacheService' },
+      { id: 'garbage-collection', title: 'Garbage Collection' },
+      { id: 'persistence', title: 'Persistence' },
+      { id: 'optimistic-updates', title: 'Optimistic Updates' },
+      { id: 'type-policies', title: 'Type Policies' },
+    ]);
+  }
 
   protected readonly apiEntries: ApiEntry[] = [
     { name: 'NormalizedCache', description: 'Low-level normalized document store', type: 'class' },

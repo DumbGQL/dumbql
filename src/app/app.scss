@@ -15,6 +15,10 @@
   display: none;
 }
 
+.docs-toc-btn {
+  display: none;
+}
+
 .app-logo {
   display: flex;
   align-items: center;
@@ -105,6 +109,12 @@ tui-data-list-wrapper {
   border-top: 1px solid var(--tui-border-normal);
   color: var(--tui-text-secondary);
   font-size: 0.8125rem;
+}
+
+@media (width <= 1024px) {
+  .docs-toc-btn {
+    display: inline-flex;
+  }
 }
 
 @media (width <= 768px) {

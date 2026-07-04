@@ -1,19 +1,21 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
 import { TuiNotification } from '@taiga-ui/core';
-import { DocsToc, type TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-core',
   standalone: true,
-  imports: [TuiBadge, TuiNotification, TuiChip, DocsToc, AnchorDirective],
+  imports: [TuiBadge, TuiNotification, TuiChip, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './core.html',
   styleUrl: './core.scss',
 })
 export class DocsCore {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly packageSince = this.versionService.getPackageSince('@dumbql/core');
@@ -120,36 +122,38 @@ export const GET_NOTES = gql\`query GetNotes($filter: NoteType) {
   getNotes(filter: $filter) { id title content noteType }
 }\`;`;
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'dumbqlcore', title: '@dumbql/core' },
-    { id: 'installation', title: 'Installation' },
-    {
-      id: 'graphqlservice',
-      title: 'GraphqlService',
-      children: [
-        { id: 'query', title: 'Query' },
-        { id: 'mutation', title: 'Mutation' },
-        { id: 'refetch', title: 'Refetch' },
-      ],
-    },
-    {
-      id: 'middleware-pipeline',
-      title: 'Middleware Pipeline',
-      children: [{ id: 'built-in-middleware', title: 'Built-in Middleware' }],
-    },
-    { id: 'standalone-functions', title: 'Standalone Functions' },
-    { id: 'gql-tag', title: 'gql Tag' },
-    { id: 'reactive-variables', title: 'Reactive Variables' },
-    { id: 'client-directive', title: 'Client Directive' },
-    {
-      id: 'configuration',
-      title: 'Configuration',
-      children: [
-        { id: 'provide-graphql', title: 'provideGraphql' },
-        { id: 'plugins', title: 'Plugins' },
-        { id: 'api-reference', title: 'API Reference' },
-      ],
-    },
-    { id: 'app-queries', title: 'App Queries' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'dumbqlcore', title: '@dumbql/core' },
+      { id: 'installation', title: 'Installation' },
+      {
+        id: 'graphqlservice',
+        title: 'GraphqlService',
+        children: [
+          { id: 'query', title: 'Query' },
+          { id: 'mutation', title: 'Mutation' },
+          { id: 'refetch', title: 'Refetch' },
+        ],
+      },
+      {
+        id: 'middleware-pipeline',
+        title: 'Middleware Pipeline',
+        children: [{ id: 'built-in-middleware', title: 'Built-in Middleware' }],
+      },
+      { id: 'standalone-functions', title: 'Standalone Functions' },
+      { id: 'gql-tag', title: 'gql Tag' },
+      { id: 'reactive-variables', title: 'Reactive Variables' },
+      { id: 'client-directive', title: 'Client Directive' },
+      {
+        id: 'configuration',
+        title: 'Configuration',
+        children: [
+          { id: 'provide-graphql', title: 'provideGraphql' },
+          { id: 'plugins', title: 'Plugins' },
+          { id: 'api-reference', title: 'API Reference' },
+        ],
+      },
+      { id: 'app-queries', title: 'App Queries' },
+    ]);
+  }
 }

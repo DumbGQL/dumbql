@@ -1,32 +1,35 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
-import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
-import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-middlewares',
   standalone: true,
-  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  imports: [TuiBadge, TuiChip, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './middlewares.html',
   styleUrl: './middlewares.scss',
 })
 export class DocsMiddlewares {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly packageSince = this.versionService.getPackageSince('@dumbql/middlewares');
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/middlewares/src/lib';
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'auth-refresh', title: 'authRefreshMiddleware' },
-    { id: 'retry-exchange', title: 'retryExchange' },
-    { id: 'focus-refetch', title: 'focusRefetchMiddleware' },
-    { id: 'offline-queue', title: 'offlineQueueMiddleware' },
-    { id: 'composing', title: 'Composing Middlewares' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'auth-refresh', title: 'authRefreshMiddleware' },
+      { id: 'retry-exchange', title: 'retryExchange' },
+      { id: 'focus-refetch', title: 'focusRefetchMiddleware' },
+      { id: 'offline-queue', title: 'offlineQueueMiddleware' },
+      { id: 'composing', title: 'Composing Middlewares' },
+    ]);
+  }
 
   protected readonly authRefreshCode = `import { authRefreshMiddleware } from '@dumbql/middlewares';
 

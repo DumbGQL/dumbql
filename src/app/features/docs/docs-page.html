@@ -31,7 +31,20 @@
       }
     </nav>
     <div class="sidebar-footer">
-      <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener"> GitHub → </a>
+      <div class="sidebar-version">
+        <label class="version-label" for="sidebar-version-select">Version</label>
+        <select
+          id="sidebar-version-select"
+          class="version-select"
+          [value]="versionService.currentVersion()"
+          (change)="setVersion($event)"
+        >
+          @for (v of versionService.allVersions; track v) {
+            <option [value]="v">{{ v }}</option>
+          }
+        </select>
+      </div>
+      <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub →</a>
     </div>
   </aside>
   <div class="docs-content">
@@ -42,4 +55,26 @@
     }
     <router-outlet />
   </div>
+
+  @if (tocService.sections().length) {
+    @if (tocService.open()) {
+      <button class="toc-overlay" (click)="closeToc()" aria-label="Close table of contents"></button>
+    }
+    <aside class="docs-toc" [class.open]="tocService.open()">
+      <div class="toc-header">
+        <div class="toc-heading">On this page</div>
+        <button
+          tuiIconButton
+          type="button"
+          iconStart="@tui.x"
+          appearance="flat"
+          size="s"
+          class="toc-close"
+          (click)="closeToc()"
+          aria-label="Close table of contents"
+        ></button>
+      </div>
+      <app-docs-toc [sections]="tocService.sections()" />
+    </aside>
+  }
 </div>

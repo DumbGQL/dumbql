@@ -15,7 +15,7 @@
             <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
             <span tuiBadge appearance="info" size="s">v{{ versionService.currentVersion() }}</span>
             <span tuiBadge appearance="neutral" size="s">since v{{ packageSince }}</span>
-              <a
+            <a
               [href]="githubUrl"
               target="_blank"
               rel="noopener"
@@ -98,8 +98,4 @@
       <app-docs-api-table [entries]="apiEntries" />
     }
   </div>
-
-  <aside class="doc-page-toc">
-    <app-docs-toc [sections]="tocSections" />
-  </aside>
 </div>

@@ -43,7 +43,10 @@
       <pre><code>{{ configCode }}</code></pre>
     </div>
     <p>Then just run <code>dumbql-dev</code> without arguments.</p>
-    <p>You can also pass <code>--rewrite</code> to enable automatic URL rewriting for StackBlitz / Codespaces / WebContainers where the frontend URL differs from <code>localhost</code>:</p>
+    <p>
+      You can also pass <code>--rewrite</code> to enable automatic URL rewriting for StackBlitz / Codespaces /
+      WebContainers where the frontend URL differs from <code>localhost</code>:
+    </p>
     <div class="code-block">
       <pre><code>dumbql-dev --proxy http://localhost:4200 --rewrite</code></pre>
     </div>
@@ -114,8 +117,4 @@
       </tbody>
     </table>
   </div>
-
-  <aside class="doc-page-toc">
-    <app-docs-toc [sections]="tocSections" />
-  </aside>
 </div>

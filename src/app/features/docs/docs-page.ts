@@ -12,8 +12,10 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, Navi
 import { TuiButton } from '@taiga-ui/core';
 import hljs from 'highlight.js';
 import { Logo } from '../../shared/ui/logo/logo';
+import { DocsToc } from '../../shared/ui/docs-toc/docs-toc';
 import { VersionService } from '../../shared/services/version.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
+import { TocService } from '../../shared/services/toc.service';
 
 interface NavItem {
   path: string;
@@ -25,12 +27,12 @@ interface NavItem {
   selector: 'app-docs-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, Logo],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, Logo, DocsToc],
   templateUrl: './docs-page.html',
   styleUrl: './docs-page.scss',
 })
 export class DocsPage {
-  private readonly versionService = inject(VersionService);
+  protected readonly versionService = inject(VersionService);
   private readonly router = inject(Router);
 
   protected readonly contentLoading = signal(true);
@@ -62,14 +64,25 @@ export class DocsPage {
   }
 
   protected readonly sidebar = inject(SidebarService);
+  protected readonly tocService = inject(TocService);
 
   protected closeSidebar(): void {
     this.sidebar.close();
   }
 
+  protected closeToc(): void {
+    this.tocService.close();
+  }
+
+  protected setVersion(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.versionService.setVersion(target.value);
+  }
+
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.sidebar.close();
+    this.tocService.close();
   }
 
   private readonly allNavItems: NavItem[] = [

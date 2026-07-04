@@ -1,31 +1,34 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
-import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
-import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-debugging',
   standalone: true,
-  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  imports: [TuiBadge, TuiChip, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './debugging.html',
   styleUrl: './debugging.scss',
 })
 export class DocsDebugging {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly packageSince = this.versionService.getPackageSince('@dumbql/debugging');
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/debugging/src/lib';
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'debug-service', title: 'Debug Service' },
-    { id: 'parse-field-tree', title: 'parseFieldTree()' },
-    { id: 'mutation-chart', title: 'buildMutationChart()' },
-    { id: 'normalize-data', title: 'normalizeData()' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'debug-service', title: 'Debug Service' },
+      { id: 'parse-field-tree', title: 'parseFieldTree()' },
+      { id: 'mutation-chart', title: 'buildMutationChart()' },
+      { id: 'normalize-data', title: 'normalizeData()' },
+    ]);
+  }
 
   protected readonly debugServiceCode = `import { provideDumbqlDebugging } from '@dumbql/debugging';
 

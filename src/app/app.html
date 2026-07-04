@@ -11,6 +11,18 @@
         (click)="sidebar.toggle()"
         aria-label="Toggle sidebar"
       ></button>
+      @if (tocService.sections().length) {
+        <button
+          tuiIconButton
+          type="button"
+          iconStart="@tui.list"
+          appearance="flat"
+          size="s"
+          class="docs-toc-btn"
+          (click)="tocService.toggle()"
+          aria-label="Toggle table of contents"
+        ></button>
+      }
     }
     <a class="app-logo" routerLink="/">
       <app-logo size="icon" />

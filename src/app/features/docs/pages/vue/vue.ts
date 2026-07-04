@@ -1,30 +1,33 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
-import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
-import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-vue',
   standalone: true,
-  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  imports: [TuiBadge, TuiChip, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './vue.html',
   styleUrl: './vue.scss',
 })
 export class DocsVue {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly packageSince = this.versionService.getPackageSince('@dumbql/vue');
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/vue/src/lib';
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'quick-start', title: 'Quick Start' },
-    { id: 'composables', title: 'Composables' },
-    { id: 'plugin', title: 'Vue Plugin' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'quick-start', title: 'Quick Start' },
+      { id: 'composables', title: 'Composables' },
+      { id: 'plugin', title: 'Vue Plugin' },
+    ]);
+  }
 
   protected readonly quickStartCode = `<script setup>
 import { createDumbqlPlugin, useQuery, gql } from '@dumbql/vue';

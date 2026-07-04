@@ -13,6 +13,7 @@ import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdo
 import { Logo } from './shared/ui/logo/logo';
 import { VersionService } from './shared/services/version.service';
 import { SidebarService } from './shared/services/sidebar.service';
+import { TocService } from './shared/services/toc.service';
 import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
 import { FormsModule } from '@angular/forms';
 
@@ -43,6 +44,7 @@ export class App {
   private readonly router = inject(Router);
   protected readonly versionService = inject(VersionService);
   protected readonly sidebar = inject(SidebarService);
+  protected readonly tocService = inject(TocService);
 
   protected readonly isDarkMode = this.darkMode;
   protected readonly showDocsMenu = signal(this.router.url.startsWith('/docs'));

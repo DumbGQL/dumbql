@@ -6,8 +6,8 @@
           <app-logo />
           <p class="hero-subtitle">The Pragmatic GraphQL Client for Any Framework</p>
           <p class="hero-desc">
-            A modular, tree-shakeable GraphQL client with framework-agnostic core
-            and bindings for React, Vue, and Angular. Each capability in its own
+            A modular, tree-shakeable GraphQL client with framework-agnostic core and bindings for React, Vue, and
+            Angular. Each capability in its own
             <code>@dumbql/*</code> package — you pay only for what you use.
           </p>
           <div class="hero-actions">
@@ -23,15 +23,14 @@
 
       <div class="why-block" tuiNotification appearance="warning">
         <p>
-          <strong>If you're tired of:</strong> framework bindings that lag 6 months
-          behind every major release · fighting React idioms in Angular tests ·
-          installing 3 third-party packages just to upload a file · writing 50 lines
-          of <code>typePolicies</code> to make normalized cache work
+          <strong>If you're tired of:</strong> framework bindings that lag 6 months behind every major release ·
+          fighting React idioms in Angular tests · installing 3 third-party packages just to upload a file · writing 50
+          lines of <code>typePolicies</code> to make normalized cache work
         </p>
         <p style="margin-bottom: 0">
           <strong>DumbQL fixes all of this.</strong> One <code>npm install</code>
-          and you're done. Angular-native, Signals-ready, zero-config cache, built-in
-          middleware — every feature works out of the box.
+          and you're done. Angular-native, Signals-ready, zero-config cache, built-in middleware — every feature works
+          out of the box.
         </p>
       </div>
 
@@ -46,15 +45,17 @@
       <h2 appAnchor>Why DumbQL?</h2>
 
       <p>
-        Existing GraphQL clients are either framework-locked (Apollo primarily targets
-        React), overly complex (Relay), or too simplistic. DumbQL is designed with a
-        framework-agnostic core and first-class bindings for React, Vue, and Angular,
-        keeping each package small enough that the entire library adds less than 25 kB
-        to your production bundle.
+        Existing GraphQL clients are either framework-locked (Apollo primarily targets React), overly complex (Relay),
+        or too simplistic. DumbQL is designed with a framework-agnostic core and first-class bindings for React, Vue,
+        and Angular, keeping each package small enough that the entire library adds less than 25 kB to your production
+        bundle.
       </p>
 
       <ul>
-        <li><strong>Zero config normalized cache</strong> — just <code>__typename</code> + <code>id</code>, no <code>typePolicies</code></li>
+        <li>
+          <strong>Zero config normalized cache</strong> — just <code>__typename</code> + <code>id</code>, no
+          <code>typePolicies</code>
+        </li>
         <li><strong>Built-in middleware ecosystem</strong> — auth, retry, offline queue, auto mock, APQ, batching</li>
         <li><strong>Framework-native</strong> — Angular Signals, React hooks, Vue composables. Not ports.</li>
         <li><strong>Offline-first</strong> — mutation queue with localStorage persistence, auto-replay on reconnect</li>
@@ -74,7 +75,4 @@
       </p>
     </section>
   </div>
-  <aside class="overview-toc">
-    <app-docs-toc [sections]="tocSections" />
-  </aside>
 </div>

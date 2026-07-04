@@ -1,31 +1,34 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
-import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
-import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
+import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
   selector: 'app-docs-live-queries',
   standalone: true,
-  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
+  imports: [TuiBadge, TuiChip, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './live-queries.html',
   styleUrl: './live-queries.scss',
 })
 export class DocsLiveQueries {
+  private readonly tocService = inject(TocService);
+
   protected readonly versionService = inject(VersionService);
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/subscriptions/src/lib';
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'overview', title: 'Overview' },
-    { id: 'react', title: 'React: useLiveQuery' },
-    { id: 'vue', title: 'Vue: useLiveQuery' },
-    { id: 'angular', title: 'Angular: Live Queries' },
-    { id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
-    { id: 'protocol', title: 'WebSocket Protocol' },
-  ];
+  constructor() {
+    this.tocService.sections.set([
+      { id: 'overview', title: 'Overview' },
+      { id: 'react', title: 'React: useLiveQuery' },
+      { id: 'vue', title: 'Vue: useLiveQuery' },
+      { id: 'angular', title: 'Angular: Live Queries' },
+      { id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
+      { id: 'protocol', title: 'WebSocket Protocol' },
+    ]);
+  }
 
   protected readonly reactCode = `import { useLiveQuery } from '@dumbql/react';
 import { gql } from '@dumbql/client';

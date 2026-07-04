@@ -1,4 +1,13 @@
-import { Component, ChangeDetectionStrategy, afterEveryRender, computed, effect, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  afterEveryRender,
+  computed,
+  effect,
+  inject,
+  signal,
+  HostListener,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import hljs from 'highlight.js';
 import { VersionService } from '../../shared/services/version.service';
@@ -37,6 +46,21 @@ export class DocsPage {
         this.router.navigateByUrl('/docs/overview');
       }
     });
+  }
+
+  protected readonly sidebarOpen = signal(false);
+
+  protected toggleSidebar(): void {
+    this.sidebarOpen.update((v) => !v);
+  }
+
+  protected closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.sidebarOpen.set(false);
   }
 
   private readonly allNavItems: NavItem[] = [

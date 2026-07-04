@@ -82,7 +82,8 @@
     line-height: 1.6;
   }
 
-  ul, ol {
+  ul,
+  ol {
     margin: 0.5rem 0 1rem;
     padding-left: 1.25rem;
     color: var(--tui-text-secondary);
@@ -133,7 +134,8 @@
     overflow: hidden;
     border: 1px solid var(--tui-border-normal);
 
-    th, td {
+    th,
+    td {
       padding: 0.625rem 0.75rem;
       border-bottom: 1px solid var(--tui-border-normal);
       text-align: left;
@@ -158,5 +160,25 @@
 
   [tuiNotification] {
     margin: 0.75rem 0;
+  }
+}
+
+@media (width <= 1024px) {
+  .doc-page-toc {
+    display: none;
+  }
+
+  .doc-page-content {
+    max-width: none;
+  }
+
+  .doc-page-layout {
+    gap: 0;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }

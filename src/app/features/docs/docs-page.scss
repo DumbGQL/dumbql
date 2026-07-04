@@ -84,3 +84,119 @@
     background: none;
   }
 }
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 0.5rem;
+  z-index: 80;
+  width: 2rem;
+  height: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  background: var(--tui-background-accent-1);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-left: 0.75rem;
+
+  span {
+    display: block;
+    width: 1rem;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+  border: none;
+  cursor: default;
+  padding: 0;
+  background: none;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+@media (width <= 1024px) {
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .docs-layout {
+    position: relative;
+  }
+
+  .docs-sidebar {
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    bottom: 0;
+    z-index: 90;
+    width: 18rem;
+    min-width: 18rem;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 2rem rgb(0 0 0 / 20%);
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+
+    .sidebar-title {
+      padding: 0;
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+  }
+
+  .sidebar-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--tui-text-secondary);
+    border-radius: 0.25rem;
+
+    &:hover {
+      background: var(--tui-background-neutral-1);
+      color: var(--tui-text-primary);
+    }
+  }
+
+  .sidebar-nav {
+    padding: 0.5rem 0.75rem 1rem;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgb(0 0 0 / 30%);
+    z-index: 89;
+    cursor: default;
+  }
+
+  .docs-content {
+    padding: 1.5rem 1rem;
+  }
+}

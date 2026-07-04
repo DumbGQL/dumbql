@@ -113,3 +113,34 @@
     }
   }
 }
+
+@media (width <= 1024px) {
+  .overview-toc {
+    display: none;
+  }
+
+  .overview-content {
+    max-width: none;
+  }
+
+  .overview-layout {
+    gap: 0;
+  }
+}
+
+@media (width <= 640px) {
+  .doc-page {
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      a {
+        text-align: center;
+      }
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

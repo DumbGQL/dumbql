@@ -1,6 +1,38 @@
 <div class="docs-layout">
-  <aside class="docs-sidebar">
-    <div class="sidebar-title">Documentation</div>
+  <button
+    class="sidebar-toggle"
+    (click)="toggleSidebar()"
+    (keydown.enter)="toggleSidebar()"
+    (keydown.space)="toggleSidebar()"
+    aria-label="Toggle sidebar"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (sidebarOpen()) {
+    <button
+      class="sidebar-overlay"
+      (click)="closeSidebar()"
+      (keydown.enter)="closeSidebar()"
+      aria-label="Close sidebar"
+    ></button>
+  }
+
+  <aside class="docs-sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Documentation</div>
+      <button
+        class="sidebar-close"
+        (click)="closeSidebar()"
+        (keydown.enter)="closeSidebar()"
+        (keydown.space)="closeSidebar()"
+        aria-label="Close sidebar"
+      >
+        ✕
+      </button>
+    </div>
     <nav class="sidebar-nav">
       @for (item of navItems(); track item.path) {
         <a
@@ -8,6 +40,7 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: false }"
           class="nav-link"
+          (click)="closeSidebar()"
         >
           {{ item.label }}
         </a>

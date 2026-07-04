@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip, TuiTab, TuiTabs } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { DocsApiTable, type ApiEntry } from '../../../../shared/ui/docs-api-table/docs-api-table';
 import { TocService } from '../../../../shared/services/toc.service';
@@ -8,7 +10,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-cache',
   standalone: true,
-  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, AnchorDirective, DocsApiTable],
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cache.html',
   styleUrl: './cache.scss',
@@ -26,15 +28,17 @@ export class DocsCache {
 
   protected readonly tabs = ['Docs', 'API'];
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'normalized-cache', title: 'NormalizedCache' },
+    { id: 'cache-service', title: 'CacheService' },
+    { id: 'garbage-collection', title: 'Garbage Collection' },
+    { id: 'persistence', title: 'Persistence' },
+    { id: 'optimistic-updates', title: 'Optimistic Updates' },
+    { id: 'type-policies', title: 'Type Policies' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'normalized-cache', title: 'NormalizedCache' },
-      { id: 'cache-service', title: 'CacheService' },
-      { id: 'garbage-collection', title: 'Garbage Collection' },
-      { id: 'persistence', title: 'Persistence' },
-      { id: 'optimistic-updates', title: 'Optimistic Updates' },
-      { id: 'type-policies', title: 'Type Policies' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly apiEntries: ApiEntry[] = [

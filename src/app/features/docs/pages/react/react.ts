@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-react',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './react.html',
   styleUrl: './react.scss',
@@ -21,13 +23,15 @@ export class DocsReact {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/react/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'quick-start', title: 'Quick Start' },
+    { id: 'hooks', title: 'Hooks' },
+    { id: 'render-props', title: 'Render-prop Components' },
+    { id: 'context', title: 'Context & Provider' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'quick-start', title: 'Quick Start' },
-      { id: 'hooks', title: 'Hooks' },
-      { id: 'render-props', title: 'Render-prop Components' },
-      { id: 'context', title: 'Context & Provider' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly quickStartCode = `import { DumbqlProvider, useQuery, gql } from '@dumbql/react';

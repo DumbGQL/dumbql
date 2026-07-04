@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-dev-server',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dev-server.html',
   styleUrl: './dev-server.scss',
@@ -21,13 +23,15 @@ export class DocsDevServer {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/dev-server/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'quick-start', title: 'Quick Start' },
+    { id: 'configuration', title: 'Configuration' },
+    { id: 'cli', title: 'CLI Options' },
+    { id: 'api', title: 'Programmatic API' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'quick-start', title: 'Quick Start' },
-      { id: 'configuration', title: 'Configuration' },
-      { id: 'cli', title: 'CLI Options' },
-      { id: 'api', title: 'Programmatic API' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly cliCode = 'npx dumbql-dev --proxy http://localhost:4200';

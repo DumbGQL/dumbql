@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-downloader',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './downloader.html',
   styleUrl: './downloader.scss',
@@ -21,11 +23,13 @@ export class DocsDownloader {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/downloader/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'download-schema', title: 'downloadAndStoreSchema()' },
+    { id: 'output-structure', title: 'Output Structure' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'download-schema', title: 'downloadAndStoreSchema()' },
-      { id: 'output-structure', title: 'Output Structure' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly downloadSchemaCode = `import { downloadAndStoreSchema } from '@dumbql/downloader';

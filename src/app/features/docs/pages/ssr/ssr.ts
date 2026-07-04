@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-ssr',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './ssr.html',
   styleUrl: './ssr.scss',
@@ -21,12 +23,14 @@ export class DocsSsr {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/ssr/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'setup', title: 'SSR Setup' },
+    { id: 'transfer-cache', title: 'Transfer Cache' },
+    { id: 'chunked-transfer', title: 'Chunked Transfer' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'setup', title: 'SSR Setup' },
-      { id: 'transfer-cache', title: 'Transfer Cache' },
-      { id: 'chunked-transfer', title: 'Chunked Transfer' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly ssrStreamServiceCode = `import { provideDumbqlSsr } from '@dumbql/ssr';

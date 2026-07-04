@@ -2,6 +2,8 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiNotification } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { RouterLink } from '@angular/router';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -10,7 +12,7 @@ import { StackblitzStarterService } from '../../../../shared/stackblitz/stackbli
 @Component({
   selector: 'app-docs-getting-started',
   standalone: true,
-  imports: [TuiNotification, TuiBadge, RouterLink, AnchorDirective],
+  imports: [TuiNotification, TuiBadge, RouterLink, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './getting-started.html',
   styleUrl: './getting-started.scss',
@@ -21,14 +23,16 @@ export class DocsGettingStarted {
   protected readonly versionService = inject(VersionService);
   protected readonly sandbox = inject(StackblitzStarterService);
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'install', title: 'Install' },
+    { id: 'configure', title: 'Configure' },
+    { id: 'first-query', title: 'Your First Query' },
+    { id: 'starters', title: 'Starters' },
+    { id: 'next-steps', title: 'Next Steps' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'install', title: 'Install' },
-      { id: 'configure', title: 'Configure' },
-      { id: 'first-query', title: 'Your First Query' },
-      { id: 'starters', title: 'Starters' },
-      { id: 'next-steps', title: 'Next Steps' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly installCode = 'npm install @dumbql/client';

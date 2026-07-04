@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-migration',
   standalone: true,
-  imports: [TuiBadge, AnchorDirective],
+  imports: [TuiBadge, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './migration.html',
   styleUrl: './migration.scss',
@@ -17,14 +19,16 @@ export class DocsMigration {
 
   protected readonly versionService = inject(VersionService);
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'why-migrate', title: 'Why Migrate?' },
+    { id: 'cli-usage', title: 'CLI Usage' },
+    { id: 'manual-migration', title: 'Manual Migration' },
+    { id: 'adapter-guide', title: 'Adapter: Incremental Migration' },
+    { id: 'comparison-table', title: 'Apollo vs DumbQL API Mapping' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'why-migrate', title: 'Why Migrate?' },
-      { id: 'cli-usage', title: 'CLI Usage' },
-      { id: 'manual-migration', title: 'Manual Migration' },
-      { id: 'adapter-guide', title: 'Adapter: Incremental Migration' },
-      { id: 'comparison-table', title: 'Apollo vs DumbQL API Mapping' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly apolloDumbqlMapping = [

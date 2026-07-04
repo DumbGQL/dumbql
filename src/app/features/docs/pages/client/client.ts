@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-client',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './client.html',
   styleUrl: './client.scss',
@@ -21,15 +23,17 @@ export class DocsClient {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/client/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'quick-start', title: 'Quick Start' },
+    { id: 'api', title: 'API' },
+    { id: 'middleware', title: 'Middleware' },
+    { id: 'cache', title: 'Cache Integration' },
+    { id: 'streaming', title: 'Streaming' },
+    { id: 'file-upload', title: 'File Upload' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'quick-start', title: 'Quick Start' },
-      { id: 'api', title: 'API' },
-      { id: 'middleware', title: 'Middleware' },
-      { id: 'cache', title: 'Cache Integration' },
-      { id: 'streaming', title: 'Streaming' },
-      { id: 'file-upload', title: 'File Upload' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly quickStartCode = `import { createClient, gql, isSuccess } from '@dumbql/client';

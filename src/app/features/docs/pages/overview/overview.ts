@@ -3,6 +3,8 @@ import { RouterLink } from '@angular/router';
 import { TuiNotification, TuiButton } from '@taiga-ui/core';
 import { Logo } from '../../../../shared/ui/logo/logo';
 import { DocFeatureCard } from '../../../../shared/ui/doc-feature-card/doc-feature-card';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 
@@ -16,7 +18,7 @@ interface Feature {
 @Component({
   selector: 'app-docs-overview',
   standalone: true,
-  imports: [RouterLink, TuiNotification, TuiButton, Logo, DocFeatureCard, AnchorDirective],
+  imports: [RouterLink, TuiNotification, TuiButton, Logo, DocFeatureCard, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
@@ -117,12 +119,14 @@ export class DocsOverview {
     },
   ];
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'overview', title: 'Overview' },
+    { id: 'packages', title: 'Packages' },
+    { id: 'why-dumbql', title: 'Why DumbQL?' },
+    { id: 'getting-started', title: 'Getting Started' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'overview', title: 'Overview' },
-      { id: 'packages', title: 'Packages' },
-      { id: 'why-dumbql', title: 'Why DumbQL?' },
-      { id: 'getting-started', title: 'Getting Started' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 }

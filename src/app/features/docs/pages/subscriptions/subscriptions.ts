@@ -1,5 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
+import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
+import type { TocSection } from '../../../../shared/ui/docs-toc/docs-toc';
 import { AnchorDirective } from '../../../../shared/ui/anchor-heading/anchor-heading.directive';
 import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
@@ -7,7 +9,7 @@ import { VersionService } from '../../../../shared/services/version.service';
 @Component({
   selector: 'app-docs-subscriptions',
   standalone: true,
-  imports: [TuiBadge, TuiChip, AnchorDirective],
+  imports: [TuiBadge, TuiChip, DocsToc, AnchorDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './subscriptions.html',
   styleUrl: './subscriptions.scss',
@@ -21,12 +23,14 @@ export class DocsSubscriptions {
 
   protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/subscriptions/src/lib';
 
+  protected readonly tocSections: TocSection[] = [
+    { id: 'graphql-subscription-service', title: 'GraphqlSubscriptionService' },
+    { id: 'subscribe', title: 'subscribe()' },
+    { id: 'graphql-transport-ws', title: 'graphql-transport-ws Protocol' },
+  ];
+
   constructor() {
-    this.tocService.sections.set([
-      { id: 'graphql-subscription-service', title: 'GraphqlSubscriptionService' },
-      { id: 'subscribe', title: 'subscribe()' },
-      { id: 'graphql-transport-ws', title: 'graphql-transport-ws Protocol' },
-    ]);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly provideSubscriptionsCode = `import { provideDumbqlSubscriptions } from '@dumbql/subscriptions/angular';

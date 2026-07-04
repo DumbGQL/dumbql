@@ -1,37 +1,21 @@
 <div class="docs-layout">
-  <button
-    class="sidebar-toggle"
-    (click)="toggleSidebar()"
-    (keydown.enter)="toggleSidebar()"
-    (keydown.space)="toggleSidebar()"
-    aria-label="Toggle sidebar"
-  >
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-
-  @if (sidebarOpen()) {
-    <button
-      class="sidebar-overlay"
-      (click)="closeSidebar()"
-      (keydown.enter)="closeSidebar()"
-      aria-label="Close sidebar"
-    ></button>
+  @if (sidebar.open()) {
+    <button class="sidebar-overlay" (click)="closeSidebar()" aria-label="Close sidebar"></button>
   }
 
-  <aside class="docs-sidebar" [class.open]="sidebarOpen()">
+  <aside class="docs-sidebar" [class.open]="sidebar.open()">
     <div class="sidebar-header">
       <div class="sidebar-title">Documentation</div>
       <button
+        tuiIconButton
+        type="button"
+        icon="@tui.x"
+        appearance="flat"
+        size="s"
         class="sidebar-close"
         (click)="closeSidebar()"
-        (keydown.enter)="closeSidebar()"
-        (keydown.space)="closeSidebar()"
         aria-label="Close sidebar"
-      >
-        ✕
-      </button>
+      ></button>
     </div>
     <nav class="sidebar-nav">
       @for (item of navItems(); track item.path) {
@@ -51,6 +35,9 @@
     </div>
   </aside>
   <div class="docs-content">
+    @if (contentLoading()) {
+      <div class="docs-loader">Loading...</div>
+    }
     <router-outlet />
   </div>
 </div>

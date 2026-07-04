@@ -1,5 +1,17 @@
 <tui-root>
   <header class="app-header">
+    @if (showDocsMenu()) {
+      <button
+        tuiIconButton
+        type="button"
+        icon="@tui.menu"
+        appearance="flat"
+        size="s"
+        class="docs-menu-btn"
+        (click)="sidebar.toggle()"
+        aria-label="Toggle sidebar"
+      ></button>
+    }
     <a class="app-logo" routerLink="/">
       <app-logo size="icon" />
       <span class="app-name">DumbQL</span>

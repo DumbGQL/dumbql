@@ -8,9 +8,11 @@ import {
   signal,
   HostListener,
 } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
+import { TuiButton } from '@taiga-ui/core';
 import hljs from 'highlight.js';
 import { VersionService } from '../../shared/services/version.service';
+import { SidebarService } from '../../shared/services/sidebar.service';
 
 interface NavItem {
   path: string;
@@ -22,7 +24,7 @@ interface NavItem {
   selector: 'app-docs-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton],
   templateUrl: './docs-page.html',
   styleUrl: './docs-page.scss',
 })
@@ -30,7 +32,17 @@ export class DocsPage {
   private readonly versionService = inject(VersionService);
   private readonly router = inject(Router);
 
+  protected readonly contentLoading = signal(true);
+
   constructor() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.contentLoading.set(true);
+      } else if (event instanceof NavigationEnd) {
+        this.contentLoading.set(false);
+      }
+    });
+
     afterEveryRender(() => {
       const blocks = document.querySelectorAll('.docs-content pre code:not(.hljs)');
       if (blocks.length) {
@@ -48,19 +60,15 @@ export class DocsPage {
     });
   }
 
-  protected readonly sidebarOpen = signal(false);
-
-  protected toggleSidebar(): void {
-    this.sidebarOpen.update((v) => !v);
-  }
+  protected readonly sidebar = inject(SidebarService);
 
   protected closeSidebar(): void {
-    this.sidebarOpen.set(false);
+    this.sidebar.close();
   }
 
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
-    this.sidebarOpen.set(false);
+    this.sidebar.close();
   }
 
   private readonly allNavItems: NavItem[] = [

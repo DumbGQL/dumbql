@@ -60,7 +60,8 @@
 }
 
 .sidebar-version {
-  margin-bottom: 0.75rem;
+  padding: 0.75rem 1.25rem 0.5rem;
+  border-bottom: 1px solid var(--tui-border-normal);
 }
 
 .version-label {

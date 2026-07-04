@@ -17,6 +17,19 @@
         aria-label="Close sidebar"
       ></button>
     </div>
+    <div class="sidebar-version">
+      <label class="version-label" for="sidebar-version-select">Version</label>
+      <select
+        id="sidebar-version-select"
+        class="version-select"
+        [value]="versionService.currentVersion()"
+        (change)="setVersion($event)"
+      >
+        @for (v of versionService.allVersions; track v) {
+          <option [value]="v">{{ v }}</option>
+        }
+      </select>
+    </div>
     <nav class="sidebar-nav">
       @for (item of navItems(); track item.path) {
         <a
@@ -31,19 +44,6 @@
       }
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-version">
-        <label class="version-label" for="sidebar-version-select">Version</label>
-        <select
-          id="sidebar-version-select"
-          class="version-select"
-          [value]="versionService.currentVersion()"
-          (change)="setVersion($event)"
-        >
-          @for (v of versionService.allVersions; track v) {
-            <option [value]="v">{{ v }}</option>
-          }
-        </select>
-      </div>
       <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub →</a>
     </div>
   </aside>

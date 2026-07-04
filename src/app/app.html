@@ -37,6 +37,9 @@
     </button>
   </header>
   <main class="app-main">
+    @if (loading()) {
+      <div class="app-loader">Loading…</div>
+    }
     <router-outlet />
   </main>
   <footer class="app-footer">

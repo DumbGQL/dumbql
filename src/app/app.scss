@@ -66,6 +66,16 @@ tui-data-list-wrapper {
 .app-main {
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.app-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 3.5rem - 3.25rem);
+  color: var(--tui-text-secondary);
+  font-size: 0.875rem;
 }
 
 .app-footer {
@@ -80,7 +90,6 @@ tui-data-list-wrapper {
   .app-header {
     gap: 0.5rem;
     padding: 0 0.75rem;
-    backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
 

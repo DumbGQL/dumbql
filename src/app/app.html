@@ -37,12 +37,10 @@
     </button>
   </header>
   <main class="app-main">
-    @if (loading()) {
-      <div class="app-loader">
-        <app-logo size="icon" class="app-loader-logo" />
-      </div>
-    }
-    <router-outlet />
+    <div class="app-loader" [class.app-loader--hidden]="!loading()">
+      <app-logo size="icon" class="app-loader-logo" />
+    </div>
+    <router-outlet class="app-outlet" />
   </main>
   <footer class="app-footer">
     <span>DumbQL — GraphQL for the rest of us</span>

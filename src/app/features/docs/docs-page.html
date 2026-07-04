@@ -18,17 +18,18 @@
       ></button>
     </div>
     <div class="sidebar-version">
-      <label class="version-label" for="sidebar-version-select">Version</label>
-      <select
-        id="sidebar-version-select"
-        class="version-select"
-        [value]="versionService.currentVersion()"
-        (change)="setVersion($event)"
-      >
-        @for (v of versionService.allVersions; track v) {
-          <option [value]="v">{{ v }}</option>
-        }
-      </select>
+      <label class="version-label" for="sidebar-version-input">Version</label>
+      <tui-textfield readonly tuiTextfieldSize="s" [tuiTextfieldCleaner]="false">
+        <input
+          id="sidebar-version-input"
+          tuiComboBox
+          readonly
+          placeholder="v{{ versionService.currentVersion() }}"
+          [ngModel]="versionService.currentVersion()"
+          (ngModelChange)="versionService.setVersion($event)"
+        />
+        <tui-data-list-wrapper *tuiDropdown [items]="versionService.allVersions" />
+      </tui-textfield>
     </div>
     <nav class="sidebar-nav">
       @for (item of navItems(); track item.path) {

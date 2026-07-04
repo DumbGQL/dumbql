@@ -9,7 +9,10 @@ import {
   HostListener,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
+import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
+import { FormsModule } from '@angular/forms';
 import hljs from 'highlight.js';
 import { Logo } from '../../shared/ui/logo/logo';
 import { DocsToc } from '../../shared/ui/docs-toc/docs-toc';
@@ -27,7 +30,20 @@ interface NavItem {
   selector: 'app-docs-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, Logo, DocsToc],
+  providers: [TuiDropdownDirective],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    TuiButton,
+    Logo,
+    DocsToc,
+    FormsModule,
+    TuiDataListWrapper,
+    TuiDropdown,
+    TuiComboBox,
+    ...TuiTextfield,
+  ],
   templateUrl: './docs-page.html',
   styleUrl: './docs-page.scss',
 })
@@ -72,11 +88,6 @@ export class DocsPage {
 
   protected closeToc(): void {
     this.tocService.close();
-  }
-
-  protected setVersion(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.versionService.setVersion(target.value);
   }
 
   @HostListener('document:keydown.escape')

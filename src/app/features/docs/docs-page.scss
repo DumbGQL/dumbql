@@ -62,6 +62,18 @@
 .sidebar-version {
   padding: 0.75rem 1.25rem 0.5rem;
   border-bottom: 1px solid var(--tui-border-normal);
+
+  [tuiTextfield] {
+    width: 100%;
+    font-size: 0.8125rem;
+
+    input {
+      cursor: pointer;
+      font-size: 0.8125rem;
+      caret-color: transparent;
+      user-select: none;
+    }
+  }
 }
 
 .version-label {
@@ -72,29 +84,6 @@
   letter-spacing: 0.06em;
   color: var(--tui-text-tertiary);
   margin-bottom: 0.25rem;
-}
-
-.version-select {
-  display: block;
-  width: 100%;
-  padding: 0.375rem 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--tui-text-primary);
-  background: var(--tui-background-neutral-1);
-  border: 1px solid var(--tui-border-normal);
-  border-radius: 0.375rem;
-  cursor: pointer;
-  appearance: none;
-
-  &:hover {
-    border-color: var(--tui-background-accent-1);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--tui-background-accent-1);
-    outline-offset: -1px;
-  }
 }
 
 .repo-link {

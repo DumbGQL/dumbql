@@ -11,6 +11,7 @@ import {
 import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
 import { TuiButton } from '@taiga-ui/core';
 import hljs from 'highlight.js';
+import { Logo } from '../../shared/ui/logo/logo';
 import { VersionService } from '../../shared/services/version.service';
 import { SidebarService } from '../../shared/services/sidebar.service';
 
@@ -24,7 +25,7 @@ interface NavItem {
   selector: 'app-docs-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, Logo],
   templateUrl: './docs-page.html',
   styleUrl: './docs-page.scss',
 })

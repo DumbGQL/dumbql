@@ -1,5 +1,13 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+  NavigationEnd,
+  RouteConfigLoadStart,
+  RouteConfigLoadEnd,
+} from '@angular/router';
 import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink, TuiTextfield } from '@taiga-ui/core';
 import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
 import { Logo } from './shared/ui/logo/logo';
@@ -41,16 +49,16 @@ export class App {
   protected readonly loading = signal(true);
 
   constructor() {
-    let navCount = 0;
+    let initialEnded = false;
 
     this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        navCount++;
+      if (event instanceof RouteConfigLoadStart) {
         this.loading.set(true);
+      } else if (event instanceof RouteConfigLoadEnd) {
+        this.loading.set(false);
       } else if (event instanceof NavigationEnd) {
-        navCount--;
-        if (navCount <= 0) {
-          navCount = 0;
+        if (!initialEnded) {
+          initialEnded = true;
           this.loading.set(false);
         }
         this.showDocsMenu.set(event.url.startsWith('/docs'));

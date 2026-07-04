@@ -74,8 +74,17 @@ tui-data-list-wrapper {
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 3.5rem - 3.25rem);
-  color: var(--tui-text-secondary);
-  font-size: 0.875rem;
+}
+
+.app-loader-logo {
+  animation: app-loader-spin 1s linear infinite;
+  width: 3rem;
+}
+
+@keyframes app-loader-spin {
+  to {
+    rotate: 360deg;
+  }
 }
 
 .app-footer {

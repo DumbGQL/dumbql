@@ -38,7 +38,9 @@
   </header>
   <main class="app-main">
     @if (loading()) {
-      <div class="app-loader">Loading…</div>
+      <div class="app-loader">
+        <app-logo size="icon" class="app-loader-logo" />
+      </div>
     }
     <router-outlet />
   </main>

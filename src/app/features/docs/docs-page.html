@@ -36,7 +36,9 @@
   </aside>
   <div class="docs-content">
     @if (contentLoading()) {
-      <div class="docs-loader">Loading...</div>
+      <div class="docs-loader">
+        <app-logo size="icon" class="docs-loader-logo" />
+      </div>
     }
     <router-outlet />
   </div>

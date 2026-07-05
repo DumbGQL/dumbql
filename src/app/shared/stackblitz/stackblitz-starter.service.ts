@@ -31,7 +31,7 @@ const angularProject: Project = {
           '@angular/platform-browser-dynamic': '^22.0.0',
           '@angular/router': '^22.0.0',
           '@dumbql/client': '^1.0.2',
-          '@dumbql/core': '^1.0.4',
+          '@dumbql/core': '^1.0.5-beta.2',
           '@dumbql/cache': '^1.0.3',
           graphql: '^17.0.0',
           'reflect-metadata': '^0.2.0',
@@ -135,11 +135,13 @@ import { appConfig } from './app/app.config';
 
 bootstrapApplication(AppComponent, appConfig);`,
     'src/app/app.config.ts': `import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 import { provideDumbql } from '@dumbql/core';
 import { provideCacheService } from '@dumbql/cache/angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(),
     provideZonelessChangeDetection(),
     provideDumbql({
       endpoint: '/graphql',

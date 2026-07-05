@@ -16,7 +16,7 @@ export { DUMBQL_CONFIG, GRAPHQL_CONFIG, GRAPHQL_CACHE, type GraphqlCacheLike } f
 export type { OnErrorServiceConfig, SchemaConfig, DumbqlPlugin } from './lib/dumbql-config';
 export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCode } from './lib/graphql.service';
 export { gql, print, createTypedQuery } from './lib/gql';
-export type { DocumentNode, TypedDocumentNode, TypedQueryString } from './lib/gql';
+export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';
 export { query, type QueryHandle } from './lib/query';
 export { GraphqlEndpoint, provideEndpoint, injectEndpoint, type MutateEndpointOptions } from './lib/endpoint';
 export { mutate, type MutateOptions } from './lib/mutate';

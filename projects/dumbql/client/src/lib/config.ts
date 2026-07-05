@@ -40,6 +40,9 @@ export interface PersistedQueriesConfig {
   enabled?: boolean;
   hash?: 'sha256' | 'simple';
   autoPersist?: boolean;
+  /** Send hash-only requests via GET instead of POST to enable CDN caching.
+   *  Only applies when `hash` is set and the query body is empty (hash-only). */
+  useGetForHashedQueries?: boolean;
 }
 
 // ─── Retry Exchange ─────────────────────────────────────────────────────────

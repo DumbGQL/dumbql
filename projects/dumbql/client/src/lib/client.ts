@@ -176,12 +176,36 @@ export class DumbqlClient {
 
   private async executeHttp(request: GraphqlRequestContext): Promise<GraphQLResult<unknown>> {
     try {
+      const url = request.endpoint || this._endpoint;
+
+      if (request.method === 'GET') {
+        const params = new URLSearchParams();
+        params.set('query', request.query);
+        if (request.variables && Object.keys(request.variables).length > 0) {
+          params.set('variables', JSON.stringify(request.variables));
+        }
+        if (request.extensions) {
+          params.set('extensions', JSON.stringify(request.extensions));
+        }
+        const response = await fetch(`${url}?${params.toString()}`, {
+          method: 'GET',
+          headers: request.headers,
+        });
+        if (!response.ok) {
+          return this.toHttpError({
+            message: `HTTP ${response.status}`,
+            status: response.status,
+            statusText: response.statusText,
+          });
+        }
+        const json = await response.json() as GraphQLResponse<unknown>;
+        return this.toResult(json);
+      }
+
       const body: Record<string, unknown> = { query: request.query, variables: request.variables };
       if (request.extensions) {
         body['extensions'] = request.extensions;
       }
-      const url = request.endpoint || this._endpoint;
-
       const response = await fetch(url, {
         method: 'POST',
         headers: request.headers,

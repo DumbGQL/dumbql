@@ -1,5 +1,5 @@
 import { Injectable, inject, Injector } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map, of, shareReplay, timer, switchMap, tap, Subscriber } from 'rxjs';
 import { print, type DocumentNode, type TypedDocumentNode, type TypedQueryString } from './gql';
 import { gql } from './gql';
@@ -270,11 +270,26 @@ export class GraphqlService {
 
   private executeHttp(request: GraphqlRequestContext): Observable<GraphQLResult<unknown>> {
     const headers = new HttpHeaders(request.headers);
+    const url = request.endpoint || this._endpoint;
+
+    if (request.method === 'GET') {
+      let params = new HttpParams().set('query', request.query);
+      if (request.variables && Object.keys(request.variables).length > 0) {
+        params = params.set('variables', JSON.stringify(request.variables));
+      }
+      if (request.extensions) {
+        params = params.set('extensions', JSON.stringify(request.extensions));
+      }
+      return this.http.get<GraphQLResponse<unknown>>(url, { headers, params }).pipe(
+        map((response) => this.toResult(response)),
+        catchError((error: unknown) => of(this.toHttpError(error))),
+      );
+    }
+
     const body: Record<string, unknown> = { query: request.query, variables: request.variables };
     if (request.extensions) {
       body['extensions'] = request.extensions;
     }
-    const url = request.endpoint || this._endpoint;
     return this.http.post<GraphQLResponse<unknown>>(url, body, { headers }).pipe(
       map((response) => this.toResult(response)),
       catchError((error: unknown) => of(this.toHttpError(error))),

@@ -12,6 +12,8 @@ export interface GraphqlRequestContext {
 	extensions?: Record<string, unknown>;
 	/** Optional callback when typenames are extracted from query or mutation results. */
 	onTypenamesExtracted?: (typenames: Set<string>) => void;
+	/** HTTP method override. Defaults to POST. Use GET for CDN-cacheable hash-only persisted queries. */
+	method?: 'GET' | 'POST';
 }
 
 export type GraphqlMiddlewareNext = (request: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>;

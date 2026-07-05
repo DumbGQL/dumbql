@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { from, Observable, of, switchMap, tap } from 'rxjs';
-import type { GraphQLResult, GraphqlMiddleware } from '@dumbql/core';
+import type { GraphQLResult, GraphqlMiddleware, GraphqlRequestContext } from '@dumbql/core';
 import { GraphqlService, type DocumentNode } from '@dumbql/core';
 
 async function sha256(message: string): Promise<string> {
@@ -33,7 +33,11 @@ function isPersistedQueryNotFound(result: GraphQLResult<unknown>): boolean {
 const hashCache = new Map<string, string>();
 const registeredHashes = new Set<string>();
 
-export function apqMiddleware(): GraphqlMiddleware {
+function withHashOnlyMethod(request: GraphqlRequestContext, config?: { useGetForHashedQueries?: boolean }): Partial<GraphqlRequestContext> {
+	return config?.useGetForHashedQueries ? { method: 'GET' } : {};
+}
+
+export function apqMiddleware(config?: { useGetForHashedQueries?: boolean }): GraphqlMiddleware {
 	return (request, next) => {
 		const hash = hashCache.get(request.query);
 		if (hash && registeredHashes.has(hash)) {
@@ -41,7 +45,7 @@ export function apqMiddleware(): GraphqlMiddleware {
 				...request.extensions,
 				persistedQuery: { version: 1, sha256Hash: hash },
 			};
-			return next({ ...request, query: '', extensions }).pipe(
+			return next({ ...request, query: '', extensions, ...withHashOnlyMethod(request, config) }).pipe(
 				switchMap((result) => {
 					if (isPersistedQueryNotFound(result)) {
 						registeredHashes.delete(hash);
@@ -68,7 +72,7 @@ export function apqMiddleware(): GraphqlMiddleware {
 					persistedQuery: { version: 1, sha256Hash: computedHash },
 				};
 
-				return next({ ...request, query: '', extensions }).pipe(
+				return next({ ...request, query: '', extensions, ...withHashOnlyMethod(request, config) }).pipe(
 					switchMap((result) => {
 						if (isPersistedQueryNotFound(result)) {
 							return next({

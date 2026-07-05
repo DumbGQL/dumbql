@@ -135,13 +135,13 @@ import { appConfig } from './app/app.config';
 
 bootstrapApplication(AppComponent, appConfig);`,
     'src/app/app.config.ts': `import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideDumbql } from '@dumbql/core';
 import { provideCacheService } from '@dumbql/cache/angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
     provideZonelessChangeDetection(),
     provideDumbql({
       endpoint: '/graphql',

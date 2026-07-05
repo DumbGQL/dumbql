@@ -1,7 +1,7 @@
 import { Injectable, inject, Injector } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, map, of, shareReplay, timer, switchMap, tap, Subscriber } from 'rxjs';
-import { print, type DocumentNode, type TypedDocumentNode } from './gql';
+import { print, type DocumentNode, type TypedDocumentNode, type TypedQueryString } from './gql';
 import { gql } from './gql';
 import {
   DUMBQL_CONFIG,
@@ -111,11 +111,11 @@ export class GraphqlService {
   }
 
   query<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
-    const queryStr = print(document);
+    const queryStr = typeof document === 'string' ? document : print(document);
     return this.withDedup(queryStr, variables, () => this.executeQuery<TResponse>(queryStr, variables, endpoint));
   }
 
@@ -124,21 +124,21 @@ export class GraphqlService {
    * Uses the Fetch API internally for multipart/mixed response handling.
    */
   queryStream<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
-    const queryStr = print(document);
+    const queryStr = typeof document === 'string' ? document : print(document);
     return this.executeStreaming(queryStr, variables, endpoint) as Observable<GraphQLResult<TResponse>>;
   }
 
   mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
     variables?: TVariables,
     endpoint?: string,
     optimistic?: (cache: GraphqlCacheLike) => string,
   ): Observable<GraphQLResult<TResponse>> {
-    const query = print(document);
+    const query = typeof document === 'string' ? document : print(document);
 
     const cache = this.injector.get(GRAPHQL_CACHE, null);
 
@@ -175,24 +175,24 @@ export class GraphqlService {
   }
 
   refetch<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
-    const query = print(document);
-    const key = this.dedupKey(query, variables);
+    const queryStr = typeof document === 'string' ? document : print(document);
+    const key = this.dedupKey(queryStr, variables);
     dedupCache.delete(key);
-    return this.query<TResponse, TVariables>(document, variables, endpoint);
+    return this.withDedup(queryStr, variables, () => this.executeQuery<TResponse>(queryStr, variables, endpoint));
   }
 
   poll<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-    document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+    document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
     intervalMs: number,
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
     return timer(0, intervalMs).pipe(
-      switchMap(() => this.refetch<TResponse, TVariables>(document, variables, endpoint)),
+      switchMap(() => this.refetch(document, variables, endpoint)),
     );
   }
 

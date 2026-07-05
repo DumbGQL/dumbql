@@ -7,7 +7,7 @@ export {
 	generateTypedDocumentsCode,
 	generateIndexCode,
 } from './lib/graphql-file-parser';
-export type { ParsedOperation, OperationVar } from './lib/graphql-file-parser';
+export type { ParsedOperation, OperationVar, DocumentCodegenOptions } from './lib/graphql-file-parser';
 
 export { mergeGeneratedTypes } from './lib/schema-merge';
 

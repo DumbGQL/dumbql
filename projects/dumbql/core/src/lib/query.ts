@@ -2,7 +2,7 @@ import { inject, Injector, signal, type WritableSignal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Observable, Subject, switchMap, NEVER, share, ReplaySubject, startWith, distinctUntilChanged } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
-import type { DocumentNode, TypedDocumentNode } from './gql';
+import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 
 export interface QueryHandle<T> {
   /** Stream of query results */
@@ -14,7 +14,7 @@ export interface QueryHandle<T> {
 }
 
 export function query<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-  document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+  document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
   variables?: TVariables,
 ): QueryHandle<TResponse> {
   const graphql = inject(GraphqlService);

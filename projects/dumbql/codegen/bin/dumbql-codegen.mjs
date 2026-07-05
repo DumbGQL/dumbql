@@ -22,6 +22,7 @@ function parseArgs(args) {
       case '--watch': case '-w': opts.watch = true; break;
       case '--schema-only': opts.schemaOnly = true; break;
       case '--documents-only': opts.documentsOnly = true; break;
+      case '--client-preset': opts.clientPreset = true; break;
       case '--output': case '-o': opts.output = args[++i]; break;
       case '--help': case '-h':
         console.log(`
@@ -32,6 +33,7 @@ Options:
   --watch, -w             Watch .graphql files for changes
   --schema-only           Generate only schema types
   --documents-only        Generate only typed documents from .graphql files
+  --client-preset         Generate createTypedQuery() instead of gql — skips runtime parse()
   --output, -o <dir>      Output directory for generated types
   --help, -h              Show this help
 `);
@@ -127,8 +129,10 @@ async function generateDocuments(typesDir, codegenConfig, typesConfig) {
   const typesPath = resolve(typesDir, 'index.ts');
   const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
 
+  const clientPreset = opts.clientPreset === true;
+
   for (const op of operations) {
-    const code = generateTypedDocumentsCode([op], typesCode);
+    const code = generateTypedDocumentsCode([op], typesCode, { clientPreset });
     writeFileSync(join(docsDir, `${op.name}.ts`), code);
     console.log(`  Generated: ${op.name}.ts`);
   }
@@ -151,7 +155,7 @@ async function generateDocuments(typesDir, codegenConfig, typesConfig) {
     const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
 
     for (const frag of fragments) {
-      const code = generateFragmentCode([frag], typesCode);
+      const code = generateFragmentCode([frag], typesCode, clientPreset);
       writeFileSync(join(fragsDir, `${frag.name}.ts`), code);
       console.log(`  Fragment: ${frag.name}.ts`);
     }

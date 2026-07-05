@@ -24,6 +24,7 @@ const BUILD_ORDER = [
   'debugging',
   'testing',
   'apollo-adapter',
+  'opentelemetry',
   'react',
   'vue',
 ];

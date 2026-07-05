@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/dumbql/opentelemetry",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@dumbql/core": ["../../../projects/dumbql/core/src/public-api.ts"],
+      "@dumbql/client": ["../../../projects/dumbql/client/src/public-api.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

@@ -31,6 +31,8 @@
       "@dumbql/middlewares/angular": ["./projects/dumbql/middlewares/src/angular.ts"],
       "@dumbql/testing": ["./projects/dumbql/testing/src/public-api.ts"],
       "@dumbql/client": ["./projects/dumbql/client/src/public-api.ts"],
+      "@dumbql/opentelemetry": ["./projects/dumbql/opentelemetry/src/public-api.ts"],
+      "@dumbql/opentelemetry/angular": ["./projects/dumbql/opentelemetry/src/angular/index.ts"],
       "@dumbql/react": ["./projects/dumbql/react/src/public-api.ts"],
       "@dumbql/vue": ["./projects/dumbql/vue/src/public-api.ts"]
     }

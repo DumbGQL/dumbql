@@ -183,7 +183,7 @@ interface Note {
       @if (error)  { <p>Error: {{ error }}</p> }
       @if (data) {
         <ul>
-          @for (note of data.getNotes; track note.id) {
+          @for (note of data.data.getNotes; track note.id) {
             <li><strong>{{ note.title }}</strong>: {{ note.content }}</li>
           }
         </ul>

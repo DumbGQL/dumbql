@@ -104,17 +104,6 @@ export class DumbqlQueryDirective<T = unknown> {
       this.dumbqlQueryVars();
       this.refetch$.next();
     });
-
-    afterRenderEffect({
-      write: () => {
-        const loading = this.loading();
-        const result = this.result();
-        if (!loading && result) {
-          const el = this.viewRef?.rootNodes[0] as HTMLElement | undefined;
-          el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      },
-    });
   }
 
   /** Expose refetch so callers can trigger manual re-fetch. */

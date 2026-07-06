@@ -65,20 +65,45 @@ describe('useBackgroundQuery (Vue)', () => {
     vi.clearAllMocks();
   });
 
-  it('returns a promise that resolves with data', async () => {
+  it('starts query immediately and returns QueryRef with loading ref', async () => {
     const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
-    const data = await useBackgroundQuery<{ title: string }>(BOOK_QUERY);
+    const queryRef = useBackgroundQuery<{ title: string }>(BOOK_QUERY);
 
-    expect(data).toEqual({ title: 'Dune' });
+    expect(client.query).toHaveBeenCalledWith(BOOK_QUERY, undefined);
+    expect(queryRef.loading.value).toBe(true);
+    expect(queryRef.data.value).toBeNull();
+
+    await new Promise(process.nextTick);
+
+    expect(queryRef.loading.value).toBe(false);
+    expect(queryRef.data.value).toEqual({ title: 'Dune' });
   });
 
-  it('throws on error', async () => {
-    const err = { status: 'error', error: 'Failed', errorCode: 'NETWORK_ERROR' };
-    const client = { query: vi.fn().mockResolvedValue(err), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+  it('sets error on query failure', async () => {
+    const client = { query: vi.fn().mockResolvedValue({ status: 'error', error: 'Failed', errorCode: 'NETWORK_ERROR' }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
-    await expect(useBackgroundQuery<unknown>(BOOK_QUERY)).rejects.toEqual(err);
+    const queryRef = useBackgroundQuery<unknown>(BOOK_QUERY);
+
+    await new Promise(process.nextTick);
+
+    expect(queryRef.loading.value).toBe(false);
+    expect(queryRef.error.value).toBe('Failed');
+  });
+
+  it('refetch calls client.refetch and updates refs', async () => {
+    const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }), refetch: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Updated' } }), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    vi.mocked(useClient).mockReturnValue(client as never);
+
+    const queryRef = useBackgroundQuery<{ title: string }>(BOOK_QUERY);
+    await new Promise(process.nextTick);
+
+    const result = await queryRef.refetch();
+
+    expect(client.refetch).toHaveBeenCalled();
+    expect(queryRef.data.value).toEqual({ title: 'Updated' });
+    expect(result).toEqual({ status: 'success', data: { title: 'Updated' } });
   });
 });

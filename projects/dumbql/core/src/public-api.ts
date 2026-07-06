@@ -19,10 +19,13 @@ export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCod
 export { gql, print, createTypedQuery } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';
 export { query, type QueryHandle } from './lib/query';
+export { query as injectQuery, type QueryHandle as InjectQueryHandle } from './lib/query';
 export { GraphqlEndpoint, provideEndpoint, injectEndpoint, type MutateEndpointOptions } from './lib/endpoint';
 export { mutate, type MutateOptions } from './lib/mutate';
+export { mutate as injectMutation, type MutateOptions as InjectMutationOptions } from './lib/mutate';
 export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
+export { injectPrefetch } from './lib/prefetch';
 export {
   isSuccess,
   isError,

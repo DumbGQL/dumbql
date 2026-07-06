@@ -30,101 +30,11 @@ on:
           - rc
           - beta
           - alpha
-      tag_cache:
-        description: '@dumbql/cache'
-        default: 'latest'
+      npm_tag:
+        description: 'npm dist-tag for all packages (auto = derived from version bump type)'
+        default: 'auto'
         type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_client:
-        description: '@dumbql/client'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_codegen:
-        description: '@dumbql/codegen'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_core:
-        description: '@dumbql/core'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_dev_server:
-        description: '@dumbql/dev-server'
-        default: 'rc'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_errors:
-        description: '@dumbql/errors'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_fragments:
-        description: '@dumbql/fragments'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_downloader:
-        description: '@dumbql/downloader'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_ssr:
-        description: '@dumbql/ssr'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_subscriptions:
-        description: '@dumbql/subscriptions'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_middlewares:
-        description: '@dumbql/middlewares'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_pagination:
-        description: '@dumbql/pagination'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_persisted_queries:
-        description: '@dumbql/persisted-queries'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_file_upload:
-        description: '@dumbql/file-upload'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_debugging:
-        description: '@dumbql/debugging'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_testing:
-        description: '@dumbql/testing'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_apollo_adapter:
-        description: '@dumbql/apollo-adapter'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_react:
-        description: '@dumbql/react'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
-      tag_vue:
-        description: '@dumbql/vue'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, beta, alpha, skip]
+        options: [auto, latest, rc, beta, alpha, skip]
 permissions:
   contents: write
 
@@ -167,50 +77,21 @@ jobs:
             echo "EXACT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
             echo "DEV_SERVER_VERSION=${{ inputs.version_dev_server }}" >> "$GITHUB_ENV"
 
-            echo "TAG_cache=${{ inputs.tag_cache }}" >> "$GITHUB_ENV"
-            echo "TAG_client=${{ inputs.tag_client }}" >> "$GITHUB_ENV"
-            echo "TAG_codegen=${{ inputs.tag_codegen }}" >> "$GITHUB_ENV"
-            echo "TAG_core=${{ inputs.tag_core }}" >> "$GITHUB_ENV"
-            echo "TAG_dev_server=${{ inputs.tag_dev_server }}" >> "$GITHUB_ENV"
-            echo "TAG_errors=${{ inputs.tag_errors }}" >> "$GITHUB_ENV"
-            echo "TAG_fragments=${{ inputs.tag_fragments }}" >> "$GITHUB_ENV"
-            echo "TAG_downloader=${{ inputs.tag_downloader }}" >> "$GITHUB_ENV"
-            echo "TAG_ssr=${{ inputs.tag_ssr }}" >> "$GITHUB_ENV"
-            echo "TAG_subscriptions=${{ inputs.tag_subscriptions }}" >> "$GITHUB_ENV"
-            echo "TAG_middlewares=${{ inputs.tag_middlewares }}" >> "$GITHUB_ENV"
-            echo "TAG_pagination=${{ inputs.tag_pagination }}" >> "$GITHUB_ENV"
-            echo "TAG_persisted_queries=${{ inputs.tag_persisted_queries }}" >> "$GITHUB_ENV"
-            echo "TAG_file_upload=${{ inputs.tag_file_upload }}" >> "$GITHUB_ENV"
-            echo "TAG_debugging=${{ inputs.tag_debugging }}" >> "$GITHUB_ENV"
-            echo "TAG_testing=${{ inputs.tag_testing }}" >> "$GITHUB_ENV"
-            echo "TAG_apollo_adapter=${{ inputs.tag_apollo_adapter }}" >> "$GITHUB_ENV"
-            echo "TAG_react=${{ inputs.tag_react }}" >> "$GITHUB_ENV"
-            echo "TAG_vue=${{ inputs.tag_vue }}" >> "$GITHUB_ENV"
+            # Derive npm tag: auto = follow version bump type
+            NPM_TAG="${{ inputs.npm_tag }}"
+            if [ "$NPM_TAG" = "auto" ]; then
+              case "${{ inputs.type }}" in
+                rc|beta|alpha) NPM_TAG="${{ inputs.type }}" ;;
+                *) NPM_TAG="latest" ;;
+              esac
+            fi
+            echo "NPM_TAG=$NPM_TAG" >> "$GITHUB_ENV"
           else
             BRANCH="${{ github.ref_name }}"
             echo "BUMP_TYPE=$BRANCH" >> "$GITHUB_ENV"
             echo "EXACT_VERSION=" >> "$GITHUB_ENV"
             echo "DEV_SERVER_VERSION=" >> "$GITHUB_ENV"
-
-            echo "TAG_cache=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_client=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_codegen=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_core=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_dev_server=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_errors=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_fragments=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_downloader=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_ssr=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_subscriptions=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_middlewares=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_pagination=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_persisted_queries=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_file_upload=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_debugging=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_testing=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_apollo_adapter=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_react=$BRANCH" >> "$GITHUB_ENV"
-            echo "TAG_vue=$BRANCH" >> "$GITHUB_ENV"
+            echo "NPM_TAG=$BRANCH" >> "$GITHUB_ENV"
           fi
 
       - name: Bump version
@@ -257,38 +138,16 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          declare -A TAG_MAP
-          TAG_MAP["@dumbql/cache"]="$TAG_cache"
-          TAG_MAP["@dumbql/client"]="$TAG_client"
-          TAG_MAP["@dumbql/codegen"]="$TAG_codegen"
-          TAG_MAP["@dumbql/core"]="$TAG_core"
-          TAG_MAP["@dumbql/dev-server"]="$TAG_dev_server"
-          TAG_MAP["@dumbql/errors"]="$TAG_errors"
-          TAG_MAP["@dumbql/fragments"]="$TAG_fragments"
-          TAG_MAP["@dumbql/downloader"]="$TAG_downloader"
-          TAG_MAP["@dumbql/ssr"]="$TAG_ssr"
-          TAG_MAP["@dumbql/subscriptions"]="$TAG_subscriptions"
-          TAG_MAP["@dumbql/middlewares"]="$TAG_middlewares"
-          TAG_MAP["@dumbql/pagination"]="$TAG_pagination"
-          TAG_MAP["@dumbql/persisted-queries"]="$TAG_persisted_queries"
-          TAG_MAP["@dumbql/file-upload"]="$TAG_file_upload"
-          TAG_MAP["@dumbql/debugging"]="$TAG_debugging"
-          TAG_MAP["@dumbql/testing"]="$TAG_testing"
-          TAG_MAP["@dumbql/apollo-adapter"]="$TAG_apollo_adapter"
-          TAG_MAP["@dumbql/react"]="$TAG_react"
-          TAG_MAP["@dumbql/vue"]="$TAG_vue"
+          TAG="$NPM_TAG"
+          if [ "$TAG" = "skip" ] || [ -z "$TAG" ]; then
+            echo "  ⏭️  Skipping all packages (NPM_TAG=skip)"
+            exit 0
+          fi
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
-              tag="${TAG_MAP[$name]}"
-
-              if [ "$tag" = "skip" ] || [ -z "$tag" ]; then
-                echo "  ⏭️  Skipping $name"
-                continue
-              fi
-
-              echo "  Publishing $name → tag: $tag"
-              npm publish "$pkg" --access public --tag "$tag"
+              echo "  Publishing $name → tag: $TAG"
+              npm publish "$pkg" --access public --tag "$TAG"
             fi
           done
 

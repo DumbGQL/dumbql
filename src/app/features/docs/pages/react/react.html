@@ -25,9 +25,11 @@
           </div>
         </div>
         <p class="lead">
-          React bindings for <code>@dumbql/client</code>. Provides hooks (<code>useQuery</code>,
-          <code>useMutation</code>, <code>useSubscription</code>, <code>useFragment</code>, <code>useLiveQuery</code>),
-          render-prop components, and a <code>DumbqlProvider</code> context wrapper.
+           React bindings for <code>@dumbql/client</code>. Provides hooks (<code>useQuery</code>,
+           <code>useMutation</code>, <code>useSubscription</code>, <code>useFragment</code>, <code>useLiveQuery</code>,
+           <code>useSuspenseQuery</code>, <code>useBackgroundQuery</code>, <code>useReadQuery</code>,
+           <code>usePrefetch</code>, <code>useVal</code>), components (<code>RateLimitGate</code>,
+           <code>NullOverlay</code>), render-prop components, and a <code>DumbqlProvider</code> context wrapper.
         </p>
       </header>
 
@@ -45,13 +47,18 @@
       </p>
 
       <h3>useMutation</h3>
-      <p>Returns a mutate function and result state:</p>
+      <p>Returns a mutate function and result state. Supports <strong>optimistic updates</strong> via the
+        <code>optimistic</code> option — receives the <code>CacheStore</code> and returns an ID. The update is
+        automatically committed on success or rolled back on error:</p>
       <div class="code-block">
         <pre><code>{{ mutationCode }}</code></pre>
       </div>
 
       <h3>useSubscription</h3>
-      <p>Connects to a WebSocket subscription:</p>
+      <p>
+        Connects to a WebSocket subscription. Supports <strong>auto-reconnect</strong> with exponential backoff
+        (<code>reconnect</code>, <code>reconnectInterval</code>, <code>maxReconnects</code>):
+      </p>
       <div class="code-block">
         <pre><code>{{ subscriptionCode }}</code></pre>
       </div>
@@ -126,6 +133,22 @@
       </p>
       <div class="code-block">
         <pre><code>{{ otelCode }}</code></pre>
+      </div>
+
+      <h2 appAnchor id="rate-limit-gate">RateLimitGate</h2>
+      <p>
+        <code>RateLimitGate</code> wraps your UI and shows a countdown banner when <code>isLimited</code> is true.
+        Fires <code>onRetry</code> when the countdown completes.
+      </p>
+
+      <h2 appAnchor id="reactive-val">Reactive Val</h2>
+      <p>
+        <code>useVal</code> creates a mutable reactive value container with null-handling utilities
+        (<code>nullify</code>, <code>isNull</code>, <code>orElse</code>, <code>match</code>, etc.).
+        Re-renders on every mutation.
+      </p>
+      <div class="code-block">
+        <pre><code>{{ valCode }}</code></pre>
       </div>
 
       <h2 appAnchor id="render-props">Render-prop Components</h2>

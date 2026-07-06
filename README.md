@@ -3,8 +3,8 @@
 > **Framework-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, React, and Vue — not ported from another framework. Zero-boilerplate. Signals-ready.**
 
 <p align="center">
-  <a href="https://github.com/DumbGQL/dumbql/actions/workflows/ci.yml">
-    <img src="https://github.com/DumbGQL/dumbql/actions/workflows/ci.yml/badge.svg" alt="CI"/>
+  <a href="https://github.com/DumbGQL/dumbql/actions/workflows/release.yml">
+    <img src="https://github.com/DumbGQL/dumbql/actions/workflows/release.yml/badge.svg" alt="Release"/>
   </a>
   <a href="https://codecov.io/gh/DumbGQL/dumbql">
     <img src="https://codecov.io/gh/DumbGQL/dumbql/branch/main/graph/badge.svg" alt="codecov"/>

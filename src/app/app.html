@@ -39,6 +39,7 @@
       tuiButton
       appearance="flat"
       size="s"
+      iconStart="@tui.chevron-down"
       class="version-select"
       [tuiDropdown]="versionMenu"
       [tuiDropdownManual]="open()"
@@ -47,7 +48,6 @@
       (click)="open.update((v) => !v)"
     >
       v{{ versionService.currentVersion() }}
-      <span tuiChevron [tuiChevron]="open()"></span>
     </button>
     <ng-template #versionMenu>
       <tui-data-list>

@@ -25,9 +25,12 @@
           </div>
         </div>
         <p class="lead">
-          Vue composables for <code>@dumbql/client</code>. Provides <code>useQuery</code>, <code>useMutation</code>,
-          <code>useSubscription</code>, <code>useLiveQuery</code>, <code>useSuspenseQuery</code>, and a Vue plugin
-          (<code>createDumbqlPlugin</code>) for global client registration.
+           Vue composables for <code>@dumbql/client</code>. Provides <code>useQuery</code>, <code>useMutation</code>,
+           <code>useSubscription</code>, <code>useLiveQuery</code>, <code>useFragment</code>, <code>useSuspenseQuery</code>,
+           <code>useBackgroundQuery</code>, <code>useReadQuery</code>, <code>usePrefetch</code>, <code>useVal</code>,
+           components (<code>RateLimitGate</code>, <code>NullOverlay</code>),
+           directives (<code>v-dql-mutate</code>, <code>v-dql-loading</code>),
+           and a Vue plugin (<code>createDumbqlPlugin</code>) for global client registration.
         </p>
       </header>
 
@@ -45,13 +48,39 @@
       </p>
 
       <h3>useMutation</h3>
+      <p>
+        Supports <strong>optimistic updates</strong> via <code>optimistic</code> option — receives cache, returns an ID.
+        Auto-committed on success, rolled back on error.
+      </p>
       <div class="code-block">
         <pre><code>{{ mutationCode }}</code></pre>
       </div>
 
       <h3>useSubscription</h3>
+      <p>
+        Supports <strong>auto-reconnect</strong> with exponential backoff
+        (<code>reconnect</code>, <code>reconnectInterval</code>, <code>maxReconnects</code>):
+      </p>
       <div class="code-block">
         <pre><code>{{ subscriptionCode }}</code></pre>
+      </div>
+
+      <h3>useFragment</h3>
+      <p>
+        Reads a normalized entity from the cache by <code>__typename</code> + <code>id</code>.
+        Returns <code>&#123; data, complete &#125;</code> — reactive cache lookup, no network request.
+      </p>
+      <div class="code-block">
+        <pre><code>{{ fragmentCode }}</code></pre>
+      </div>
+
+      <h2 appAnchor id="fragments">Fragments</h2>
+      <p>
+        <code>useFragment</code> reads a normalized cache entity by <code>__typename</code> + <code>id</code>.
+        No network request — pure cache lookup. Returns <code>&#123; data, complete &#125;</code>.
+      </p>
+      <div class="code-block">
+        <pre><code>{{ fragmentCode }}</code></pre>
       </div>
 
       <h2 appAnchor id="live-queries">Live Queries</h2>
@@ -79,6 +108,40 @@
       </p>
       <div class="code-block">
         <pre><code>{{ apqCode }}</code></pre>
+      </div>
+
+      <h2 appAnchor id="rate-limit-gate">RateLimitGate</h2>
+      <p>
+        <code>RateLimitGate</code> wraps your template and shows a countdown banner when <code>isLimited</code> is
+        <code>true</code>. Fires <code>onRetry</code> when the countdown completes.
+      </p>
+
+      <h2 appAnchor id="directives">Directives</h2>
+      <p>
+        Registered automatically via <code>createDumbqlPlugin</code>:
+      </p>
+      <ul>
+        <li>
+          <code>v-dql-mutate</code> — on click, executes a mutation. Accepts a string (mutation) or
+          <code>&#123; mutation, variables &#125;</code> object.
+        </li>
+        <li>
+          <code>v-dql-loading</code> — toggles <code>.dql-loading</code> CSS class on the element based on a boolean
+          expression.
+        </li>
+      </ul>
+      <div class="code-block">
+        <pre><code>{{ directiveCode }}</code></pre>
+      </div>
+
+      <h2 appAnchor id="reactive-val">Reactive Val</h2>
+      <p>
+        <code>useVal</code> creates a reactive value container with null-handling utilities
+        (<code>nullify</code>, <code>isNull</code>, <code>orElse</code>, <code>match</code>, etc.).
+        Returns a Vue <code>Ref</code> augmented with these methods.
+      </p>
+      <div class="code-block">
+        <pre><code>{{ valCode }}</code></pre>
       </div>
 
       <h2 appAnchor id="suspense-ssr">Suspense &amp; SSR</h2>

@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.5] — 2026-07-06
+
+### Added
+- **Optimistic updates** for `useMutation` (React + Vue) — new `optimistic` option receives `CacheStore` and returns an ID. Update auto-committed on success, rolled back on error.
+- **Subscription auto-reconnect** (React + Vue + Angular) — exponential backoff with jitter via `reconnect`, `reconnectInterval`, `maxReconnects` options.
+- **Vue directives** — `v-dql-mutate` (click-to-mutate), `v-dql-loading` (CSS class toggle). Registered via `registerDirectives()` or automatically through `createDumbqlPlugin`.
+- **Vue `useFragment`** — cache-backed fragment reading by `__typename` + `id`. Mirrors React `useFragment`.
+- **Vue `usePrefetch`** — returns a prefetch function, mirrors React `usePrefetch`.
+- **Vue `RateLimitGate`** — countdown banner component. Mirrors React `RateLimitGate`.
+- **Vue `QueryRef` + `useReadQuery`** — `useBackgroundQuery` now returns a reactive `QueryRef` with `data`, `error`, `loading` refs and `refetch`. `useReadQuery` unwraps the data ref.
+- **Angular `injectLiveQuery`** — standalone function returning `Observable<T>` via `GraphqlLiveQuery` (fetch + WebSocket subscribe).
+- **Angular `injectQuery` / `injectMutation`** — aliases for existing `query()` / `mutate()`.
+- **Angular `injectFragment`** — synchronous cache lookup via `CacheService` (from `@dumbql/cache/angular`).
+- **Angular `injectPrefetch`** — returns a prefetch function, defers `inject()` until subscription.
+- **Reactive `useVal`** — renamed from `useSmthRef` in both React and Vue. Reactive value container with null-handling utilities (`nullify`, `isNull`, `orElse`, `match`, etc.).
+- **Vue `useBackgroundQuery`** now returns `QueryRef` (was `Promise<TData>`).
+- **Middleware docs** — added sections for autoMock, errorHandler, rateLimit, dedup, costEstimation.
+- Tests for Vue directives (6 cases), React `useMutation` optimistic (4 cases).
+
+### Changed
+- Branch renamed from `feature/opentelemetry-tracing` to `beta/v1.0.5`.
+- `useSmthRef` renamed to `useVal` across React and Vue.
+- `GraphqlSubscriptionService` (Angular) now respects `reconnect`, `reconnectInterval`, `maxReconnectAttempts` from `SubscriptionsConfig`.
+
 ## [1.1.6] — 2026-07-01
 
 ### Added

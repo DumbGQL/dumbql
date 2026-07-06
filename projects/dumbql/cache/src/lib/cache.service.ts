@@ -5,7 +5,7 @@ import { CachePersistenceService } from './cache-persist-ng';
 import { type CacheEvent, CacheEvents } from './cache-events';
 import { type CacheMetricsSnapshot, CacheMetrics } from './cache-metrics';
 import { type Provider } from '@angular/core';
-import { GRAPHQL_CACHE } from '@dumbql/core';
+import { GRAPHQL_CACHE } from './tokens';
 import { filter, map } from 'rxjs/operators';
 
 export class CacheService {

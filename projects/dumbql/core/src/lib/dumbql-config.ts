@@ -241,19 +241,7 @@ export const DUMBQL_CONFIG = new InjectionToken<DumbqlConfig>('DUMBQL_CONFIG');
 /** @deprecated Use DUMBQL_CONFIG instead */
 export const GRAPHQL_CONFIG = DUMBQL_CONFIG;
 
-export interface GraphqlCacheLike {
-  merge(entity: { __typename: string; id: string; [key: string]: unknown }): void;
-  readLocal(key: string): unknown;
-  writeLocalWithTypes<T>(key: string, value: T, types: Set<string>): void;
-  clearLocalStateByTypes(types: string[]): void;
-  setTypePolicies(policies: Record<string, { keyFields?: string[]; merge?: unknown }>): void;
-  applyOptimistic(update: { id: string; entities: { __typename: string; id: string }[] }): string;
-  commitOptimistic(id: string): void;
-  rollbackOptimistic(id: string): void;
-}
-
-/** Injection token for the cache service. Provide via `provideCacheService()` from @dumbql/cache/angular */
-export const GRAPHQL_CACHE = new InjectionToken<GraphqlCacheLike>('GRAPHQL_CACHE');
+export { GRAPHQL_CACHE, type GraphqlCacheLike } from '@dumbql/cache';
 
 // ─── Provider ───────────────────────────────────────────────────────────────
 

@@ -14,7 +14,7 @@ export interface VueVal<T> extends Ref<T> {
 
 export function useVal<T>(initialValue: T): VueVal<T> {
   const inner = new Val(initialValue);
-  const r = vueRef<T>(initialValue) as VueVal<T>;
+  const r = vueRef<T>(initialValue) as unknown as VueVal<T>;
 
   r.nullify = () => {
     const prev = inner.nullify();

@@ -45,7 +45,7 @@ export const RateLimitGate = defineComponent({
     return { remaining };
   },
   render() {
-    if (!this.isLimited) return this.$slots.default?.();
+    if (!this.isLimited) return this.$slots['default']?.();
 
     const defaultFallback = h('div', {
       style: {
@@ -80,6 +80,6 @@ export const RateLimitGate = defineComponent({
       ]),
     ]);
 
-    return this.$slots.fallback?.() ?? defaultFallback;
+    return this.$slots['fallback']?.() ?? defaultFallback;
   },
 });

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEpicFetus } from './use-epic-fetus';
 
-const styles: Record<string, React.CSSProperties> = {
+const s: Record<string, React.CSSProperties> = {
   overlay: {
     position: 'fixed', inset: '0', zIndex: 99999,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -58,18 +58,18 @@ export function NullOverlay(): ReactNode {
   const message = isNull ? (event.path ?? 'unknown') : event.message;
 
   return (
-    <div style={{ ...styles.overlay, ...(isNull ? styles.overlayNull : styles.overlayError) }}>
-      <div style={styles.content}>
-        <div style={styles.icon}>
+    <div style={{ ...s['overlay'], ...(isNull ? s['overlayNull'] : s['overlayError']) }}>
+      <div style={s['content']}>
+        <div style={s['icon']}>
           {isNull ? (
-            <span style={styles.nullSym}>&empty;</span>
+            <span style={s['nullSym']}>&empty;</span>
           ) : (
-            <span style={styles.errSym}>&#9888;</span>
+            <span style={s['errSym']}>&#9888;</span>
           )}
         </div>
-        <div style={isNull ? styles.titleNull : styles.titleError}>{title}</div>
-        <div style={styles.message}>{message}</div>
-        <div style={styles.sub}>THE DATA IS CORRUPTED</div>
+        <div style={isNull ? s['titleNull'] : s['titleError']}>{title}</div>
+        <div style={s['message']}>{message}</div>
+        <div style={s['sub']}>THE DATA IS CORRUPTED</div>
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ export function useQuery<TData, TVariables extends Record<string, unknown> = Rec
     setNetworkStatus('loading');
     setCalled(true);
 
-    client.query<TData, TVariables>(document, variables).then((res) => {
+    client.query<TData, TVariables>(document, variables).then((res: GraphQLResult<TData>) => {
       if (cancelled) return;
       setResult(res);
       setLoading(false);

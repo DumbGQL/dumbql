@@ -7,6 +7,9 @@ export interface UseSubscriptionOptions<TData> {
   variables?: Record<string, unknown>;
   wsEndpoint?: string;
   shouldSubscribe?: boolean;
+  reconnect?: boolean;
+  reconnectInterval?: number;
+  maxReconnects?: number;
   onNext?: (data: TData) => void;
   onError?: (error: string, errorCode?: ErrorCode) => void;
   onComplete?: () => void;
@@ -41,14 +44,20 @@ export function useSubscription<TData, TVariables extends Record<string, unknown
     client.endpoint.replace(/^http/, 'ws');
 
   const shouldSubscribe = options?.shouldSubscribe ?? true;
+  const shouldReconnect = options?.reconnect ?? false;
+  const reconnectInterval = options?.reconnectInterval ?? 2000;
+  const maxReconnects = options?.maxReconnects ?? 5;
   const onNext = options?.onNext;
   const onError = options?.onError;
   const onComplete = options?.onComplete;
 
   let ws: WebSocket | null = null;
+  let reconnectAttempt = 0;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  let unsubscribed = false;
 
-  onMounted(() => {
-    if (!shouldSubscribe) return;
+  const connect = () => {
+    if (unsubscribed) return;
 
     loading.value = true;
     data.value = null;
@@ -59,15 +68,13 @@ export function useSubscription<TData, TVariables extends Record<string, unknown
     ws = new WebSocket(wsEndpoint);
 
     ws.onopen = () => {
-      const subscribeMsg = {
+      loading.value = true;
+      reconnectAttempt = 0;
+      ws!.send(JSON.stringify({
         type: 'subscribe',
         id: '1',
-        payload: {
-          query: queryStr,
-          variables: variables ?? {},
-        },
-      };
-      ws!.send(JSON.stringify(subscribeMsg));
+        payload: { query: queryStr, variables: variables ?? {} },
+      }));
     };
 
     ws.onmessage = (event) => {
@@ -109,10 +116,23 @@ export function useSubscription<TData, TVariables extends Record<string, unknown
 
     ws.onclose = () => {
       loading.value = false;
+      ws = null;
+      if (!unsubscribed && shouldReconnect && reconnectAttempt < maxReconnects) {
+        const delay = reconnectInterval * Math.pow(2, reconnectAttempt) + Math.random() * 1000;
+        reconnectAttempt++;
+        reconnectTimer = setTimeout(connect, delay) as unknown as ReturnType<typeof setTimeout>;
+      }
     };
+  };
+
+  onMounted(() => {
+    if (!shouldSubscribe) return;
+    connect();
   });
 
   onUnmounted(() => {
+    unsubscribed = true;
+    if (reconnectTimer) clearTimeout(reconnectTimer);
     if (ws) {
       ws.close(1000, 'unsubscribe');
       ws = null;

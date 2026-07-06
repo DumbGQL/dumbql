@@ -1,6 +1,7 @@
 # Python testing patterns
 
 ## Detection
+
 - `pyproject.toml` / `requirements.txt` / `setup.py`. Runner: `pytest` unless `unittest` is clearly the established convention in the repo.
 
 ## Fixtures & parametrize

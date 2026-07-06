@@ -44,7 +44,7 @@
       [tuiDropdownManual]="open()"
       (tuiActiveZoneChange)="open.set($event)"
       (tuiObscured)="open.set(false)"
-      (click)="open.update(v => !v)"
+      (click)="open.update((v) => !v)"
     >
       v{{ versionService.currentVersion() }}
       <span tuiChevron [tuiChevron]="open()"></span>
@@ -52,13 +52,7 @@
     <ng-template #versionMenu>
       <tui-data-list>
         @for (v of versionService.allVersions; track v) {
-          <button
-            type="button"
-            tuiOption
-            (click)="versionService.setVersion(v); open.set(false)"
-          >
-            v{{ v }}
-          </button>
+          <button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
         }
       </tui-data-list>
     </ng-template>

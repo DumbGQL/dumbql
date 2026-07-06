@@ -25,28 +25,33 @@
           </div>
         </div>
         <p class="lead">
-          The fragments package provides utility functions for defining reusable GraphQL fragment documents and composing
-          them into full queries. This promotes colocation of data requirements with the components that use them.
+          The fragments package provides utility functions for defining reusable GraphQL fragment documents and
+          composing them into full queries. This promotes colocation of data requirements with the components that use
+          them.
         </p>
       </header>
 
       <h2 appAnchor id="fragment">fragment()</h2>
       <p>
-        Define a reusable fragment using the <code>fragment()</code> helper. This creates a typed document reference that
-        can be spread into queries:
+        Define a reusable fragment using the <code>fragment()</code> helper. This creates a typed document reference
+        that can be spread into queries:
       </p>
       <div class="code-block">
         <pre><code>&#123;&#123; fragmentCode &#125;&#125;</code></pre>
       </div>
 
       <h2 appAnchor id="spread">spread()</h2>
-      <p>Use <code>spread()</code> to interpolate a fragment into a query document. The spread is resolved at runtime:</p>
+      <p>
+        Use <code>spread()</code> to interpolate a fragment into a query document. The spread is resolved at runtime:
+      </p>
       <div class="code-block">
         <pre><code>&#123;&#123; spreadCode &#125;&#125;</code></pre>
       </div>
 
       <h2 appAnchor id="compose">compose()</h2>
-      <p>When fragments reference other fragments, use <code>compose()</code> to assemble them into a single document:</p>
+      <p>
+        When fragments reference other fragments, use <code>compose()</code> to assemble them into a single document:
+      </p>
       <div class="code-block">
         <pre><code>&#123;&#123; composeCode &#125;&#125;</code></pre>
       </div>

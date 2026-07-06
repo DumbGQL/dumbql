@@ -8,4 +8,5 @@ export { gql, isSuccess, isError, unwrap, unwrapOrThrow } from '@dumbql/client';
 export { useEpicFetus, type NullDetectionInfo } from './lib/use-epic-fetus';
 export { NullOverlay } from './lib/null-overlay';
 
-export { useVal, type VueVal } from './lib/use-smth-ref';
+export { useVal, type VueVal } from './lib/use-val';
+export { registerDirectives } from './lib/directives';

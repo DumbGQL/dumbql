@@ -1,6 +1,7 @@
 # Go testing patterns
 
 ## Detection
+
 - `go.mod` present. Runner: `go test ./...` (add `-race` whenever concurrency is in scope — it's cheap and finds real bugs).
 - Check for `testify` (`stretchr/testify`) in `go.sum` — if present, use `assert`/`require` in the same style as existing tests. If absent, use plain `if got != want { t.Errorf(...) }` — don't introduce a new dependency for this.
 - Check for existing test helpers in `*_test.go` files (builders, fake clocks, in-memory DB setup) — reuse them.

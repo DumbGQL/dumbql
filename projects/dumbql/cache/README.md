@@ -101,10 +101,7 @@ import { provideCacheService } from '@dumbql/cache/angular';
 import { provideCachePersistence } from '@dumbql/cache/angular';
 
 bootstrapApplication(App, {
-  providers: [
-    provideCacheService(),
-    provideCachePersistence({ storageKey: 'my_cache' }),
-  ],
+  providers: [provideCacheService(), provideCachePersistence({ storageKey: 'my_cache' })],
 });
 
 // Anywhere in your app:
@@ -112,11 +109,20 @@ class TodoService {
   private cache = inject(CacheService);
 
   loadTodos() {
-    this.graphql.query(gql`{ todos { id title } }`).subscribe(res => {
-      for (const todo of res.data.todos) {
-        this.cache.write(todo);
-      }
-    });
+    this.graphql
+      .query(gql`
+        {
+          todos {
+            id
+            title
+          }
+        }
+      `)
+      .subscribe((res) => {
+        for (const todo of res.data.todos) {
+          this.cache.write(todo);
+        }
+      });
   }
 }
 ```
@@ -154,12 +160,12 @@ nc.restore(json);
 
 ### Key Building
 
-| Scenario | Key |
-|----------|-----|
-| Entity with `id` | `Todo:1` |
-| Custom keyFields: `keyFields: ['slug']` | `Post:my-post-slug` |
-| Multiple keyFields: `keyFields: ['locale', 'slug']` | `Translation:en.hello` |
-| No `id`, no keyFields | `Todo:__inline__1` (auto-increment) |
+| Scenario                                            | Key                                 |
+| --------------------------------------------------- | ----------------------------------- |
+| Entity with `id`                                    | `Todo:1`                            |
+| Custom keyFields: `keyFields: ['slug']`             | `Post:my-post-slug`                 |
+| Multiple keyFields: `keyFields: ['locale', 'slug']` | `Translation:en.hello`              |
+| No `id`, no keyFields                               | `Todo:__inline__1` (auto-increment) |
 
 ---
 
@@ -205,7 +211,7 @@ cache.collectGarbage();
 ### Factory
 
 ```typescript
-function createCache(config?: CacheStoreConfig): CacheStore
+function createCache(config?: CacheStoreConfig): CacheStore;
 ```
 
 ---
@@ -255,7 +261,7 @@ provideCacheService({
       keyFields: ['locale', 'key'], // key becomes "Translation:en.hello"
     },
   },
-})
+});
 ```
 
 ### merge
@@ -276,7 +282,7 @@ provideCacheService({
     LogEntries: { merge: 'append' },
     Notifications: { merge: 'prepend' },
   },
-})
+});
 ```
 
 ### Custom merge function
@@ -285,7 +291,7 @@ provideCacheService({
 merge: (existing, incoming, options?: { args?: Record<string, unknown> }) => {
   // Fully custom logic
   return merged;
-}
+};
 ```
 
 ---
@@ -300,11 +306,11 @@ Cache data can be persisted across page reloads.
 import { CachePersistence, createCache } from '@dumbql/cache';
 
 const persist = new CachePersistence({
-  storageKey: 'my_cache',   // localStorage key (default: '__dumbql_cache')
-  version: 'v2',            // bump to invalidate old caches
-  maxAge: 3600_000,         // auto-evict after 1 hour
-  throttle: 500,            // debounce persist calls (ms)
-  storage: 'localStorage',  // or 'memory'
+  storageKey: 'my_cache', // localStorage key (default: '__dumbql_cache')
+  version: 'v2', // bump to invalidate old caches
+  maxAge: 3600_000, // auto-evict after 1 hour
+  throttle: 500, // debounce persist calls (ms)
+  storage: 'localStorage', // or 'memory'
 });
 
 const cache = createCache({ persist });
@@ -391,29 +397,29 @@ class SidebarComponent {
 
 ### Framework-agnostic (`@dumbql/cache`)
 
-| Export | Description |
-|--------|-------------|
-| `CacheStore` | Plain cache — normalized entities, local state, GC, persistence |
-| `createCache(config?)` | Factory function for `CacheStore` |
-| `NormalizedCache` | Low-level entity store — `set`, `get`, `merge`, `remove`, `applyOptimistic` |
-| `CacheGc` | Reference-counting GC with TTL eviction |
-| `CachePersistence` | Storage persistence (localStorage with memory fallback) |
-| `CACHE_PERSIST_CONFIG` | Symbol for custom persist config |
-| `CacheEntity` | Entity interface (`__typename`, `id?`, `[key: string]`) |
-| `OptimisticUpdate` | Optimistic update interface (`id`, `apply`, `rollback`) |
-| `TypePolicy` | Type policy interface (`keyFields?`, `merge?`) |
-| `CacheStoreConfig` | CacheStore config interface (`persist?`, `typePolicies?`) |
-| `CachePersistConfig` | Persistence config interface |
+| Export                 | Description                                                                 |
+| ---------------------- | --------------------------------------------------------------------------- |
+| `CacheStore`           | Plain cache — normalized entities, local state, GC, persistence             |
+| `createCache(config?)` | Factory function for `CacheStore`                                           |
+| `NormalizedCache`      | Low-level entity store — `set`, `get`, `merge`, `remove`, `applyOptimistic` |
+| `CacheGc`              | Reference-counting GC with TTL eviction                                     |
+| `CachePersistence`     | Storage persistence (localStorage with memory fallback)                     |
+| `CACHE_PERSIST_CONFIG` | Symbol for custom persist config                                            |
+| `CacheEntity`          | Entity interface (`__typename`, `id?`, `[key: string]`)                     |
+| `OptimisticUpdate`     | Optimistic update interface (`id`, `apply`, `rollback`)                     |
+| `TypePolicy`           | Type policy interface (`keyFields?`, `merge?`)                              |
+| `CacheStoreConfig`     | CacheStore config interface (`persist?`, `typePolicies?`)                   |
+| `CachePersistConfig`   | Persistence config interface                                                |
 
 ### Angular (`@dumbql/cache/angular`)
 
-| Export | Description |
-|--------|-------------|
-| `CacheService` | `@Injectable()` — DI-compatible cache wrapper with RxJS `watchLocal` |
-| `CachePersistenceService` | `@Injectable()` — Angular persistence service |
-| `NG_CACHE_PERSIST_CONFIG` | `InjectionToken` for persist config |
-| `provideCacheService(persistSvc?)` | Provider for `CacheService` + `GRAPHQL_CACHE` token |
-| `provideCachePersistence(config?)` | Provider for persistence + auto-init |
+| Export                             | Description                                                          |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `CacheService`                     | `@Injectable()` — DI-compatible cache wrapper with RxJS `watchLocal` |
+| `CachePersistenceService`          | `@Injectable()` — Angular persistence service                        |
+| `NG_CACHE_PERSIST_CONFIG`          | `InjectionToken` for persist config                                  |
+| `provideCacheService(persistSvc?)` | Provider for `CacheService` + `GRAPHQL_CACHE` token                  |
+| `provideCachePersistence(config?)` | Provider for persistence + auto-init                                 |
 
 ---
 

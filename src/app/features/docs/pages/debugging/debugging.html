@@ -64,8 +64,8 @@
       <h3>Architecture</h3>
       <p>
         The extension patches <code>window.fetch</code>, <code>XMLHttpRequest</code>, and <code>WebSocket</code>
-        to intercept all GraphQL traffic. When used alongside the DumbQL DevTools middleware, it also receives
-        enriched metadata including timing, schema data, and entity cache snapshots.
+        to intercept all GraphQL traffic. When used alongside the DumbQL DevTools middleware, it also receives enriched
+        metadata including timing, schema data, and entity cache snapshots.
       </p>
 
       <h3>Permissions</h3>
@@ -77,26 +77,22 @@
 
       <h2 appAnchor id="devtools-service">DevTools Service</h2>
       <p>
-        The <code>DevtoolsService</code> connects your Angular application to the browser extension. It captures
-        every GraphQL request with timing information, sends schema data on introspection queries, and
-        maintains a backlog in <code>localStorage</code>.
+        The <code>DevtoolsService</code> connects your Angular application to the browser extension. It captures every
+        GraphQL request with timing information, sends schema data on introspection queries, and maintains a backlog in
+        <code>localStorage</code>.
       </p>
 
       <div class="code-block">
         <pre><code>&#123;&#123; devtoolsSetupCode &#125;&#125;</code></pre>
       </div>
 
-      <p>
-        Enable the DevTools middleware directly for custom setups:
-      </p>
+      <p>Enable the DevTools middleware directly for custom setups:</p>
       <div class="code-block">
         <pre><code>&#123;&#123; devtoolsMiddlewareCode &#125;&#125;</code></pre>
       </div>
 
       <h2 appAnchor id="request-timeline">Request Timeline</h2>
-      <p>
-        The DevTools panel displays a real-time, filterable list of all captured GraphQL operations:
-      </p>
+      <p>The DevTools panel displays a real-time, filterable list of all captured GraphQL operations:</p>
       <ul>
         <li><strong>Real-time capture:</strong> Every query, mutation, and subscription is captured as it arrives</li>
         <li><strong>Search & filter:</strong> Filter by operation name or query text</li>
@@ -148,14 +144,21 @@
       </table>
 
       <h2 appAnchor id="schema-browser">Schema Browser</h2>
-      <p>
-        The built-in schema browser lets you explore your GraphQL schema interactively:
-      </p>
+      <p>The built-in schema browser lets you explore your GraphQL schema interactively:</p>
       <ul>
         <li><strong>Download:</strong> Fetch full introspection schema from any endpoint</li>
-        <li><strong>Type list:</strong> All non-introspection types with kind badges (<code>object</code>, <code>enum</code>, <code>input</code>, <code>interface</code>, <code>union</code>)</li>
-        <li><strong>Type detail:</strong> Fields table with types, nullability, arguments; enum values; interface implementations</li>
-        <li><strong>Schema Graph SVG:</strong> Interactive type connection graph — selected type centered with incoming/outgoing references</li>
+        <li>
+          <strong>Type list:</strong> All non-introspection types with kind badges (<code>object</code>,
+          <code>enum</code>, <code>input</code>, <code>interface</code>, <code>union</code>)
+        </li>
+        <li>
+          <strong>Type detail:</strong> Fields table with types, nullability, arguments; enum values; interface
+          implementations
+        </li>
+        <li>
+          <strong>Schema Graph SVG:</strong> Interactive type connection graph — selected type centered with
+          incoming/outgoing references
+        </li>
         <li><strong>Save/Load:</strong> Export schema as JSON file; reload from live endpoint</li>
       </ul>
 
@@ -169,16 +172,15 @@
         <li><strong>Missing:</strong> Field was requested but absent from response (potential issue)</li>
         <li><strong>Extra:</strong> Field was returned but not explicitly requested (over-fetching)</li>
       </ul>
-      <p>
-        This helps identify over-fetching, under-fetching, and schema drift during development.
-      </p>
+      <p>This helps identify over-fetching, under-fetching, and schema drift during development.</p>
 
       <h2 appAnchor id="subscription-monitor">Subscription Monitor</h2>
-      <p>
-        The extension tracks GraphQL subscriptions over WebSocket:
-      </p>
+      <p>The extension tracks GraphQL subscriptions over WebSocket:</p>
       <ul>
-        <li><strong>Lifecycle tracking:</strong> <code>open</code>, <code>next</code> (DATA), <code>error</code>, <code>close</code>, <code>complete</code> events</li>
+        <li>
+          <strong>Lifecycle tracking:</strong> <code>open</code>, <code>next</code> (DATA), <code>error</code>,
+          <code>close</code>, <code>complete</code> events
+        </li>
         <li><strong>Message capture:</strong> Both sent and received messages on WebSocket connections</li>
         <li><strong>Status indicators:</strong> Green (open), red (error), dimmed (closed/completed)</li>
         <li><strong>Event log:</strong> Full scrollable log with DATA badges and JSON payloads</li>
@@ -186,13 +188,13 @@
       </ul>
 
       <h2 appAnchor id="data-export">Data Export/Import</h2>
-      <p>
-        Export and import captured data for sharing or offline analysis:
-      </p>
+      <p>Export and import captured data for sharing or offline analysis:</p>
       <ul>
         <li><strong>Export:</strong> Download all captured requests and subscriptions as JSON</li>
         <li><strong>Import:</strong> Load a previously exported JSON file into the current session</li>
-        <li><strong>File format:</strong> <code>graphql-data-&#123;timestamp&#125;.json</code> with full request metadata</li>
+        <li>
+          <strong>File format:</strong> <code>graphql-data-&#123;timestamp&#125;.json</code> with full request metadata
+        </li>
       </ul>
 
       <h2 appAnchor id="debug-service">Debug Service</h2>

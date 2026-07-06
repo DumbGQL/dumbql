@@ -1,6 +1,7 @@
 # Angular / TypeScript testing patterns
 
 ## Detection
+
 - `angular.json` + `package.json`. Check `package.json`/`angular.json` for the test runner: Karma+Jasmine (classic Angular default), Jest, or Vitest (newer setups). Match whichever is already configured — don't introduce a second runner.
 - Check for Taiga UI, standalone components, and signals usage (this user's stack leans heavily on standalone components + signals over NgRx) — test signal state transitions directly rather than through the full component tree when possible.
 

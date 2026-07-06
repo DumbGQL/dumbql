@@ -25,4 +25,4 @@ export { useEpicFetus, type NullDetectionInfo } from './lib/use-epic-fetus';
 export { NullOverlay } from './lib/null-overlay';
 
 // Val
-export { useVal, type ReactVal } from './lib/use-smth-ref';
+export { useVal, type ReactVal } from './lib/use-val';

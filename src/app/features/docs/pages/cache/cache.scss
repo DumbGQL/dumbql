@@ -28,9 +28,11 @@
     &--response strong {
       color: var(--tui-status-info);
     }
+
     &--cache strong {
       color: var(--tui-status-success);
     }
+
     &--query strong {
       color: var(--tui-status-warning);
     }
@@ -38,9 +40,11 @@
     &--response {
       background: color-mix(in srgb, var(--tui-status-info) 8%, transparent);
     }
+
     &--cache {
       background: color-mix(in srgb, var(--tui-status-success) 8%, transparent);
     }
+
     &--query {
       background: color-mix(in srgb, var(--tui-status-warning) 8%, transparent);
     }

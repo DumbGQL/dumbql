@@ -29,6 +29,10 @@ yarn-error.log
 !.vscode/mcp.json
 .history/*
 
+# Build artifacts in sub-projects and starters
+**/dist/
+**/.angular/
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/

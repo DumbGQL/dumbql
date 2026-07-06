@@ -98,6 +98,11 @@ export class DocsMiddlewares {
   	{ id: 'retry-exchange', title: 'retryExchange' },
   	{ id: 'focus-refetch', title: 'focusRefetchMiddleware' },
   	{ id: 'offline-queue', title: 'offlineQueueMiddleware' },
+  	{ id: 'auto-mock', title: 'autoMockMiddleware' },
+  	{ id: 'error-handler', title: 'errorHandlerMiddleware' },
+  	{ id: 'rate-limit', title: 'rateLimitMiddleware' },
+  	{ id: 'dedup', title: 'dedupMiddleware' },
+  	{ id: 'cost-estimation', title: 'costEstimationMiddleware' },
   	{ id: 'composing', title: 'Composing Middlewares' },
   ];
 
@@ -135,14 +140,57 @@ export const appConfig = {
 
 const middleware = offlineQueueMiddleware();`;
 
+  protected readonly autoMockCode = `import { autoMockMiddleware } from '@dumbql/middlewares';
+
+const middleware = autoMockMiddleware({
+  schema: fs.readFileSync('schema.graphql', 'utf-8'),
+  mocks: {
+    User: () => ({ name: 'Mock User' }),
+  },
+  delay: 200,
+});`;
+
+  protected readonly errorHandlerCode = `import { errorHandlerMiddleware } from '@dumbql/middlewares';
+
+const middleware = errorHandlerMiddleware({
+  handle: (error) => {
+    notifyUser(error.message);
+    return true; // recoverable
+  },
+  fallbackMessage: 'Something went wrong',
+});`;
+
+  protected readonly rateLimitCode = `import { rateLimitMiddleware } from '@dumbql/middlewares';
+
+const middleware = rateLimitMiddleware({
+  maxRequests: 10,
+  windowMs: 1000,
+});`;
+
+  protected readonly dedupCode = `import { dedupMiddleware } from '@dumbql/middlewares';
+
+const middleware = dedupMiddleware();`;
+
+  protected readonly costEstimationCode = `import { costEstimationMiddleware } from '@dumbql/middlewares';
+
+const middleware = costEstimationMiddleware({
+  maxCost: 1000,
+  mode: 'block',
+});`;
+
   protected readonly composingMiddlewaresCode = `import { composeMiddlewares, createHttpLink } from '@dumbql/core';
-import { authRefreshMiddleware, retryExchange, focusRefetchMiddleware, offlineQueueMiddleware } from '@dumbql/middlewares';
+import { authRefreshMiddleware, retryExchange, focusRefetchMiddleware, offlineQueueMiddleware, autoMockMiddleware, errorHandlerMiddleware, rateLimitMiddleware, dedupMiddleware, costEstimationMiddleware } from '@dumbql/middlewares';
 
 const link = composeMiddlewares(
   authRefreshMiddleware({ refreshToken: () => getToken() }),
   retryExchange({ maxRetries: 3 }),
   focusRefetchMiddleware(),
   offlineQueueMiddleware(),
+  autoMockMiddleware(),
+  errorHandlerMiddleware({ handle: () => true }),
+  rateLimitMiddleware(),
+  dedupMiddleware(),
+  costEstimationMiddleware(),
   createHttpLink({ uri: '/graphql' }),
 );`;
 }

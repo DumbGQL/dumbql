@@ -14,6 +14,7 @@ Writes tests that would actually catch bugs, not tests that exist to make a cove
 ## Why "coverage padding" tests are worse than no tests
 
 They give false confidence and rot as documentation. Examples to actively avoid generating:
+
 - Testing a getter/setter or a struct literal — nothing to break
 - Calling a function and asserting only "it didn't throw" / "no error" with no check on actual output
 - Snapshot tests with no reasoning about what would make the snapshot wrong
@@ -29,6 +30,7 @@ If a candidate test would fall into one of these buckets, don't propose it — o
 Look for, in order of what's present: `go.mod`, `package.json` (+ `angular.json`, jest/karma/vitest config), `pyproject.toml`/`requirements.txt`, `Cargo.toml`, `pom.xml`/`build.gradle`, etc. Multiple can coexist (e.g. Go backend + Angular frontend — this matches the common stack in this user's own projects).
 
 For each stack found, identify:
+
 - Test framework and runner command (`go test ./...`, `ng test`, `pytest`, `cargo test`, ...)
 - Existing test file naming convention and directory layout
 - Existing test utilities/mocks/fixtures already in the repo — reuse these, don't invent parallel ones
@@ -53,7 +55,7 @@ For every function/method that is untested, happy-path-only, or padding-only, lo
 - **Integration seams**: what happens when a mocked dependency returns malformed data, times out, or is called 0/N times instead of 1
 - **Regression risk**: use `git log -p --since="..."` / `git blame` around recently changed or recently-bug-fixed code — recent churn is a strong signal something there is fragile
 
-For each candidate, note: what the happy-path test (if any) already covers vs. what's actually missing, and *why* it matters (what bug would slip through today).
+For each candidate, note: what the happy-path test (if any) already covers vs. what's actually missing, and _why_ it matters (what bug would slip through today).
 
 Classify each as **Critical** (silent data corruption, security, crash in prod path) / **Important** (wrong behavior on realistic input) / **Nice-to-have** (defensive, unlikely input).
 

@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor>@dumbql/middlewares</h1>
         <div class="tags">
@@ -61,6 +68,19 @@
     <div class="code-block">
       <pre><code>{{ composingMiddlewaresCode }}</code></pre>
     </div>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/middlewares</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

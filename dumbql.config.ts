@@ -67,6 +67,19 @@ const config: DumbqlConfig = {
 		enabled: true,
 	},
 
+	// ── Telemetry / OpenTelemetry ───────────────────────────────────────────────
+	telemetry: {
+		enabled: true,
+		tracing: {
+			enabled: true,
+			exporter: 'console',
+			serviceName: 'dumbql-app',
+		},
+		tags: {
+			env: 'development',
+		},
+	},
+
 	// ── DevTools (browser extension integration) ────────────────────────────────
 	devtools: {
 		autoConnect: true,

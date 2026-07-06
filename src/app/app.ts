@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   Router,
   RouterLink,
@@ -8,33 +8,35 @@ import {
   RouteConfigLoadStart,
   RouteConfigLoadEnd,
 } from '@angular/router';
-import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink, TuiTextfield } from '@taiga-ui/core';
-import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
+import { TuiButton, TuiRoot, TUI_DARK_MODE, TuiLink } from '@taiga-ui/core';
+import { TuiDropdown } from '@taiga-ui/core/portals/dropdown';
+import { TuiDataList } from '@taiga-ui/core/components/data-list';
+import { TuiChevron } from '@taiga-ui/kit/directives/chevron';
+import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
+import { TuiObscured } from '@taiga-ui/cdk/directives/obscured';
 import { Logo } from './shared/ui/logo/logo';
 import { VersionService } from './shared/services/version.service';
 import { SidebarService } from './shared/services/sidebar.service';
 import { TocService } from './shared/services/toc.service';
-import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
-import { FormsModule } from '@angular/forms';
+import { NullOverlay } from '@dumbql/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TuiDropdownDirective],
   imports: [
     TuiLink,
     RouterOutlet,
     RouterLink,
-    FormsModule,
-    TuiDataListWrapper,
     RouterLinkActive,
     TuiButton,
     TuiRoot,
     Logo,
     TuiDropdown,
-    TuiComboBox,
-    ...TuiTextfield,
+    TuiDataList,
+    TuiChevron,
+    TuiActiveZone,
+    TuiObscured,
+    NullOverlay,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -49,6 +51,7 @@ export class App {
   protected readonly isDarkMode = this.darkMode;
   protected readonly showDocsMenu = signal(this.router.url.startsWith('/docs'));
   protected readonly loading = signal(true);
+  protected readonly open = signal(false);
 
   constructor() {
     let initialEnded = false;

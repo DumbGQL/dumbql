@@ -98,10 +98,14 @@ export class DumbqlClient {
     const result = await result$;
 
     if (result.status === 'success' && result.data && this._cacheService) {
-      const typeNames = new Set<string>();
-      extractTypeNames(result.data, typeNames);
-      if (typeNames.size > 0) {
-        this._cacheService.clearLocalStateByTypes(Array.from(typeNames));
+      try {
+        const typeNames = new Set<string>();
+        extractTypeNames(result.data, typeNames);
+        if (typeNames.size > 0) {
+          this._cacheService.clearLocalStateByTypes(Array.from(typeNames));
+        }
+      } catch {
+        // cache invalidation is best-effort
       }
     }
 
@@ -164,7 +168,11 @@ export class DumbqlClient {
     const mw: GraphqlMiddleware[] = [...(config.middleware ?? [])];
 
     if (config.cache?.enabled !== false && this._cacheService) {
-      mw.push(cacheMiddleware(this._cacheService, config.cache));
+      try {
+        mw.push(cacheMiddleware(this._cacheService, config.cache));
+      } catch {
+        // cache middleware not available
+      }
     }
 
     if (config.devAuth?.enabled !== false) {

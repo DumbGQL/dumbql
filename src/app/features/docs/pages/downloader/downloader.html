@@ -1,8 +1,15 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
-      <div class="title-row">
-        <h1 appAnchor>@dumbql/downloader</h1>
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1 appAnchor>@dumbql/downloader</h1>
         <div class="tags">
           <span tuiBadge appearance="primary" size="s">Stable</span>
           <span tuiChip appearance="neutral" size="xs">Angular 22+</span>
@@ -35,6 +42,20 @@
     <div class="code-block">
       <pre><code>&#123;&#123; outputStructureCode &#125;&#125;</code></pre>
     </div>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/downloader</span>
+          </div>
+        </div>
+      </header>
+
+      <app-docs-api-table [entries]="apiEntries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

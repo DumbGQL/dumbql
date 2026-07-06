@@ -42,7 +42,11 @@ function extractTypeNames(data: unknown, types: Set<string>): void {
 export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): GraphqlMiddleware {
   // Wire typePolicies if provided
   if (config?.typePolicies) {
-    cache.setTypePolicies(config.typePolicies as Record<string, TypePolicy>);
+    try {
+      cache.setTypePolicies(config.typePolicies as Record<string, TypePolicy>);
+    } catch {
+      // typePolicies are best-effort
+    }
   }
 
   const fetchTimestamps = new Map<string, number>();
@@ -52,21 +56,30 @@ export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): Graphq
   return async (request, next) => {
     const storeResult = (result: GraphQLResult<unknown>, queryHash: string): void => {
       if (result.status === 'success' && result.data) {
-        const entities: EntityRef[] = [];
-        const typeNames = new Set<string>();
-        extractEntities(result.data, entities);
-        extractTypeNames(result.data, typeNames);
-        for (const entity of entities) {
-          cache.merge(entity);
+        try {
+          const entities: EntityRef[] = [];
+          const typeNames = new Set<string>();
+          extractEntities(result.data, entities);
+          extractTypeNames(result.data, typeNames);
+          for (const entity of entities) {
+            cache.merge(entity);
+          }
+          cache.writeLocalWithTypes(queryHash, result, typeNames);
+          fetchTimestamps.set(queryHash, Date.now());
+        } catch {
+          // cache write is best-effort
         }
-        cache.writeLocalWithTypes(queryHash, result, typeNames);
-        fetchTimestamps.set(queryHash, Date.now());
       }
     };
 
     if (request.type === 'query') {
       const queryHash = `query:${request.query}|${JSON.stringify(request.variables)}`;
-      const cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
+      let cachedRaw: GraphQLResult<unknown> | undefined;
+      try {
+        cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
+      } catch {
+        cachedRaw = undefined;
+      }
       const lastFetch = fetchTimestamps.get(queryHash) ?? 0;
       const age = Date.now() - lastFetch;
 
@@ -93,15 +106,19 @@ export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): Graphq
     if (request.type === 'mutation') {
       const result = await next(request);
       if (result.status === 'success' && result.data) {
-        const entities: EntityRef[] = [];
-        const typeNames = new Set<string>();
-        extractEntities(result.data, entities);
-        extractTypeNames(result.data, typeNames);
-        for (const entity of entities) {
-          cache.merge(entity);
-        }
-        if (typeNames.size > 0) {
-          cache.clearLocalStateByTypes(Array.from(typeNames));
+        try {
+          const entities: EntityRef[] = [];
+          const typeNames = new Set<string>();
+          extractEntities(result.data, entities);
+          extractTypeNames(result.data, typeNames);
+          for (const entity of entities) {
+            cache.merge(entity);
+          }
+          if (typeNames.size > 0) {
+            cache.clearLocalStateByTypes(Array.from(typeNames));
+          }
+        } catch {
+          // cache update after mutation is best-effort
         }
       }
       return result;

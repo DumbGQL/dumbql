@@ -165,6 +165,21 @@ export interface SsrConfig {
   cacheTtl?: number;
 }
 
+// ─── Telemetry / OpenTelemetry ───────────────────────────────────────────────
+
+export interface TelemetryConfig {
+  enabled?: boolean;
+  /** OpenTelemetry tracing configuration */
+  tracing?: {
+    enabled?: boolean;
+    exporter?: 'console' | 'otlp';
+    endpoint?: string;
+    serviceName?: string;
+  };
+  /** Middleware-level tracing tags */
+  tags?: Record<string, string>;
+}
+
 // ─── Codegen (CLI-only, ignored at runtime) ─────────────────────────────────
 
 export interface CodegenConfig {
@@ -210,6 +225,7 @@ export interface DumbqlConfig extends GraphqlCoreConfig {
   ssr?: SsrConfig;
   codegen?: CodegenConfig;
   devtools?: boolean | DevtoolsConfig;
+  telemetry?: TelemetryConfig;
   plugins?: DumbqlPlugin[];
 }
 

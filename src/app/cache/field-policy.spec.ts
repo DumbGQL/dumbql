@@ -56,8 +56,8 @@ describe('NormalizedCache — FieldPolicy', () => {
           merge: (existing, incoming) => ({
             ...(incoming as Record<string, unknown>),
             items: [
-              ...((existing as Record<string, unknown> | undefined)?.items as unknown[] ?? []),
-              ...((incoming as Record<string, unknown>).items as unknown[]),
+              ...((existing as Record<string, unknown> | undefined)?.['items'] as unknown[] ?? []),
+              ...((incoming as Record<string, unknown>)['items'] as unknown[]),
             ],
           }),
         },

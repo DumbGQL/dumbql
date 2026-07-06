@@ -60,4 +60,26 @@
       console.warn('[GraphQL DevTools] runtime.sendMessage error:', e);
     }
   });
+
+  // ── Epic Fetus toggle ──
+  function sendEpicFetusConfig() {
+    runtime.storage.local.get('epicFetusEnabled', function (data) {
+      var enabled = data.epicFetusEnabled !== false;
+      window.postMessage({
+        source: SOURCE,
+        type: 'epic-fetus-config',
+        payload: { enabled: enabled },
+      }, '*');
+    });
+  }
+
+  sendEpicFetusConfig();
+
+  if (typeof runtime.storage.onChanged !== 'undefined') {
+    runtime.storage.onChanged.addListener(function (changes) {
+      if (changes.epicFetusEnabled) {
+        sendEpicFetusConfig();
+      }
+    });
+  }
 })();

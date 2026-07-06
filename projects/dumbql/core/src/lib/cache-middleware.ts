@@ -77,8 +77,12 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
     // Wire typePolicies once per Injector
     if (!initialized.has(inj) && cfg?.cache?.typePolicies) {
       initialized.add(inj);
-      const policies = cfg.cache.typePolicies as Record<string, TypePolicy>;
-      cache.setTypePolicies(policies);
+      try {
+        const policies = cfg.cache.typePolicies as Record<string, TypePolicy>;
+        cache.setTypePolicies(policies);
+      } catch {
+        // typePolicies are best-effort
+      }
     }
 
     const maxAge = cfg?.cache?.maxAge ?? 0;
@@ -86,21 +90,30 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 
     const storeResult = (result: GraphQLResult<unknown>, queryHash: string): void => {
       if (result.status === 'success' && result.data) {
-        const entities: EntityRef[] = [];
-        const typeNames = new Set<string>();
-        extractEntities(result.data, entities);
-        extractTypeNames(result.data, typeNames);
-        for (const entity of entities) {
-          cache.merge(entity);
+        try {
+          const entities: EntityRef[] = [];
+          const typeNames = new Set<string>();
+          extractEntities(result.data, entities);
+          extractTypeNames(result.data, typeNames);
+          for (const entity of entities) {
+            cache.merge(entity);
+          }
+          cache.writeLocalWithTypes(queryHash, result, typeNames);
+          fetchTimestamps.set(queryHash, Date.now());
+        } catch {
+          // cache write is best-effort
         }
-        cache.writeLocalWithTypes(queryHash, result, typeNames);
-        fetchTimestamps.set(queryHash, Date.now());
       }
     };
 
     if (request.type === 'query') {
       const queryHash = `query:${request.query}|${JSON.stringify(request.variables)}`;
-      const cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
+      let cachedRaw: GraphQLResult<unknown> | undefined;
+      try {
+        cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
+      } catch {
+        cachedRaw = undefined;
+      }
       const lastFetch = fetchTimestamps.get(queryHash) ?? 0;
       const age = Date.now() - lastFetch;
 
@@ -131,19 +144,23 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
       return next(request).pipe(
         tap((result: GraphQLResult<unknown>) => {
           if (result.status === 'success' && result.data) {
-            const entities: EntityRef[] = [];
-            const typeNames = new Set<string>();
-            extractEntities(result.data, entities);
-            extractTypeNames(result.data, typeNames);
-            for (const entity of entities) {
-              cache.merge(entity);
-            }
-            // Selective invalidation: only clear cached queries that reference
-            // the mutated entity types. Unlike URQL Graphcache which invalidates
-            // ALL queries of a type on create (issue #3843), we track per-query
-            // typename dependencies and only clear the affected ones.
-            if (typeNames.size > 0) {
-              cache.clearLocalStateByTypes(Array.from(typeNames));
+            try {
+              const entities: EntityRef[] = [];
+              const typeNames = new Set<string>();
+              extractEntities(result.data, entities);
+              extractTypeNames(result.data, typeNames);
+              for (const entity of entities) {
+                cache.merge(entity);
+              }
+              // Selective invalidation: only clear cached queries that reference
+              // the mutated entity types. Unlike URQL Graphcache which invalidates
+              // ALL queries of a type on create (issue #3843), we track per-query
+              // typename dependencies and only clear the affected ones.
+              if (typeNames.size > 0) {
+                cache.clearLocalStateByTypes(Array.from(typeNames));
+              }
+            } catch {
+              // cache update after mutation is best-effort
             }
           }
         }),

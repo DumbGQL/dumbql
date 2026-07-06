@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor>@dumbql/dev-server</h1>
         <div class="tags">
@@ -90,28 +97,19 @@
       </tbody>
     </table>
 
-    <h2 appAnchor id="api">Programmatic API</h2>
-    <div class="code-block">
-      <pre><code>{{ programmaticCode }}</code></pre>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Export</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>createDevServer(config?)</code></td>
-          <td>Creates a Node.js <code>http.Server</code> with GraphQL + proxy</td>
-        </tr>
-        <tr>
-          <td><code>startDevServer(config?)</code></td>
-          <td>Creates and starts the server on the given port</td>
-        </tr>
-      </tbody>
-    </table>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/dev-server</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

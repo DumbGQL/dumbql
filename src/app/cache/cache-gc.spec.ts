@@ -128,4 +128,46 @@ describe('CacheGc', () => {
 			expect(gc.refCountOf('User', '1')).toBe(2);
 		});
 	});
+
+	describe('edge cases', () => {
+		it('handles entities without id field in track', () => {
+			const noId = { __typename: 'User', name: 'no-id' } as never;
+			expect(() => gc.track([noId])).not.toThrow();
+		});
+
+		it('handles entities without id field in release', () => {
+			const noId = { __typename: 'User', name: 'no-id' } as never;
+			expect(() => gc.release([noId])).not.toThrow();
+		});
+
+		it('handles release more times than tracked without going negative', () => {
+			gc.track([user1]);
+			gc.release([user1]);
+			gc.release([user1]); // second release — refCount already 0
+			expect(gc.refCountOf('User', '1')).toBe(0);
+		});
+
+		it('track after release marks entity as not dangling', () => {
+			gc.track([user1]);
+			gc.release([user1]);
+			// user1 is now dangling
+			gc.track([user1]); // re-tracked
+			const evicted = gc.sweep();
+			expect(evicted).toBe(0); // should not evict because re-tracked
+		});
+
+		it('sweep with no dangling entities returns 0', () => {
+			const evicted = gc.sweep();
+			expect(evicted).toBe(0);
+		});
+
+		it('sweep does not evict entities still in cache when release not called', () => {
+			cache.set(user1);
+			gc.track([user1]);
+			// never released — still referenced
+			const evicted = gc.sweep();
+			expect(evicted).toBe(0);
+			expect(cache.get('User', '1')).toBeDefined();
+		});
+	});
 });

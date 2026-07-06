@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor id="overview">Live Queries</h1>
         <div class="tags">
@@ -139,24 +146,7 @@
       <pre><code>{{ classCode }}</code></pre>
     </div>
 
-    <h3>API</h3>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Method</th>
-          <th>Returns</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>execute(query, variables?, callbacks?)</code></td>
-          <td><code>Promise&lt;() =&gt; void&gt;</code></td>
-          <td>Executes the initial HTTP fetch, then subscribes via WebSocket. Returns an unsubscribe function.</td>
-        </tr>
-      </tbody>
-    </table>
 
     <h2 appAnchor id="protocol">WebSocket Protocol</h2>
 
@@ -191,6 +181,33 @@
       This protocol avoids the race conditions and reconnection issues of the older
       <code>subscriptions-transport-ws</code> protocol.
     </p>
+
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/subscriptions</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
+
+    @if (selectedTabIndex === 2) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>Starters</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">Copy & run</span>
+          </div>
+        </div>
+      </header>
+      <p>Choose your framework and copy the starter code below:</p>
+      <app-docs-stackblitz-starter [codes]="liveQueryStarters" title="Live Queries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

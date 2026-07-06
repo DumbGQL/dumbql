@@ -33,3 +33,6 @@ export type {
   RetryExchangeConfig,
   MiddlewareConfig,
 } from './lib/config';
+
+export { Val } from './lib/ref';
+export { walkObject, extractOpName, nullDetectionMiddleware, type NullDetectionEvent, type NullValueInfo, type QueryErrorInfo } from './lib/null-detection';

@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor>@dumbql/subscriptions</h1>
         <div class="tags">
@@ -56,6 +63,32 @@
     <div class="code-block">
       <pre><code>&#123;&#123; connectionParamsCode &#125;&#125;</code></pre>
     </div>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/subscriptions</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
+
+    @if (selectedTabIndex === 2) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>Starters</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">Copy & run</span>
+          </div>
+        </div>
+      </header>
+      <p>Choose your framework and copy the starter code below:</p>
+      <app-docs-stackblitz-starter [codes]="subStarters" title="Subscriptions" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

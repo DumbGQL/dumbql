@@ -7,5 +7,7 @@ export {
   CACHE_PERSIST_CONFIG,
   type CachePersistConfig,
 } from './lib/cache-persist';
+export { CacheEvents, type CacheEvent, type CacheEventListener } from './lib/cache-events';
+export { CacheMetrics, type CacheMetricsSnapshot } from './lib/cache-metrics';
 
 // For Angular wrappers import from '@dumbql/cache/angular'

@@ -24,77 +24,65 @@
       </p>
     </header>
 
-    <h2 appAnchor id="quick-start">Quick Start</h2>
-    <div class="code-block">
-      <pre><code>{{ quickStartCode }}</code></pre>
-    </div>
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex" class="page-tabs">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
 
-    <h2 appAnchor id="api">API</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Export</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>createClient(config, cache?)</code></td>
-          <td>Factory for <code>DumbqlClient</code></td>
-        </tr>
-        <tr>
-          <td><code>DumbqlClient</code></td>
-          <td>
-            Core class — <code>query()</code>, <code>mutate()</code>, <code>refetch()</code>, <code>queryStream()</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>gql`…`</code></td>
-          <td>Template tag for <code>DocumentNode</code></td>
-        </tr>
-        <tr>
-          <td><code>isSuccess(result)</code> / <code>isError(result)</code></td>
-          <td>Result type guards</td>
-        </tr>
-        <tr>
-          <td><code>unwrap(result)</code> / <code>unwrapOrThrow(result)</code></td>
-          <td>Extract data</td>
-        </tr>
-        <tr>
-          <td><code>mapResult(result, fn)</code></td>
-          <td>Map over success data</td>
-        </tr>
-      </tbody>
-    </table>
+    @if (selectedTabIndex === 0) {
+      <h2 appAnchor id="quick-start">Quick Start</h2>
+      <div class="code-block">
+        <pre><code>{{ quickStartCode }}</code></pre>
+      </div>
 
-    <h2 appAnchor id="middleware">Middleware</h2>
-    <p>
-      The middleware pipeline lets you intercept and transform every request. Built-in middlewares:
-      <code>authMiddleware</code>, <code>loggingMiddleware</code>, <code>devAuthMiddleware</code>.
-    </p>
-    <div class="code-block">
-      <pre><code>{{ middlewareCode }}</code></pre>
-    </div>
+      <h2 appAnchor id="middleware">Middleware</h2>
+      <p>
+        The middleware pipeline lets you intercept and transform every request. Built-in middlewares:
+        <code>authMiddleware</code>, <code>loggingMiddleware</code>, <code>devAuthMiddleware</code>.
+      </p>
+      <div class="code-block">
+        <pre><code>{{ middlewareCode }}</code></pre>
+      </div>
 
-    <h2 appAnchor id="cache">Cache Integration</h2>
-    <p>Pass a <code>CacheStore</code> from <code>@dumbql/cache</code> to enable normalized entity caching:</p>
-    <div class="code-block">
-      <pre><code>{{ cacheCode }}</code></pre>
-    </div>
+      <h2 appAnchor id="cache">Cache Integration</h2>
+      <p>Pass a <code>CacheStore</code> from <code>@dumbql/cache</code> to enable normalized entity caching:</p>
+      <div class="code-block">
+        <pre><code>{{ cacheCode }}</code></pre>
+      </div>
 
-    <h2 appAnchor id="streaming">Streaming</h2>
-    <p>Support for <code>&#64;defer</code> and <code>&#64;stream</code> directives via multipart/mixed responses:</p>
-    <div class="code-block">
-      <pre><code>{{ streamingCode }}</code></pre>
-    </div>
+      <h2 appAnchor id="streaming">Streaming</h2>
+      <p>Support for <code>&#64;defer</code> and <code>&#64;stream</code> directives via multipart/mixed responses:</p>
+      <div class="code-block">
+        <pre><code>{{ streamingCode }}</code></pre>
+      </div>
 
-    <h2 appAnchor id="file-upload">File Upload</h2>
-    <p>Automatic <code>File</code> / <code>Blob</code> / <code>FileList</code> detection with multipart upload spec:</p>
-    <div class="code-block">
-      <pre><code>const result = await client.mutate(UPLOAD_FILE, &#123;
+      <h2 appAnchor id="file-upload">File Upload</h2>
+      <p>Automatic <code>File</code> / <code>Blob</code> / <code>FileList</code> detection with multipart upload spec:</p>
+      <div class="code-block">
+        <pre><code>const result = await client.mutate(UPLOAD_FILE, &#123;
   file: fileInput.files[0],
 &#125;);</code></pre>
-    </div>
+      </div>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <h2 appAnchor id="api-reference">API Reference</h2>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
+
+    @if (selectedTabIndex === 2) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>Starters</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">Copy & run</span>
+          </div>
+        </div>
+      </header>
+      <p>Choose your framework and copy the starter code below:</p>
+      <app-docs-stackblitz-starter [codes]="clientStarters" title="Client" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

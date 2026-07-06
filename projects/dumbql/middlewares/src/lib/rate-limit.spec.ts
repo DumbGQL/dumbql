@@ -60,9 +60,9 @@ describe('rateLimitMiddleware', () => {
     mw(reqA, next);
     mw(reqB, next);
     mw(reqA, next); // Should be blocked (key A exceeded)
-    mw(reqB, next); // Should be allowed (key B still within limit)
+    mw(reqB, next); // Should also be blocked (key B already used its 1/1)
 
-    expect(next).toHaveBeenCalledTimes(3);
+    expect(next).toHaveBeenCalledTimes(2);
   });
 
   it('resets the window after windowMs', async () => {

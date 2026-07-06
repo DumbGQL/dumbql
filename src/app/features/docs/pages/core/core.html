@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor id="dumbqlcore">@dumbql/core</h1>
         <div class="tags">
@@ -269,86 +276,19 @@ const user = this.graphql.query(GET_CURRENT_USER);
 const notes = this.graphql.query(GET_NOTES, &#123; filter: 'PASSWORD' &#125;);</code></pre>
     </div>
 
-    <h2 appAnchor id="api-reference">API Reference</h2>
+    }
 
-    <table>
-      <thead>
-        <tr>
-          <th>Export</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>GraphqlService</code></td>
-          <td>class</td>
-          <td>
-            Main service: <code>query()</code>, <code>mutate()</code>, <code>watchQuery()</code>, <code>refetch()</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>query()</code></td>
-          <td>function</td>
-          <td>Standalone query (requires injection context)</td>
-        </tr>
-        <tr>
-          <td><code>mutate()</code></td>
-          <td>function</td>
-          <td>Standalone mutate (requires injection context)</td>
-        </tr>
-        <tr>
-          <td><code>gql</code></td>
-          <td>tagged template</td>
-          <td>Parse GraphQL strings into <code>DocumentNode</code></td>
-        </tr>
-        <tr>
-          <td><code>createReactiveVar</code></td>
-          <td>function</td>
-          <td>Create a reactive variable that triggers refetch</td>
-        </tr>
-        <tr>
-          <td><code>composeMiddlewares</code></td>
-          <td>function</td>
-          <td>Compose middleware into a link</td>
-        </tr>
-        <tr>
-          <td><code>executeQuery</code></td>
-          <td>function</td>
-          <td>Execute a query outside Angular DI</td>
-        </tr>
-        <tr>
-          <td><code>buildRequest</code></td>
-          <td>function</td>
-          <td>Build a request object from a document</td>
-        </tr>
-        <tr>
-          <td><code>parseResult</code></td>
-          <td>function</td>
-          <td>Parse and validate a raw GraphQL result</td>
-        </tr>
-        <tr>
-          <td><code>createHttpLink</code></td>
-          <td>function</td>
-          <td>Create an HTTP link</td>
-        </tr>
-        <tr>
-          <td><code>loggingMiddleware</code></td>
-          <td>function</td>
-          <td>Console logging middleware</td>
-        </tr>
-        <tr>
-          <td><code>provideDumbqlCore</code></td>
-          <td>provider</td>
-          <td>Provider with <code>Link</code> config</td>
-        </tr>
-        <tr>
-          <td><code>provideGraphql</code></td>
-          <td>provider</td>
-          <td>Provider with <code>endpoint</code> shorthand</td>
-        </tr>
-      </tbody>
-    </table>
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/core</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

@@ -5,3 +5,7 @@ export { useSubscription, type UseSubscriptionOptions, type UseSubscriptionResul
 export { useLiveQuery, type UseLiveQueryOptions, type UseLiveQueryResult } from './lib/use-live-query';
 export { useSuspenseQuery, useBackgroundQuery, type UseSuspenseQueryResult } from './lib/use-suspense-query';
 export { gql, isSuccess, isError, unwrap, unwrapOrThrow } from '@dumbql/client';
+export { useEpicFetus, type NullDetectionInfo } from './lib/use-epic-fetus';
+export { NullOverlay } from './lib/null-overlay';
+
+export { useVal, type VueVal } from './lib/use-smth-ref';

@@ -19,3 +19,10 @@ export { Subscription, type SubscriptionProps } from './lib/subscription';
 // Re-exports for convenience
 export { gql, isSuccess, isError, unwrap, unwrapOrThrow, type GraphQLResult } from '@dumbql/client';
 export { type CacheStore } from '@dumbql/cache';
+
+// Epic Fetus & Null Overlay
+export { useEpicFetus, type NullDetectionInfo } from './lib/use-epic-fetus';
+export { NullOverlay } from './lib/null-overlay';
+
+// Val
+export { useVal, type ReactVal } from './lib/use-smth-ref';

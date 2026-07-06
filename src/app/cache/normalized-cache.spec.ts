@@ -308,4 +308,50 @@ describe('NormalizedCache', () => {
 			expect(cache2.count()).toBe(1);
 		});
 	});
+
+	describe('edge cases', () => {
+		it('get with typename returns undefined when no entities of that type', () => {
+			const cache = createCache();
+			cache.set(user1);
+			expect(cache.get('Post')).toBeUndefined();
+		});
+
+		it('set with both id and keyFields policy uses keyFields', () => {
+			const cache = new NormalizedCache({ Post: { keyFields: ['slug'] } });
+			cache.set({ __typename: 'Post', id: '1', slug: 'hello', title: 'World' } as never);
+			// Should be keyed by slug, not id
+			expect(cache.get('Post', 'hello')).toBeDefined();
+			expect(cache.get('Post', '1')).toBeUndefined();
+		});
+
+		it('set with null __typename is ignored', () => {
+			const cache = createCache();
+			cache.set({ __typename: null as unknown as string, id: '1', name: 'no-type' } as never);
+			expect(cache.count()).toBe(0);
+		});
+
+		it('set with undefined __typename is ignored', () => {
+			const cache = createCache();
+			cache.set({ id: '1', name: 'no-type' } as never);
+			expect(cache.count()).toBe(0);
+		});
+
+		it('merge with entity without id uses inline key', () => {
+			const cache = createCache();
+			cache.merge({ __typename: 'User', name: 'inline-merge' } as never);
+			expect(cache.count()).toBe(1);
+			const users = cache.get('User')!;
+			expect(users).toHaveLength(1);
+		});
+
+		it('rollbackOptimistic with non-existent id does nothing', () => {
+			const cache = createCache();
+			expect(() => cache.rollbackOptimistic('non-existent')).not.toThrow();
+		});
+
+		it('commitOptimistic with non-existent id does nothing', () => {
+			const cache = createCache();
+			expect(() => cache.commitOptimistic('non-existent')).not.toThrow();
+		});
+	});
 });

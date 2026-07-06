@@ -1,6 +1,13 @@
 <div class="doc-page-layout">
   <div class="doc-page-content doc-page">
-    <header class="page-header">
+    <tui-tabs [(activeItemIndex)]="selectedTabIndex">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+
+    @if (selectedTabIndex === 0) {
+      <header class="page-header">
       <div class="title-row">
         <h1 appAnchor>@dumbql/react</h1>
         <div class="tags">
@@ -19,7 +26,8 @@
       </div>
       <p class="lead">
         React bindings for <code>@dumbql/client</code>. Provides hooks (<code>useQuery</code>, <code>useMutation</code>,
-        <code>useSubscription</code>), render-prop components, and a <code>DumbqlProvider</code> context wrapper.
+        <code>useSubscription</code>, <code>useFragment</code>, <code>useLiveQuery</code>), render-prop components, and
+        a <code>DumbqlProvider</code> context wrapper.
       </p>
     </header>
 
@@ -48,35 +56,97 @@
       <pre><code>{{ subscriptionCode }}</code></pre>
     </div>
 
+    <h2 appAnchor id="fragments">Fragments</h2>
+    <p>
+      <code>useFragment</code> subscribes to a normalized fragment by <code>__typename</code> + <code>id</code>.
+      Returns <code>&#123; data, complete &#125;</code> — re-renders whenever that entity updates in the cache.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ fragmentCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="live-queries">Live Queries</h2>
+    <p>
+      <code>useLiveQuery</code> combines a query with a subscription for real-time updates. Automatically subscribes
+      after the initial fetch and merges incoming changes.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ liveQueryCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="pagination">Pagination</h2>
+    <p>
+      Use <code>fetchMore</code> with cursor or offset pagination from <code>@dumbql/pagination</code>. The
+      <code>cursorMerge</code> helper appends incoming edges to the cached list.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ paginationCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="persisted-queries">Persisted Queries</h2>
+    <p>
+      Automatic Persisted Queries (APQ) reduce bandwidth by sending a hash first. Attach
+      <code>apqMiddleware</code> from <code>@dumbql/persisted-queries</code> to the client:
+    </p>
+    <div class="code-block">
+      <pre><code>{{ apqCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="suspense-ssr">Suspense &amp; SSR</h2>
+    <p>
+      <code>useSuspenseQuery</code> integrates with React Suspense for data loading.
+      <code>usePrefetch</code> fires a query ahead of navigation.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ ssrCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="testing">Testing</h2>
+    <p>
+      Use <code>@dumbql/testing</code> with React Testing Library. Create a <code>MockGraphqlService</code> and wrap
+      components in <code>DumbqlProvider</code>.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ testingCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="debugging">Debugging</h2>
+    <p>
+      <code>@dumbql/debugging</code> provides <code>GraphqlDebugService</code> to log and inspect every operation.
+      Enable it during development to trace queries, mutations, and cache activity.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ debuggingCode }}</code></pre>
+    </div>
+
+    <h2 appAnchor id="opentelemetry">OpenTelemetry</h2>
+    <p>
+      <code>@dumbql/opentelemetry</code> adds distributed tracing. Create a <code>MinimalTracer</code> and set it
+      as the global tracer. Exported spans include query/mutation execution time and cache hits.
+    </p>
+    <div class="code-block">
+      <pre><code>{{ otelCode }}</code></pre>
+    </div>
+
     <h2 appAnchor id="render-props">Render-prop Components</h2>
     <p>Alternative to hooks — useful in class components or when you need inline query logic:</p>
     <div class="code-block">
       <pre><code>{{ renderPropCode }}</code></pre>
     </div>
 
-    <h2 appAnchor id="context">Context & Provider</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Export</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>DumbqlProvider</code></td>
-          <td>Provides client + optional cache to the tree</td>
-        </tr>
-        <tr>
-          <td><code>useClient()</code></td>
-          <td>Returns <code>DumbqlClient</code> from context</td>
-        </tr>
-        <tr>
-          <td><code>useCache()</code></td>
-          <td>Returns <code>CacheStore | null</code> from context</td>
-        </tr>
-      </tbody>
-    </table>
+    }
+
+    @if (selectedTabIndex === 1) {
+      <header class="page-header">
+        <div class="title-row">
+          <h1>API Reference</h1>
+          <div class="tags">
+            <span tuiBadge appearance="primary" size="s">@dumbql/react</span>
+          </div>
+        </div>
+      </header>
+      <app-docs-api-table [entries]="apiEntries" />
+    }
   </div>
   <aside class="doc-page-toc">
     <app-docs-toc [sections]="tocSections" />

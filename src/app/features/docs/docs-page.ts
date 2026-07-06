@@ -9,10 +9,12 @@ import {
   HostListener,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
-import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
 import { TuiDropdown, TuiDropdownDirective } from '@taiga-ui/core/portals/dropdown';
-import { TuiComboBox, TuiDataListWrapper } from '@taiga-ui/kit';
-import { FormsModule } from '@angular/forms';
+import { TuiDataList } from '@taiga-ui/core/components/data-list';
+import { TuiChevron } from '@taiga-ui/kit/directives/chevron';
+import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
+import { TuiObscured } from '@taiga-ui/cdk/directives/obscured';
 import hljs from 'highlight.js';
 import { Logo } from '../../shared/ui/logo/logo';
 import { DocsToc } from '../../shared/ui/docs-toc/docs-toc';
@@ -38,11 +40,11 @@ interface NavItem {
     TuiButton,
     Logo,
     DocsToc,
-    FormsModule,
-    TuiDataListWrapper,
     TuiDropdown,
-    TuiComboBox,
-    ...TuiTextfield,
+    TuiDataList,
+    TuiChevron,
+    TuiActiveZone,
+    TuiObscured,
   ],
   templateUrl: './docs-page.html',
   styleUrl: './docs-page.scss',
@@ -52,6 +54,7 @@ export class DocsPage {
   private readonly router = inject(Router);
 
   protected readonly contentLoading = signal(true);
+  protected readonly open = signal(false);
 
   constructor() {
     this.router.events.subscribe((event) => {
@@ -113,12 +116,17 @@ export class DocsPage {
     { path: '/docs/fragments', label: '@dumbql/fragments', since: '0.0.1' },
     { path: '/docs/ssr', label: '@dumbql/ssr', since: '0.0.1' },
     { path: '/docs/debugging', label: '@dumbql/debugging', since: '0.0.1' },
+    { path: '/docs/opentelemetry', label: '@dumbql/opentelemetry', since: '1.0.5-beta.3' },
+    { path: '/docs/epic-fetus', label: 'Epic Fetus', since: '1.0.5-beta.4' },
     { path: '/docs/downloader', label: '@dumbql/downloader', since: '0.0.1' },
     { path: '/docs/testing', label: '@dumbql/testing', since: '0.0.1' },
     { path: '/docs/comparison', label: 'vs Other Solutions', since: '0.0.1' },
     { path: '/docs/migration', label: 'Migration from Apollo', since: '0.0.2-alpha.1' },
     { path: '/docs/api', label: 'API Reference', since: '0.0.1' },
-    { path: '/docs/dev-server', label: '@dumbql/dev-server', since: '1.1.0' },
+    { path: '/docs/dev-server', label: '@dumbql/dev-server', since: '0.0.3' },
+    { path: '/docs/apollo-adapter', label: '@dumbql/apollo-adapter', since: '0.0.3' },
+    { path: '/docs/codegen', label: '@dumbql/codegen', since: '0.0.1' },
+    { path: '/docs/errors', label: '@dumbql/errors', since: '0.0.3' },
     { path: '/docs/devcontainers', label: 'Sandboxes', since: '0.0.1' },
   ];
 

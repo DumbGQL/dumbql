@@ -1,19 +1,26 @@
-import { BehaviorSubject, type Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { type CacheEntity, type OptimisticUpdate, type TypePolicy } from './normalized-cache';
 import { CacheStore } from './cache-store';
 import { CachePersistenceService } from './cache-persist-ng';
+import { type CacheEvent, CacheEvents } from './cache-events';
+import { type CacheMetricsSnapshot, CacheMetrics } from './cache-metrics';
 import { type Provider } from '@angular/core';
 import { GRAPHQL_CACHE } from '@dumbql/core';
+import { filter, map } from 'rxjs/operators';
 
 export class CacheService {
   private store = new CacheStore();
   readonly cache = this.store.cache;
   readonly gc = this.store.gc;
+  readonly events: CacheEvents;
+  readonly metrics: CacheMetrics;
 
   private localStateSubject = new Map<string, BehaviorSubject<unknown>>();
   private persistSvc: CachePersistenceService | null = null;
 
   constructor(persistSvc?: CachePersistenceService | null) {
+    this.events = this.store.events;
+    this.metrics = this.store.metrics;
     this.persistSvc = persistSvc ?? null;
     if (this.persistSvc) {
       const restored = this.persistSvc.restore();
@@ -117,6 +124,41 @@ export class CacheService {
       data.push([`__local__${k}`, { value: v.value }]);
     }
     this.persistSvc.persist(data);
+  }
+
+  onEvent(): Observable<CacheEvent> {
+    return new Observable<CacheEvent>((subscriber) => {
+      const unsubscribe = this.events.on((event) => subscriber.next(event));
+      return () => unsubscribe();
+    });
+  }
+
+  onWrite(): Observable<CacheEvent & { type: 'write' }> {
+    return this.onEvent().pipe(
+      filter((e): e is CacheEvent & { type: 'write' } => e.type === 'write'),
+    );
+  }
+
+  onEvict(): Observable<CacheEvent & { type: 'evict' }> {
+    return this.onEvent().pipe(
+      filter((e): e is CacheEvent & { type: 'evict' } => e.type === 'evict'),
+    );
+  }
+
+  onGcSweep(): Observable<CacheEvent & { type: 'gcSweep' }> {
+    return this.onEvent().pipe(
+      filter((e): e is CacheEvent & { type: 'gcSweep' } => e.type === 'gcSweep'),
+    );
+  }
+
+  onOptimistic(): Observable<CacheEvent & { type: 'optimistic' }> {
+    return this.onEvent().pipe(
+      filter((e): e is CacheEvent & { type: 'optimistic' } => e.type === 'optimistic'),
+    );
+  }
+
+  getMetricsSnapshot(): CacheMetricsSnapshot {
+    return this.store.getMetricsSnapshot();
   }
 }
 

@@ -1,11 +1,12 @@
 import { createServer, type Server, type IncomingMessage, type ServerResponse } from 'node:http';
 import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
-import { readFileSync, existsSync, statSync } from 'node:fs';
-import { resolve, join, extname } from 'node:path';
+import { readFileSync, existsSync, statSync, watch } from 'node:fs';
+import { resolve, join, extname, dirname } from 'node:path';
 import { spawn as spawnChild } from 'node:child_process';
 import { createYoga, createSchema } from 'graphql-yoga';
 import type { GraphQLSchema } from 'graphql';
+import { WebSocketServer } from 'ws';
 import type { DevServerConfig } from './types.js';
 import { analyzeEnvironment, resolvePublicFrontendHost, type EnvInfo } from './env-analyzer.js';
 
@@ -221,14 +222,13 @@ function createProxyHandler(frontendTarget: string, env: EnvInfo, devServerPort:
   };
 }
 
-export function createDevServer(config: DevServerConfig & { port?: number } = {}): Server {
-  const schema = loadSchema(config.mock);
-  const frontendTarget = config.proxy?.target ?? 'http://localhost:4200';
-  const env = analyzeEnvironment(config.proxy?.rewrite);
-  const port = config.port ?? 4000;
-  const staticDir = config.staticDir;
+interface SchemaWatchState {
+  yoga: ReturnType<typeof createYoga>;
+  schema: GraphQLSchema;
+}
 
-  const yoga = createYoga({
+function createFreshYoga(schema: GraphQLSchema): ReturnType<typeof createYoga> {
+  return createYoga({
     schema,
     graphqlEndpoint: '/graphql',
     cors: {
@@ -237,6 +237,70 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
       allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     },
   });
+}
+
+function resolveSchemaPath(config: DevServerConfig): string | null {
+  const mock = config.mock;
+  if (mock?.schema && !isInlineSchema(mock.schema)) {
+    return resolve(mock.schema);
+  }
+  const defaultPath = resolve('graphql/schema.graphql');
+  if (existsSync(defaultPath)) {
+    return defaultPath;
+  }
+  return null;
+}
+
+function attachSchemaWatcher(
+  config: DevServerConfig,
+  state: SchemaWatchState,
+  server: Server,
+): void {
+  if (!config.mock?.watchSchema) return;
+
+  const schemaPath = resolveSchemaPath(config);
+  if (!schemaPath) {
+    console.warn('  [schema-watch] No schema file found to watch');
+    return;
+  }
+
+  const wss = new WebSocketServer({ server, path: '/schema-ws' });
+  console.log(`  Schema WebSocket: /schema-ws (watching ${schemaPath})`);
+
+  const broadcast = (event: string, data: unknown) => {
+    const msg = JSON.stringify({ type: event, data });
+    wss.clients.forEach((client) => {
+      if (client.readyState === 1) client.send(msg);
+    });
+  };
+
+  watch(dirname(schemaPath), (eventType, filename) => {
+    if (filename && eventType === 'change') {
+      try {
+        state.schema = loadSchema(config.mock);
+        state.yoga = createFreshYoga(state.schema);
+        const sdl = readFileSync(schemaPath, 'utf-8');
+        broadcast('schema-changed', { sdl, timestamp: Date.now() });
+        console.log(`  [schema-watch] Schema reloaded: ${filename}`);
+      } catch (err) {
+        broadcast('schema-error', { message: String(err), timestamp: Date.now() });
+        console.error(`  [schema-watch] Failed to reload schema:`, err);
+      }
+    }
+  });
+}
+
+export function createDevServer(config: DevServerConfig & { port?: number } = {}): Server {
+  const frontendTarget = config.proxy?.target ?? 'http://localhost:4200';
+  const env = analyzeEnvironment(config.proxy?.rewrite);
+  const port = config.port ?? 4000;
+  const staticDir = config.staticDir;
+
+  const state: SchemaWatchState = {
+    schema: loadSchema(config.mock),
+    yoga: null as unknown as ReturnType<typeof createYoga>,
+  };
+  state.yoga = createFreshYoga(state.schema);
 
   const proxy = createProxyHandler(frontendTarget, env, port);
 
@@ -249,7 +313,7 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
     }
 
     if (url.pathname === '/graphql') {
-      yoga(req, res);
+      state.yoga(req, res);
       return;
     }
 
@@ -269,6 +333,8 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
 
     proxy(req, res);
   });
+
+  attachSchemaWatcher(config, state, server);
 
   return server;
 }

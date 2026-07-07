@@ -9,6 +9,9 @@
   <a href="https://codecov.io/gh/DumbGQL/dumbql">
     <img src="https://img.shields.io/codecov/c/github/DumbGQL/dumbql" alt="codecov"/>
   </a>
+  <a href="https://www.npmjs.com/package/@dumbql/core">
+    <img src="https://badge.fury.io/js/@dumbql%2Fcore.svg" alt="npm version"/>
+  </a>
 </p>
 
 **If you're tired of:**

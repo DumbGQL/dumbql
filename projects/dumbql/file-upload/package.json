@@ -1,17 +1,17 @@
 {
-  "name": "@dumbql/file-upload",
-  "version": "1.0.5-beta.4",
-  "keywords": [
-    "graphql",
-    "file-upload",
-    "upload",
-    "dumbql"
-  ],
-  "peerDependencies": {
-    "@angular/common": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@dumbql/core": "^0.0.3",
-    "rxjs": "~7.8.0"
-  },
-  "sideEffects": false
+	"name": "@dumbql/file-upload",
+	"version": "1.0.5",
+	"keywords": [
+		"graphql",
+		"file-upload",
+		"upload",
+		"dumbql"
+	],
+	"peerDependencies": {
+		"@angular/common": "^22.0.0",
+		"@angular/core": "^22.0.0",
+		"@dumbql/core": "^0.0.3",
+		"rxjs": "~7.8.0"
+	},
+	"sideEffects": false
 }

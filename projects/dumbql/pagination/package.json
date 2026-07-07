@@ -1,17 +1,17 @@
 {
-  "name": "@dumbql/pagination",
-  "version": "1.0.5-beta.4",
-  "keywords": [
-    "graphql",
-    "pagination",
-    "offset",
-    "cursor",
-    "dumbql"
-  ],
-  "peerDependencies": {
-    "@angular/core": "^22.0.0",
-    "@dumbql/core": "^0.0.3",
-    "rxjs": "~7.8.0"
-  },
-  "sideEffects": false
+	"name": "@dumbql/pagination",
+	"version": "1.0.5",
+	"keywords": [
+		"graphql",
+		"pagination",
+		"offset",
+		"cursor",
+		"dumbql"
+	],
+	"peerDependencies": {
+		"@angular/core": "^22.0.0",
+		"@dumbql/core": "^0.0.3",
+		"rxjs": "~7.8.0"
+	},
+	"sideEffects": false
 }

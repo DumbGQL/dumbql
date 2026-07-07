@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - rc
+      - rc/**
       - beta
+      - beta/**
       - alpha
+      - alpha/**
   workflow_dispatch:
     inputs:
       version:

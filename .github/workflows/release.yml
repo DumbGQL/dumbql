@@ -91,10 +91,16 @@ jobs:
             echo "NPM_TAG=$NPM_TAG" >> "$GITHUB_ENV"
           else
             BRANCH="${{ github.ref_name }}"
-            echo "BUMP_TYPE=$BRANCH" >> "$GITHUB_ENV"
+            # Extract base channel from branch: beta/v1.0.5 → beta
+            CHANNEL="${BRANCH%%/*}"
+            case "$CHANNEL" in
+              rc|beta|alpha) ;;
+              *) CHANNEL="$BRANCH" ;;
+            esac
+            echo "BUMP_TYPE=$CHANNEL" >> "$GITHUB_ENV"
             echo "EXACT_VERSION=" >> "$GITHUB_ENV"
             echo "DEV_SERVER_VERSION=" >> "$GITHUB_ENV"
-            echo "NPM_TAG=$BRANCH" >> "$GITHUB_ENV"
+            echo "NPM_TAG=$CHANNEL" >> "$GITHUB_ENV"
           fi
 
       - name: Bump version

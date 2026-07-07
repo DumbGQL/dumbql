@@ -8,13 +8,18 @@ on:
       - alpha
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'Branch to release from'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+
+          - rc
+          - beta
+          - alpha
       version:
         description: 'Exact version (e.g. 0.0.3). Leave empty to auto-bump.'
-        required: false
-        default: ''
-        type: string
-      version_dev_server:
-        description: 'Exact version for @dumbql/dev-server (e.g. 1.0.0). Overrides main version.'
         required: false
         default: ''
         type: string
@@ -44,6 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.branch || github.ref_name }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
@@ -75,7 +81,6 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "BUMP_TYPE=${{ inputs.type }}" >> "$GITHUB_ENV"
             echo "EXACT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
-            echo "DEV_SERVER_VERSION=${{ inputs.version_dev_server }}" >> "$GITHUB_ENV"
 
             # Derive npm tag: auto = follow version bump type
             NPM_TAG="${{ inputs.npm_tag }}"
@@ -91,12 +96,11 @@ jobs:
             # Extract base channel from branch: beta/v1.0.5 → beta
             CHANNEL="${BRANCH%%/*}"
             case "$CHANNEL" in
-              rc|beta|alpha) ;;
+              main|rc|beta|alpha) ;;
               *) CHANNEL="$BRANCH" ;;
             esac
             echo "BUMP_TYPE=$CHANNEL" >> "$GITHUB_ENV"
             echo "EXACT_VERSION=" >> "$GITHUB_ENV"
-            echo "DEV_SERVER_VERSION=" >> "$GITHUB_ENV"
             echo "NPM_TAG=$CHANNEL" >> "$GITHUB_ENV"
           fi
 
@@ -107,17 +111,6 @@ jobs:
           else
             node scripts/version.mjs "$BUMP_TYPE"
           fi
-
-      - name: Set dev-server version (if specified)
-        if: env.DEV_SERVER_VERSION != ''
-        run: |
-          node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('projects/dumbql/dev-server/package.json', 'utf-8'));
-            pkg.version = '$DEV_SERVER_VERSION';
-            fs.writeFileSync('projects/dumbql/dev-server/package.json', JSON.stringify(pkg, null, 2) + '\n');
-            console.log('  @dumbql/dev-server → ' + pkg.version);
-          "
 
       - name: Read tag
         id: tag

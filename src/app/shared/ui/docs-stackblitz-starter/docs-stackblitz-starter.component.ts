@@ -20,19 +20,21 @@ import type { StarterCodes } from './index';
     </tui-tabs>
 
     <div class="starter-toolbar">
-      <button tuiButton size="s" appearance="outline" [tuiButtonCopy]="currentCode()">
-        Copy
-      </button>
-      <button tuiButton size="s" appearance="outline" (click)="openStackblitz()">
-        Open in StackBlitz
-      </button>
+      <button tuiButton size="s" appearance="outline" [tuiButtonCopy]="currentCode()">Copy</button>
+      <button tuiButton size="s" appearance="outline" (click)="openStackblitz()">Open in StackBlitz</button>
     </div>
 
     <pre><code [innerHTML]="htmlCode()"></code></pre>
   `,
-  styles: [`
-    .starter-toolbar { display: flex; gap: 0.5rem; margin: 0.75rem 0; }
-  `],
+  styles: [
+    `
+      .starter-toolbar {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0.75rem 0;
+      }
+    `,
+  ],
 })
 export class DocsStackblitzStarterComponent {
   readonly codes = input.required<StarterCodes>();

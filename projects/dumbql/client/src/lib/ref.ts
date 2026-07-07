@@ -27,9 +27,7 @@ export class Val<T = unknown> {
 
   isEmpty(): boolean {
     return (
-      this.isNull() ||
-      this._value === '' ||
-      (Array.isArray(this._value) && (this._value as unknown[]).length === 0)
+      this.isNull() || this._value === '' || (Array.isArray(this._value) && (this._value as unknown[]).length === 0)
     );
   }
 

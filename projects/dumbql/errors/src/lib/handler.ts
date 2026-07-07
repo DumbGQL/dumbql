@@ -8,7 +8,7 @@ export interface ErrorHandlerConfig {
 }
 
 export class ErrorHandler {
-  private handlers: Array<{ filter: ErrorFilter; handler: ErrorHandlerFn }> = [];
+  private handlers: { filter: ErrorFilter; handler: ErrorHandlerFn }[] = [];
   private config: Required<ErrorHandlerConfig>;
 
   constructor(config?: ErrorHandlerConfig) {
@@ -19,10 +19,7 @@ export class ErrorHandler {
 
   on(code: string | string[], handler: ErrorHandlerFn): this;
   on(filter: ErrorFilter, handler: ErrorHandlerFn): this;
-  on(
-    filter: string | string[] | ErrorFilter,
-    handler: ErrorHandlerFn,
-  ): this {
+  on(filter: string | string[] | ErrorFilter, handler: ErrorHandlerFn): this {
     if (typeof filter === 'function') {
       this.handlers.push({ filter, handler });
     } else {

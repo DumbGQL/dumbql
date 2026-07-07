@@ -4,13 +4,9 @@ import { print, type DocumentNode, type DumbqlConfig, DUMBQL_CONFIG } from '@dum
 import { GraphqlLiveQuery } from './graphql-live-query';
 import { SUBSCRIPTIONS_CONFIG } from './subscriptions-config';
 
-export function injectLiveQuery<T>(
-  document: DocumentNode,
-  variables?: Record<string, unknown>,
-): Observable<T> {
+export function injectLiveQuery<T>(document: DocumentNode, variables?: Record<string, unknown>): Observable<T> {
   return defer(() => {
-    const config: DumbqlConfig =
-      inject(DUMBQL_CONFIG, { optional: true }) ?? { endpoint: '/graphql' };
+    const config: DumbqlConfig = inject(DUMBQL_CONFIG, { optional: true }) ?? { endpoint: '/graphql' };
     const subsConfig = inject(SUBSCRIPTIONS_CONFIG, { optional: true });
 
     const endpoint = subsConfig?.wsUrl ?? config.endpoint ?? '/graphql';

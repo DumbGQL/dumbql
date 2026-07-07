@@ -9,12 +9,12 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-persisted-queries',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './persisted-queries.html',
-	styleUrl: './persisted-queries.scss',
+  selector: 'app-docs-persisted-queries',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './persisted-queries.html',
+  styleUrl: './persisted-queries.scss',
 })
 export class DocsPersistedQueries {
   private readonly tocService = inject(TocService);
@@ -31,18 +31,32 @@ export class DocsPersistedQueries {
   protected readonly tabs = ['Docs', 'API', 'Starters'];
 
   protected readonly apiEntries: ApiEntry[] = [
-  	{ name: 'apqMiddleware(config?)', description: 'Automatic Persisted Query middleware. First sends only the SHA-256 hash, retries with full query on PersistedQueryNotFound. Optionally uses GET for hashed queries.', type: 'function' },
-  	{ name: 'PersistedQueryService', description: 'Injectable Angular service for executing queries through the persisted query middleware chain.', type: 'class' },
-  	{ name: 'PersistedQueryService.execute(document, variables?)', description: 'Executes a GraphQL query through the persisted query pipeline.', type: 'method', default: 'document: DocumentNode, variables?: TVars' },
+    {
+      name: 'apqMiddleware(config?)',
+      description:
+        'Automatic Persisted Query middleware. First sends only the SHA-256 hash, retries with full query on PersistedQueryNotFound. Optionally uses GET for hashed queries.',
+      type: 'function',
+    },
+    {
+      name: 'PersistedQueryService',
+      description: 'Injectable Angular service for executing queries through the persisted query middleware chain.',
+      type: 'class',
+    },
+    {
+      name: 'PersistedQueryService.execute(document, variables?)',
+      description: 'Executes a GraphQL query through the persisted query pipeline.',
+      type: 'method',
+      default: 'document: DocumentNode, variables?: TVars',
+    },
   ];
 
   protected readonly tocSections: TocSection[] = [
-  	{ id: 'apq-middleware', title: 'APQ Middleware' },
-  	{ id: 'wire-format', title: 'Wire Format' },
+    { id: 'apq-middleware', title: 'APQ Middleware' },
+    { id: 'wire-format', title: 'Wire Format' },
   ];
 
   constructor() {
-  	this.tocService.sections.set(this.tocSections);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly apqStarters: StarterCodes = {

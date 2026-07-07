@@ -8,6 +8,4 @@ export interface SubscriptionsConfig {
   maxReconnectAttempts?: number;
 }
 
-export const SUBSCRIPTIONS_CONFIG = new InjectionToken<SubscriptionsConfig | null>(
-  'SUBSCRIPTIONS_CONFIG',
-);
+export const SUBSCRIPTIONS_CONFIG = new InjectionToken<SubscriptionsConfig | null>('SUBSCRIPTIONS_CONFIG');

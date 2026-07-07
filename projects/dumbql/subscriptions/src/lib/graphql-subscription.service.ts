@@ -7,18 +7,13 @@ import { SUBSCRIPTIONS_CONFIG } from './subscriptions-config';
 @Injectable({ providedIn: 'root' })
 export class GraphqlSubscriptionService {
   private readonly config: DumbqlConfig =
-    inject(DUMBQL_CONFIG, { optional: true }) ?? { endpoint: '/graphql' } as DumbqlConfig;
+    inject(DUMBQL_CONFIG, { optional: true }) ?? ({ endpoint: '/graphql' } as DumbqlConfig);
 
   private readonly subsConfig = inject(SUBSCRIPTIONS_CONFIG, { optional: true });
 
-  private readonly core = new GraphqlSubscription(
-    this.subsConfig?.wsUrl ?? this.config.endpoint ?? '/graphql',
-  );
+  private readonly core = new GraphqlSubscription(this.subsConfig?.wsUrl ?? this.config.endpoint ?? '/graphql');
 
-  subscribe<T>(
-    document: DocumentNode,
-    variables?: Record<string, unknown>,
-  ): Observable<T> {
+  subscribe<T>(document: DocumentNode, variables?: Record<string, unknown>): Observable<T> {
     const query = print(document);
     const { reconnect, reconnectInterval, maxReconnectAttempts } = this.subsConfig ?? {};
 

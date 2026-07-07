@@ -1,6 +1,12 @@
 import type {
-  Span, SpanContext, SpanAttributes, SpanStatus, SpanEvent,
-  SpanExporter, ReadonlySpan, TracerConfig,
+  Span,
+  SpanContext,
+  SpanAttributes,
+  SpanStatus,
+  SpanEvent,
+  SpanExporter,
+  ReadonlySpan,
+  TracerConfig,
 } from './types';
 import { generateTraceId, generateSpanId, formatTraceParent } from './trace-context';
 import { consoleExporter } from './exporters/console-exporter';
@@ -82,7 +88,9 @@ export class MinimalTracer {
     };
 
     return {
-      get spanContext(): SpanContext { return span.spanContext; },
+      get spanContext(): SpanContext {
+        return span.spanContext;
+      },
       setAttribute(key: string, value: string | number | boolean): void {
         span.attributes[key] = value;
       },

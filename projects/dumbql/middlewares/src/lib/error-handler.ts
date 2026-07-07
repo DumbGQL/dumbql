@@ -1,4 +1,4 @@
-import { from, Observable, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import type { GraphqlMiddleware, GraphQLResult } from '@dumbql/core';
 

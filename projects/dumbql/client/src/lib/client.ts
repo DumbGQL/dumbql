@@ -1,8 +1,14 @@
 import { print, type DocumentNode, type TypedDocumentNode } from './gql';
-import { applyMiddleware, devAuthMiddleware, hasFiles, type GraphqlRequestContext, type GraphqlMiddleware } from './middleware';
+import {
+  applyMiddleware,
+  devAuthMiddleware,
+  hasFiles,
+  type GraphqlRequestContext,
+  type GraphqlMiddleware,
+} from './middleware';
 import { cacheMiddleware } from './cache-middleware';
-import type { GraphQLResult, GraphQLResponse, NetworkErrorInfo } from './result';
-import type { ClientConfig, CacheConfig } from './config';
+import type { GraphQLResult, GraphQLResponse } from './result';
+import type { ClientConfig } from './config';
 import type { CacheStore } from '@dumbql/cache';
 
 export type { ClientConfig };
@@ -206,7 +212,7 @@ export class DumbqlClient {
             statusText: response.statusText,
           });
         }
-        const json = await response.json() as GraphQLResponse<unknown>;
+        const json = (await response.json()) as GraphQLResponse<unknown>;
         return this.toResult(json);
       }
 
@@ -228,7 +234,7 @@ export class DumbqlClient {
         });
       }
 
-      const json = await response.json() as GraphQLResponse<unknown>;
+      const json = (await response.json()) as GraphQLResponse<unknown>;
       return this.toResult(json);
     } catch (err) {
       return this.toHttpError(err instanceof Error ? err : new Error('Unknown error'));
@@ -452,7 +458,7 @@ export class DumbqlClient {
         return;
       }
 
-      const responses = await response.json() as GraphQLResponse<unknown>[];
+      const responses = (await response.json()) as GraphQLResponse<unknown>[];
       for (let i = 0; i < queue.length; i++) {
         const resp = responses[i];
         if (resp) {
@@ -506,7 +512,7 @@ export class DumbqlClient {
         });
       }
 
-      const json = await response.json() as GraphQLResponse<T>;
+      const json = (await response.json()) as GraphQLResponse<T>;
       return this.toResult(json);
     } catch (err) {
       return this.toHttpError(err instanceof Error ? err : new Error('Unknown error'));
@@ -519,20 +525,31 @@ export class DumbqlClient {
 
     if (hasErrors && this.errorPolicy === 'none') {
       return this.withErrorNotification({
-        status: 'error', errorCode: 'GRAPHQL_ERROR', error: response.errors![0].message, graphQLErrors: response.errors!,
+        status: 'error',
+        errorCode: 'GRAPHQL_ERROR',
+        error: response.errors![0].message,
+        graphQLErrors: response.errors!,
       });
     }
 
     if (hasErrors && this.errorPolicy === 'ignore') {
       if (response.data != null) {
-        const result: { status: 'success'; data: T; graphQLErrors?: { message: string; extensions?: Record<string, unknown> }[] } = {
-          status: 'success', data: response.data as T,
+        const result: {
+          status: 'success';
+          data: T;
+          graphQLErrors?: { message: string; extensions?: Record<string, unknown> }[];
+        } = {
+          status: 'success',
+          data: response.data as T,
         };
         if (this.showErrorsOnSuccess) result.graphQLErrors = response.errors;
         return result;
       }
       return this.withErrorNotification({
-        status: 'error', errorCode: 'NO_DATA', error: 'No data returned', graphQLErrors: response.errors!,
+        status: 'error',
+        errorCode: 'NO_DATA',
+        error: 'No data returned',
+        graphQLErrors: response.errors!,
       });
     }
 
@@ -542,18 +559,28 @@ export class DumbqlClient {
         return { status: 'success', data: response.data as T, graphQLErrors: response.errors };
       }
       return this.withErrorNotification({
-        status: 'error', errorCode: 'NO_DATA', error: msgs.join('; '), graphQLErrors: response.errors!,
+        status: 'error',
+        errorCode: 'NO_DATA',
+        error: msgs.join('; '),
+        graphQLErrors: response.errors!,
       });
     }
 
     if (response.data == null) {
       return this.withErrorNotification({
-        status: 'error', errorCode: 'NO_DATA', error: 'No data returned from server',
+        status: 'error',
+        errorCode: 'NO_DATA',
+        error: 'No data returned from server',
       });
     }
 
-    const result: { status: 'success'; data: T; graphQLErrors?: { message: string; extensions?: Record<string, unknown> }[] } = {
-      status: 'success', data: response.data as T,
+    const result: {
+      status: 'success';
+      data: T;
+      graphQLErrors?: { message: string; extensions?: Record<string, unknown> }[];
+    } = {
+      status: 'success',
+      data: response.data as T,
     };
     if (this.showErrorsOnSuccess && errorsPayload) {
       result.graphQLErrors = errorsPayload;
@@ -564,12 +591,16 @@ export class DumbqlClient {
   private toHttpError<T>(error: { message: string; status?: number; statusText?: string } | Error): GraphQLResult<T> {
     if (error instanceof Error) {
       return this.withErrorNotification({
-        status: 'error', errorCode: 'NETWORK_ERROR', error: error.message,
+        status: 'error',
+        errorCode: 'NETWORK_ERROR',
+        error: error.message,
         networkError: { message: error.message },
       });
     }
     return this.withErrorNotification({
-      status: 'error', errorCode: 'NETWORK_ERROR', error: error.message,
+      status: 'error',
+      errorCode: 'NETWORK_ERROR',
+      error: error.message,
       networkError: { message: error.message, status: error.status, statusText: error.statusText ?? undefined },
     });
   }
@@ -581,7 +612,7 @@ export class DumbqlClient {
       const err = new Error(result.error);
       const out = errorHandler.handle(err);
       if (out instanceof Promise) {
-        out.catch(() => {});
+        out.catch(() => undefined);
       }
     }
 
@@ -628,5 +659,3 @@ function extractTypeNames(data: unknown, types: Set<string>): void {
 export function createClient(config: ClientConfig, cache?: CacheStore): DumbqlClient {
   return new DumbqlClient(config, cache);
 }
-
-

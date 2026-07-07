@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '@dumbql/client';
+import type { DocumentNode, TypedDocumentNode, ErrorCode } from '@dumbql/client';
 import { print } from '@dumbql/client';
 import { useClient } from './provider';
 
@@ -31,8 +31,7 @@ export function useLiveQuery<TData, TVariables extends Record<string, unknown> =
   const wsRef = useRef<WebSocket | null>(null);
   const cancelledRef = useRef(false);
 
-  const wsEndpoint =
-    options?.wsEndpoint ?? client.endpoint.replace(/^http/, 'ws');
+  const wsEndpoint = options?.wsEndpoint ?? client.endpoint.replace(/^http/, 'ws');
   const shouldSubscribe = options?.shouldSubscribe ?? true;
   const onCompletedRef = useRef(options?.onCompleted);
   const onErrorRef = useRef(options?.onError);
@@ -43,10 +42,7 @@ export function useLiveQuery<TData, TVariables extends Record<string, unknown> =
     cancelledRef.current = false;
     setLoading(true);
 
-    const result = await client.query<TData, TVariables>(
-      document,
-      variables as TVariables | undefined,
-    );
+    const result = await client.query<TData, TVariables>(document, variables as TVariables | undefined);
 
     if (cancelledRef.current) return;
     setLoading(false);

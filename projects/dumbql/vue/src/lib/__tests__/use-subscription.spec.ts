@@ -34,24 +34,44 @@ function createMockWebSocket() {
     close: vi.fn((code?: number, reason?: string) => {
       onclose?.({ code: code ?? 1000, reason: reason ?? '', wasClean: true } as CloseEvent);
     }),
-    get onopen() { return onopen; },
-    set onopen(fn) { onopen = fn; },
-    get onclose() { return onclose; },
-    set onclose(fn) { onclose = fn; },
-    get onerror() { return onerror; },
-    set onerror(fn) { onerror = fn; },
-    get onmessage() { return onmessage; },
-    set onmessage(fn) { onmessage = fn; },
+    get onopen() {
+      return onopen;
+    },
+    set onopen(fn) {
+      onopen = fn;
+    },
+    get onclose() {
+      return onclose;
+    },
+    set onclose(fn) {
+      onclose = fn;
+    },
+    get onerror() {
+      return onerror;
+    },
+    set onerror(fn) {
+      onerror = fn;
+    },
+    get onmessage() {
+      return onmessage;
+    },
+    set onmessage(fn) {
+      onmessage = fn;
+    },
   };
 
-  const triggerOpen = () => { onopen?.(); };
+  const triggerOpen = () => {
+    onopen?.();
+  };
   const triggerMessage = (data: unknown) => {
     onmessage?.({ data: JSON.stringify(data) } as MessageEvent);
   };
   const triggerClose = (code = 1000, reason = '') => {
     onclose?.({ code, reason, wasClean: code === 1000 } as CloseEvent);
   };
-  const triggerError = () => { onerror?.(new Event('error')); };
+  const triggerError = () => {
+    onerror?.(new Event('error'));
+  };
 
   return { ws, triggerOpen, triggerMessage, triggerClose, triggerError };
 }
@@ -64,7 +84,9 @@ describe('useSubscription reconnect (Vue)', () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     mockWs = createMockWebSocket();
-    wsMock = vi.fn(function() { return mockWs.ws as unknown as WebSocket; });
+    wsMock = vi.fn(function () {
+      return mockWs.ws as unknown as WebSocket;
+    });
     globalThis.WebSocket = wsMock as unknown as typeof WebSocket;
     vi.mocked(useClient).mockReturnValue({ endpoint: 'http://test/graphql' } as never);
   });

@@ -95,7 +95,9 @@ describe('ErrorHandler', () => {
   it('handles errors by code', async () => {
     const handler = new ErrorHandler({ throwUnhandled: false });
     let handled = false;
-    handler.on('NETWORK_ERR', () => { handled = true; });
+    handler.on('NETWORK_ERR', () => {
+      handled = true;
+    });
     await handler.handle(new DumbqlError('network error', 'NETWORK_ERR'));
     expect(handled).toBe(true);
   });
@@ -114,7 +116,12 @@ describe('ErrorHandler', () => {
   it('handles errors by filter function', async () => {
     const handler = new ErrorHandler({ throwUnhandled: false });
     let handled = false;
-    handler.on((e) => e.message.includes('custom'), () => { handled = true; });
+    handler.on(
+      (e) => e.message.includes('custom'),
+      () => {
+        handled = true;
+      },
+    );
     await handler.handle(new DumbqlError('custom error', 'C'));
     expect(handled).toBe(true);
   });
@@ -122,8 +129,13 @@ describe('ErrorHandler', () => {
   it('stops propagation when handler returns false', async () => {
     const handler = new ErrorHandler({ throwUnhandled: false });
     const calls: string[] = [];
-    handler.on('A', () => { calls.push('first'); return false; });
-    handler.on('A', () => { calls.push('second'); });
+    handler.on('A', () => {
+      calls.push('first');
+      return false;
+    });
+    handler.on('A', () => {
+      calls.push('second');
+    });
     await handler.handle(new DumbqlError('test', 'A'));
     expect(calls).toEqual(['first']);
   });

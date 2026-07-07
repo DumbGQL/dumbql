@@ -13,6 +13,8 @@ interface SubscriptionCallbacks<T> {
 const WS_PROTOCOL = 'graphql-transport-ws';
 const CONNECTION_TIMEOUT = 10000;
 
+const NOOP = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+
 function defaultWsUrl(endpoint: string): string {
   return endpoint.replace(/^http/, 'ws');
 }
@@ -34,16 +36,16 @@ export class GraphqlSubscription {
         : 'sub_' + Math.random().toString(36).substring(2, 9);
 
     const emit = {
-      next: callbacks?.next ?? (() => {}),
-      error: callbacks?.error ?? (() => {}),
-      complete: callbacks?.complete ?? (() => {}),
+      next: callbacks?.next ?? NOOP,
+      error: callbacks?.error ?? NOOP,
+      complete: callbacks?.complete ?? NOOP,
     };
 
     try {
       ws = new WebSocket(url, WS_PROTOCOL);
     } catch (err) {
       emit.error(err instanceof Error ? err : new Error('WebSocket creation failed'));
-      return () => {};
+      return NOOP;
     }
 
     const connTimeout = setTimeout(() => {
@@ -68,11 +70,13 @@ export class GraphqlSubscription {
       switch (msg.type) {
         case 'connection_ack': {
           clearTimeout(connTimeout);
-          ws.send(JSON.stringify({
-            type: 'subscribe',
-            id: subId,
-            payload: { query, variables },
-          }));
+          ws.send(
+            JSON.stringify({
+              type: 'subscribe',
+              id: subId,
+              payload: { query, variables },
+            }),
+          );
           break;
         }
         case 'next': {

@@ -1,7 +1,7 @@
 import { Injectable, inject, type Provider, ENVIRONMENT_INITIALIZER } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, from, of } from 'rxjs';
-import { concatMap, map, tap, catchError } from 'rxjs/operators';
+import { concatMap, map, catchError } from 'rxjs/operators';
 
 export interface SchemaProgressEvent {
   loaded: number;
@@ -47,9 +47,19 @@ const TYPE_QUERY = `
 `;
 
 const SKIP_TYPES = new Set([
-  '__Type', '__Field', '__InputValue', '__EnumValue',
-  '__Directive', '__Schema', '__TypeKind', '__DirectiveLocation',
-  'String', 'Int', 'Float', 'Boolean', 'ID',
+  '__Type',
+  '__Field',
+  '__InputValue',
+  '__EnumValue',
+  '__Directive',
+  '__Schema',
+  '__TypeKind',
+  '__DirectiveLocation',
+  'String',
+  'Int',
+  'Float',
+  'Boolean',
+  'ID',
 ]);
 
 @Injectable()
@@ -91,11 +101,9 @@ export class SchemaStreamService {
           return from(types).pipe(
             concatMap((type) =>
               http
-                .post<{ data: { __type: Record<string, unknown> | null } }>(
-                  config.url,
-                  { query: TYPE_QUERY, variables: { name: type.name } },
-                  { headers },
-                )
+                .post<{
+                  data: { __type: Record<string, unknown> | null };
+                }>(config.url, { query: TYPE_QUERY, variables: { name: type.name } }, { headers })
                 .pipe(
                   map(() => {
                     const idx = types.indexOf(type);
@@ -106,12 +114,14 @@ export class SchemaStreamService {
                       done: idx === types.length - 1,
                     } as SchemaProgressEvent;
                   }),
-                  catchError(() => of({
-                    loaded: types.indexOf(type) + 1,
-                    total,
-                    typeName: type.name,
-                    done: types.indexOf(type) === types.length - 1,
-                  } as SchemaProgressEvent)),
+                  catchError(() =>
+                    of({
+                      loaded: types.indexOf(type) + 1,
+                      total,
+                      typeName: type.name,
+                      done: types.indexOf(type) === types.length - 1,
+                    } as SchemaProgressEvent),
+                  ),
                 ),
             ),
           );

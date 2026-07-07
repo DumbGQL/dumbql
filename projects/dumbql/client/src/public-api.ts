@@ -1,11 +1,5 @@
 export { DumbqlClient, createClient, type ClientConfig as DumbqlClientConfig } from './lib/client';
-export type {
-  GraphQLResult,
-  GraphQLResponse,
-  GraphQLError,
-  NetworkErrorInfo,
-  ErrorCode,
-} from './lib/result';
+export type { GraphQLResult, GraphQLResponse, GraphQLError, NetworkErrorInfo, ErrorCode } from './lib/result';
 export { gql, type DocumentNode, type TypedDocumentNode, print } from './lib/gql';
 export {
   isSuccess,
@@ -35,4 +29,11 @@ export type {
 } from './lib/config';
 
 export { Val } from './lib/ref';
-export { walkObject, extractOpName, nullDetectionMiddleware, type NullDetectionEvent, type NullValueInfo, type QueryErrorInfo } from './lib/null-detection';
+export {
+  walkObject,
+  extractOpName,
+  nullDetectionMiddleware,
+  type NullDetectionEvent,
+  type NullValueInfo,
+  type QueryErrorInfo,
+} from './lib/null-detection';

@@ -88,33 +88,39 @@ export function useQuery<TData, TVariables extends Record<string, unknown> = Rec
     return () => clearInterval(id);
   }, [pollInterval, client, document, JSON.stringify(variables ?? {}), skip]);
 
-  const refetch = useCallback(async (vars?: TVariables) => {
-    setNetworkStatus('refetching');
-    const res = await client.refetch<TData, TVariables>(document, (vars ?? variables) as TVariables);
-    setResult(res);
-    setLoading(false);
-    if (res.status === 'success') {
-      setNetworkStatus('ready');
-      onCompletedRef.current?.(res.data);
-    } else {
-      setNetworkStatus('error');
-      onErrorRef.current?.(res.error, res.errorCode);
-    }
-    return res;
-  }, [client, document, variables]);
-
-  const fetchMore = useCallback(async (merge: (prev: TData, next: TData) => TData, vars?: TVariables) => {
-    setNetworkStatus('refetching');
-    const res = await client.query<TData, TVariables>(document, vars ?? variables);
-    if (res.status === 'success' && result?.status === 'success' && result.data) {
-      const merged = merge(result.data, res.data);
-      setResult({ ...res, data: merged });
-    } else {
+  const refetch = useCallback(
+    async (vars?: TVariables) => {
+      setNetworkStatus('refetching');
+      const res = await client.refetch<TData, TVariables>(document, (vars ?? variables) as TVariables);
       setResult(res);
-    }
-    setNetworkStatus('ready');
-    return res;
-  }, [client, document, variables, result]);
+      setLoading(false);
+      if (res.status === 'success') {
+        setNetworkStatus('ready');
+        onCompletedRef.current?.(res.data);
+      } else {
+        setNetworkStatus('error');
+        onErrorRef.current?.(res.error, res.errorCode);
+      }
+      return res;
+    },
+    [client, document, variables],
+  );
+
+  const fetchMore = useCallback(
+    async (merge: (prev: TData, next: TData) => TData, vars?: TVariables) => {
+      setNetworkStatus('refetching');
+      const res = await client.query<TData, TVariables>(document, vars ?? variables);
+      if (res.status === 'success' && result?.status === 'success' && result.data) {
+        const merged = merge(result.data, res.data);
+        setResult({ ...res, data: merged });
+      } else {
+        setResult(res);
+      }
+      setNetworkStatus('ready');
+      return res;
+    },
+    [client, document, variables, result],
+  );
 
   const data = result?.status === 'success' ? result.data : null;
   const error = result?.status === 'error' ? result.error : null;

@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  parseGraphqlFile,
-  generateTypedDocumentsCode,
-  generateIndexCode,
-} from './graphql-file-parser';
+import { generateTypedDocumentsCode, generateIndexCode } from './graphql-file-parser';
 import type { FragmentTypeInfo } from './graphql-file-parser';
 
 describe('generateTypedDocumentsCode', () => {

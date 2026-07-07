@@ -56,7 +56,7 @@ describe('NormalizedCache — FieldPolicy', () => {
           merge: (existing, incoming) => ({
             ...(incoming as Record<string, unknown>),
             items: [
-              ...((existing as Record<string, unknown> | undefined)?.['items'] as unknown[] ?? []),
+              ...(((existing as Record<string, unknown> | undefined)?.['items'] as unknown[]) ?? []),
               ...((incoming as Record<string, unknown>)['items'] as unknown[]),
             ],
           }),
@@ -67,7 +67,7 @@ describe('NormalizedCache — FieldPolicy', () => {
       cache.merge({ __typename: 'PaginatedPosts', id: '1', items: [{ id: 'b' }] } as never);
 
       const result = cache.get('PaginatedPosts', '1') as Record<string, unknown>;
-      expect((result['items'] as unknown[])).toHaveLength(2);
+      expect(result['items'] as unknown[]).toHaveLength(2);
       expect((result['items'] as Record<string, unknown>[])[0]['id']).toBe('a');
       expect((result['items'] as Record<string, unknown>[])[1]['id']).toBe('b');
     });

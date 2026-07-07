@@ -5,8 +5,8 @@
  */
 export function createMigrationGuide(): Record<string, string> {
   return {
-    'ApolloClient': 'DumbqlClient (from @dumbql/client)',
-    'InMemoryCache': 'CacheStore (from @dumbql/cache)',
+    ApolloClient: 'DumbqlClient (from @dumbql/client)',
+    InMemoryCache: 'CacheStore (from @dumbql/cache)',
     'useQuery(query, { variables })': 'useQuery(query, { variables }) (from @dumbql/react or @dumbql/vue)',
     'useMutation(query, { variables, update, onCompleted, onError })':
       'useMutation(query, { variables, update, onCompleted, onError })',
@@ -19,14 +19,14 @@ export function createMigrationGuide(): Record<string, string> {
     'cache.gc()': 'cache.collectGarbage()',
     'makeVar(value)': 'makeVar(value) (from @dumbql/core)',
     '@client directives': 'clientDirectiveMiddleware() (from @dumbql/core)',
-    'ApolloProvider': 'DumbqlProvider (from @dumbql/react)',
+    ApolloProvider: 'DumbqlProvider (from @dumbql/react)',
     'Apollo Link': 'GraphqlMiddleware (from @dumbql/client)',
-    'errorPolicy': 'Config option in DumbqlClient / GraphqlService',
-    'fetchPolicy': 'Config option in DumbqlClient / GraphqlService',
-    'pollInterval': 'pollInterval in useQuery options',
-    'optimisticResponse': 'optimistic in mutate() options',
-    'refetchQueries': 'client.refetch() / useQuery().refetch()',
-    'subscribeToMore': 'useLiveQuery() (from @dumbql/react or @dumbql/vue)',
+    errorPolicy: 'Config option in DumbqlClient / GraphqlService',
+    fetchPolicy: 'Config option in DumbqlClient / GraphqlService',
+    pollInterval: 'pollInterval in useQuery options',
+    optimisticResponse: 'optimistic in mutate() options',
+    refetchQueries: 'client.refetch() / useQuery().refetch()',
+    subscribeToMore: 'useLiveQuery() (from @dumbql/react or @dumbql/vue)',
     'cache.modify': 'cache.merge()',
     'field policies': 'Not yet supported (use middleware)',
     'type policies': 'Not yet supported (use middleware)',

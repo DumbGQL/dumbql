@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { CachePersistence } from '@dumbql/cache';
 
 describe('CachePersistence', () => {
@@ -38,8 +38,12 @@ describe('CachePersistence', () => {
       store.clear();
       const ls = {
         getItem: (k: string) => store.get(k) ?? null,
-        setItem: (k: string, v: string) => { store.set(k, v); },
-        removeItem: (k: string) => { store.delete(k); },
+        setItem: (k: string, v: string) => {
+          store.set(k, v);
+        },
+        removeItem: (k: string) => {
+          store.delete(k);
+        },
         clear: () => store.clear(),
         length: 0,
         key: () => null,
@@ -125,8 +129,12 @@ describe('CachePersistence', () => {
       store.clear();
       const ls = {
         getItem: (k: string) => store.get(k) ?? null,
-        setItem: (k: string, v: string) => { store.set(k, v); },
-        removeItem: (k: string) => { store.delete(k); },
+        setItem: (k: string, v: string) => {
+          store.set(k, v);
+        },
+        removeItem: (k: string) => {
+          store.delete(k);
+        },
         clear: () => store.clear(),
         length: 0,
         key: () => null,
@@ -155,13 +163,29 @@ describe('CachePersistence', () => {
   describe('malformed data', () => {
     it('handles corrupted stored data gracefully', () => {
       const memPersist = new CachePersistence({ storage: 'memory' });
-      (memPersist as unknown as { storage: { getItem: (k: string) => string | null; setItem: (k: string, v: string) => void; removeItem: (k: string) => void } }).storage.setItem('__dumbql_cache', '{invalid json');
+      (
+        memPersist as unknown as {
+          storage: {
+            getItem: (k: string) => string | null;
+            setItem: (k: string, v: string) => void;
+            removeItem: (k: string) => void;
+          };
+        }
+      ).storage.setItem('__dumbql_cache', '{invalid json');
       expect(memPersist.restore()).toBeNull();
     });
 
     it('handles empty stored data gracefully', () => {
       const memPersist = new CachePersistence({ storage: 'memory' });
-      (memPersist as unknown as { storage: { getItem: (k: string) => string | null; setItem: (k: string, v: string) => void; removeItem: (k: string) => void } }).storage.setItem('__dumbql_cache', '');
+      (
+        memPersist as unknown as {
+          storage: {
+            getItem: (k: string) => string | null;
+            setItem: (k: string, v: string) => void;
+            removeItem: (k: string) => void;
+          };
+        }
+      ).storage.setItem('__dumbql_cache', '');
       expect(memPersist.restore()).toBeNull();
     });
   });
@@ -172,7 +196,9 @@ describe('CachePersistence', () => {
       Object.defineProperty(globalThis, 'localStorage', {
         configurable: true,
         get: () => undefined,
-        set: () => { throw new Error('unavailable'); },
+        set: () => {
+          throw new Error('unavailable');
+        },
       });
 
       const fallbackPersist = new CachePersistence({ storageKey: 'fallback_test' });

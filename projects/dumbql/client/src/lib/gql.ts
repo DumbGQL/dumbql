@@ -8,7 +8,7 @@ export { type DocumentNode, print };
 
 export interface TypedDocumentNode<
   TResult = unknown,
-  TVariables extends Record<string, unknown> = Record<string, unknown>
+  TVariables extends Record<string, unknown> = Record<string, unknown>,
 > extends DocumentNode {
   __resultType?: TResult;
   __variablesType?: TVariables;

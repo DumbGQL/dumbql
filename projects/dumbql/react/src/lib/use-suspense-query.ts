@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '@dumbql/client';
 import { useClient } from './provider';
 
@@ -15,10 +15,7 @@ interface SuspenseQueryResult<TData> {
   networkStatus: 'ready';
 }
 
-export function useSuspenseQuery<
-  TData,
-  TVariables extends Record<string, unknown> = Record<string, unknown>,
->(
+export function useSuspenseQuery<TData, TVariables extends Record<string, unknown> = Record<string, unknown>>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
   options?: SuspenseQueryOptions<TData, TVariables>,
 ): SuspenseQueryResult<TData> {
@@ -47,26 +44,24 @@ export function useSuspenseQuery<
 
   if (!dataRef.current && !errorRef.current) {
     if (!promiseRef.current) {
-      promiseRef.current = client
-        .query<TData, TVariables>(query, variables)
-        .then((res: GraphQLResult<TData>) => {
-          if (res.status === 'success') {
-            dataRef.current = res.data;
-            onCompletedRef.current?.(res.data);
-          } else {
-            errorRef.current = res.error ?? 'Query failed';
-            errorCodeRef.current = res.errorCode;
-            onErrorRef.current?.(res.error ?? 'Query failed', res.errorCode);
-          }
-          promiseRef.current = undefined;
-        });
+      promiseRef.current = client.query<TData, TVariables>(query, variables).then((res: GraphQLResult<TData>) => {
+        if (res.status === 'success') {
+          dataRef.current = res.data;
+          onCompletedRef.current?.(res.data);
+        } else {
+          errorRef.current = res.error ?? 'Query failed';
+          errorCodeRef.current = res.errorCode;
+          onErrorRef.current?.(res.error ?? 'Query failed', res.errorCode);
+        }
+        promiseRef.current = undefined;
+      });
     }
     throw promiseRef.current;
   }
 
   if (errorRef.current) {
     const errorMessage = errorRef.current;
-    const code = errorCodeRef.current;
+    const _code = errorCodeRef.current; // eslint-disable-line @typescript-eslint/no-unused-vars
     dataRef.current = undefined;
     errorRef.current = undefined;
     errorCodeRef.current = undefined;
@@ -82,10 +77,7 @@ export interface QueryRef<TData> {
   refetch: () => Promise<GraphQLResult<TData>>;
 }
 
-export function useBackgroundQuery<
-  TData,
-  TVariables extends Record<string, unknown> = Record<string, unknown>,
->(
+export function useBackgroundQuery<TData, TVariables extends Record<string, unknown> = Record<string, unknown>>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
   options?: { variables?: TVariables },
 ): [QueryRef<TData>] {
@@ -110,16 +102,14 @@ export function useBackgroundQuery<
   }, [client, query, variables]);
 
   if (!promiseRef.current && dataRef.current === undefined && !errorRef.current) {
-    promiseRef.current = client
-      .query<TData, TVariables>(query, variables)
-      .then((res: GraphQLResult<TData>) => {
-        if (res.status === 'success') {
-          dataRef.current = res.data;
-        } else {
-          errorRef.current = res.error ?? 'Query failed';
-        }
-        promiseRef.current = undefined;
-      });
+    promiseRef.current = client.query<TData, TVariables>(query, variables).then((res: GraphQLResult<TData>) => {
+      if (res.status === 'success') {
+        dataRef.current = res.data;
+      } else {
+        errorRef.current = res.error ?? 'Query failed';
+      }
+      promiseRef.current = undefined;
+    });
   }
 
   const queryRef: QueryRef<TData> = {

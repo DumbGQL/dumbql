@@ -177,7 +177,7 @@ describe('generateFragmentCode', () => {
     const code = generateFragmentCode([frag]);
     expect(code).toContain('WithInline');
     expect(code).toContain("{ __typename: 'SpecialBook' }");
-    expect(code).not.toContain("Pick<SpecialBook");
+    expect(code).not.toContain('Pick<SpecialBook');
   });
 
   it('imports type names from typesCode', () => {
@@ -196,7 +196,15 @@ describe('generateFragmentCode', () => {
 describe('generateFragmentIndex', () => {
   it('generates exports with $key type', () => {
     const fragments = [
-      { name: 'F1', typeCondition: 'T1', fields: ['a'], inlineFragments: [] as string[], inlineFragmentFields: {} as Record<string, string[]>, document: 'fragment F1 on T1 { a }', filePath: '/f1.graphql' },
+      {
+        name: 'F1',
+        typeCondition: 'T1',
+        fields: ['a'],
+        inlineFragments: [] as string[],
+        inlineFragmentFields: {} as Record<string, string[]>,
+        document: 'fragment F1 on T1 { a }',
+        filePath: '/f1.graphql',
+      },
     ];
     const code = generateFragmentIndex(fragments);
     expect(code).toContain('F1Fragment, F1Fragment$key, F1');

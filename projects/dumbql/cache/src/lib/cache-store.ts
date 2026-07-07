@@ -25,9 +25,7 @@ export class CacheStore {
     this.events = new CacheEvents();
     this.metrics = new CacheMetrics();
     if (config?.persist) {
-      const svc = config.persist instanceof CachePersistence
-        ? config.persist
-        : new CachePersistence(config.persist);
+      const svc = config.persist instanceof CachePersistence ? config.persist : new CachePersistence(config.persist);
       this.persistSvc = svc;
       const restored = svc.restore();
       if (restored) {

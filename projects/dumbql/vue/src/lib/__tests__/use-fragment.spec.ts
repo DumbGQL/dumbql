@@ -17,10 +17,10 @@ describe('useFragment (Vue)', () => {
     const client = { getCacheService: vi.fn().mockReturnValue(cache) };
     vi.mocked(useClient).mockReturnValue(client as never);
 
-    const { data, complete } = useFragment<{ id: string; title: string; __typename: string }>(
-      {} as never,
-      { __typename: 'Book', id: '1' },
-    );
+    const { data, complete } = useFragment<{ id: string; title: string; __typename: string }>({} as never, {
+      __typename: 'Book',
+      id: '1',
+    });
 
     expect(cache.query).toHaveBeenCalledWith('Book', '1');
     expect(data).toEqual({ id: '1', title: 'Dune', __typename: 'Book' });

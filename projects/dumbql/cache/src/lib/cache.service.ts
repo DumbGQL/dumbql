@@ -6,7 +6,7 @@ import { type CacheEvent, CacheEvents } from './cache-events';
 import { type CacheMetricsSnapshot, CacheMetrics } from './cache-metrics';
 import { type Provider } from '@angular/core';
 import { GRAPHQL_CACHE } from './tokens';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 export class CacheService {
   private store = new CacheStore();
@@ -134,27 +134,19 @@ export class CacheService {
   }
 
   onWrite(): Observable<CacheEvent & { type: 'write' }> {
-    return this.onEvent().pipe(
-      filter((e): e is CacheEvent & { type: 'write' } => e.type === 'write'),
-    );
+    return this.onEvent().pipe(filter((e): e is CacheEvent & { type: 'write' } => e.type === 'write'));
   }
 
   onEvict(): Observable<CacheEvent & { type: 'evict' }> {
-    return this.onEvent().pipe(
-      filter((e): e is CacheEvent & { type: 'evict' } => e.type === 'evict'),
-    );
+    return this.onEvent().pipe(filter((e): e is CacheEvent & { type: 'evict' } => e.type === 'evict'));
   }
 
   onGcSweep(): Observable<CacheEvent & { type: 'gcSweep' }> {
-    return this.onEvent().pipe(
-      filter((e): e is CacheEvent & { type: 'gcSweep' } => e.type === 'gcSweep'),
-    );
+    return this.onEvent().pipe(filter((e): e is CacheEvent & { type: 'gcSweep' } => e.type === 'gcSweep'));
   }
 
   onOptimistic(): Observable<CacheEvent & { type: 'optimistic' }> {
-    return this.onEvent().pipe(
-      filter((e): e is CacheEvent & { type: 'optimistic' } => e.type === 'optimistic'),
-    );
+    return this.onEvent().pipe(filter((e): e is CacheEvent & { type: 'optimistic' } => e.type === 'optimistic'));
   }
 
   getMetricsSnapshot(): CacheMetricsSnapshot {

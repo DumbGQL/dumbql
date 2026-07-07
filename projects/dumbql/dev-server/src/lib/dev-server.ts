@@ -251,11 +251,7 @@ function resolveSchemaPath(config: DevServerConfig): string | null {
   return null;
 }
 
-function attachSchemaWatcher(
-  config: DevServerConfig,
-  state: SchemaWatchState,
-  server: Server,
-): void {
+function attachSchemaWatcher(config: DevServerConfig, state: SchemaWatchState, server: Server): void {
   if (!config.mock?.watchSchema) return;
 
   const schemaPath = resolveSchemaPath(config);
@@ -284,7 +280,7 @@ function attachSchemaWatcher(
         console.log(`  [schema-watch] Schema reloaded: ${filename}`);
       } catch (err) {
         broadcast('schema-error', { message: String(err), timestamp: Date.now() });
-        console.error(`  [schema-watch] Failed to reload schema:`, err);
+        console.error('  [schema-watch] Failed to reload schema:', err);
       }
     }
   });
@@ -319,9 +315,7 @@ export function createDevServer(config: DevServerConfig & { port?: number } = {}
 
     if (staticDir) {
       const resolvedStatic = resolve(staticDir);
-      const indexHtml = ['index.html', 'browser/index.html'].find((p) =>
-        existsSync(join(resolvedStatic, p)),
-      );
+      const indexHtml = ['index.html', 'browser/index.html'].find((p) => existsSync(join(resolvedStatic, p)));
       if (indexHtml) {
         serveStatic(req, res, resolvedStatic);
       } else {

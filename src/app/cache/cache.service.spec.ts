@@ -1,12 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { CacheService, provideCachePersistence } from '@dumbql/cache/angular';
+import { CacheService } from '@dumbql/cache/angular';
 import { CachePersistence } from '@dumbql/cache';
 
 describe('CacheService', () => {
   const userEntity = { __typename: 'User', id: '1', name: 'Alice', age: 30 };
 
   function createService(persistSvc?: CachePersistence | null): CacheService {
-    const ngPersist = persistSvc ? { persist: (data: [string, Record<string, unknown>][]) => persistSvc.persist(data), restore: () => persistSvc.restore(), persistThrottled: () => {}, clear: () => persistSvc.clear() } as never : undefined;
+    const ngPersist = persistSvc
+      ? ({
+          persist: (data: [string, Record<string, unknown>][]) => persistSvc.persist(data),
+          restore: () => persistSvc.restore(),
+          persistThrottled: () => {},
+          clear: () => persistSvc.clear(),
+        } as never)
+      : undefined;
     return new CacheService(ngPersist);
   }
 

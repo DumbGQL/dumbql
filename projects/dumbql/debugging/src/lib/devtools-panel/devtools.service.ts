@@ -83,22 +83,27 @@ export class DevToolsService {
       const injector = svc?.svc?.injector;
       if (!injector) return;
 
-      import('@dumbql/cache/angular').then(({ CacheService }) => {
-        const cache = injector.get<{ cache?: { all: () => Map<string, unknown> } } | null>(CacheService, { optional: true });
-        if (!cache?.cache) return;
-
-        const snapshot: CacheSnapshot[] = [];
-        const allEntries = cache.cache.all();
-        for (const [key, value] of allEntries) {
-          const entity = value as Record<string, unknown> & { __typename?: string; id?: string };
-          snapshot.push({
-            typename: entity.__typename ?? '(unknown)',
-            id: entity.id ?? key,
-            fields: entity,
+      import('@dumbql/cache/angular')
+        .then(({ CacheService }) => {
+          // eslint-disable-next-line max-len
+          const cache = injector.get<{ cache?: { all: () => Map<string, unknown> } } | null>(CacheService, {
+            optional: true,
           });
-        }
-        this.cacheSnapshot.next(snapshot);
-      }).catch(() => {});
+          if (!cache?.cache) return;
+
+          const snapshot: CacheSnapshot[] = [];
+          const allEntries = cache.cache.all();
+          for (const [key, value] of allEntries) {
+            const entity = value as Record<string, unknown> & { __typename?: string; id?: string };
+            snapshot.push({
+              typename: entity.__typename ?? '(unknown)',
+              id: entity.id ?? key,
+              fields: entity,
+            });
+          }
+          this.cacheSnapshot.next(snapshot);
+        })
+        .catch(() => undefined);
     } catch {
       // cache service may not be available
     }

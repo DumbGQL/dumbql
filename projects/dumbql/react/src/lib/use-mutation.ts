@@ -11,9 +11,7 @@ export interface UseMutationOptions<TData, TVariables> {
   optimistic?: (cache: CacheStore) => string;
 }
 
-export type UseMutationFn<TData, TVariables> = (
-  variables?: TVariables,
-) => Promise<GraphQLResult<TData>>;
+export type UseMutationFn<TData, TVariables> = (variables?: TVariables) => Promise<GraphQLResult<TData>>;
 
 export interface UseMutationResult<TData, TVariables> {
   data: TData | null;
@@ -52,7 +50,8 @@ export function useMutation<TData, TVariables extends Record<string, unknown> = 
         optimisticIdRef.current = options.optimistic(cache);
       }
 
-      const res = await client.mutate<TData, TVariables>(document, variables ?? (options?.variables as TVariables | undefined));
+      const opts = options?.variables as TVariables | undefined;
+      const res = await client.mutate<TData, TVariables>(document, variables ?? opts);
       setResult(res);
       setLoading(false);
 

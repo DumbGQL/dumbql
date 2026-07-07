@@ -50,7 +50,7 @@ export class GraphqlLiveQuery {
         return () => {};
       }
 
-      const json = await response.json() as GraphQLResponse<T>;
+      const json = (await response.json()) as GraphQLResponse<T>;
 
       if (json.errors && json.errors.length > 0) {
         emit.error(new Error(json.errors[0].message));

@@ -29,8 +29,7 @@ export function useLiveQuery<TData, TVariables extends Record<string, unknown> =
   const error = ref<string | null>(null);
   const errorCode = ref<ErrorCode | undefined>(undefined);
 
-  const wsEndpoint =
-    options?.wsEndpoint ?? client.endpoint.replace(/^http/, 'ws');
+  const wsEndpoint = options?.wsEndpoint ?? client.endpoint.replace(/^http/, 'ws');
   const shouldSubscribe = options?.shouldSubscribe ?? true;
   const onCompleted = options?.onCompleted;
   const onError = options?.onError;
@@ -41,10 +40,7 @@ export function useLiveQuery<TData, TVariables extends Record<string, unknown> =
   onMounted(async () => {
     loading.value = true;
 
-    const result = await client.query<TData, TVariables>(
-      document,
-      variables as TVariables | undefined,
-    );
+    const result = await client.query<TData, TVariables>(document, variables as TVariables | undefined);
 
     if (cancelled) return;
     loading.value = false;

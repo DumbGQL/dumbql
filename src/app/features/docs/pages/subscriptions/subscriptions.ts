@@ -9,12 +9,12 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-subscriptions',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './subscriptions.html',
-	styleUrl: './subscriptions.scss',
+  selector: 'app-docs-subscriptions',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './subscriptions.html',
+  styleUrl: './subscriptions.scss',
 })
 export class DocsSubscriptions {
   private readonly tocService = inject(TocService);
@@ -30,31 +30,101 @@ export class DocsSubscriptions {
   protected readonly tabs = ['Docs', 'API', 'Starters'];
 
   protected readonly apiEntries: ApiEntry[] = [
-  	{ name: 'GraphqlSubscription', description: 'Framework-agnostic WebSocket subscription class. Manages a single subscription lifecycle over the graphql-transport-ws protocol.', type: 'class' },
-  	{ name: 'GraphqlSubscription.constructor', description: 'Creates a new GraphqlSubscription with the GraphQL endpoint URL.', type: 'constructor', default: 'endpoint: string' },
-  	{ name: 'GraphqlSubscription.subscribe(query, variables?, callbacks?)', description: 'Opens a WebSocket connection, subscribes to the given query, and returns an unsubscribe function.', type: 'method' },
-  	{ name: 'GraphqlLiveQuery', description: 'Framework-agnostic class combining initial HTTP query fetch with WebSocket subscription for real-time updates.', type: 'class' },
-  	{ name: 'GraphqlSubscriptionService', description: 'Injectable Angular service wrapping GraphqlSubscription. Returns RxJS Observables for subscription data.', type: 'class' },
-  	{ name: 'GraphqlSubscriptionService.subscribe(document, variables?)', description: 'Subscribes to a GraphQL subscription and returns an Observable that emits on each server push.', type: 'method', default: 'document: DocumentNode, variables?: Record<string, unknown>' },
-  	{ name: 'subscribe(document, variables?)', description: 'Standalone injectable function that returns an Observable for a GraphQL subscription using GraphqlSubscriptionService.', type: 'function' },
-  	{ name: 'provideDumbqlSubscriptions(config?)', description: 'Angular provider function that configures WebSocket URL, connection params, and reconnect settings.', type: 'function' },
-  	{ name: 'SubscriptionsConfig', description: 'Configuration interface for the subscriptions provider.', type: 'interface' },
-  	{ name: 'SubscriptionsConfig.wsUrl', description: 'WebSocket endpoint URL for GraphQL subscriptions.', type: 'property' },
-  	{ name: 'SubscriptionsConfig.connectionParams', description: 'Function returning connection parameters sent during WebSocket initialization (e.g. auth tokens).', type: 'property' },
-  	{ name: 'SubscriptionsConfig.reconnect', description: 'Whether to automatically reconnect on WebSocket disconnection.', type: 'property', default: 'false' },
-  	{ name: 'SubscriptionsConfig.reconnectInterval', description: 'Interval in milliseconds between reconnection attempts.', type: 'property', default: '1000' },
-  	{ name: 'SubscriptionsConfig.maxReconnectAttempts', description: 'Maximum number of reconnection attempts before giving up.', type: 'property', default: '10' },
-  	{ name: 'SUBSCRIPTIONS_CONFIG', description: 'Angular InjectionToken used to provide SubscriptionsConfig to the subscriptions service.', type: 'constant' },
+    {
+      name: 'GraphqlSubscription',
+      description:
+        'Framework-agnostic WebSocket subscription class. Manages a single subscription lifecycle over the graphql-transport-ws protocol.',
+      type: 'class',
+    },
+    {
+      name: 'GraphqlSubscription.constructor',
+      description: 'Creates a new GraphqlSubscription with the GraphQL endpoint URL.',
+      type: 'constructor',
+      default: 'endpoint: string',
+    },
+    {
+      name: 'GraphqlSubscription.subscribe(query, variables?, callbacks?)',
+      description: 'Opens a WebSocket connection, subscribes to the given query, and returns an unsubscribe function.',
+      type: 'method',
+    },
+    {
+      name: 'GraphqlLiveQuery',
+      description:
+        'Framework-agnostic class combining initial HTTP query fetch with WebSocket subscription for real-time updates.',
+      type: 'class',
+    },
+    {
+      name: 'GraphqlSubscriptionService',
+      description:
+        'Injectable Angular service wrapping GraphqlSubscription. Returns RxJS Observables for subscription data.',
+      type: 'class',
+    },
+    {
+      name: 'GraphqlSubscriptionService.subscribe(document, variables?)',
+      description: 'Subscribes to a GraphQL subscription and returns an Observable that emits on each server push.',
+      type: 'method',
+      default: 'document: DocumentNode, variables?: Record<string, unknown>',
+    },
+    {
+      name: 'subscribe(document, variables?)',
+      description:
+        'Standalone injectable function that returns an Observable for a GraphQL subscription using GraphqlSubscriptionService.',
+      type: 'function',
+    },
+    {
+      name: 'provideDumbqlSubscriptions(config?)',
+      description:
+        'Angular provider function that configures WebSocket URL, connection params, and reconnect settings.',
+      type: 'function',
+    },
+    {
+      name: 'SubscriptionsConfig',
+      description: 'Configuration interface for the subscriptions provider.',
+      type: 'interface',
+    },
+    {
+      name: 'SubscriptionsConfig.wsUrl',
+      description: 'WebSocket endpoint URL for GraphQL subscriptions.',
+      type: 'property',
+    },
+    {
+      name: 'SubscriptionsConfig.connectionParams',
+      description: 'Function returning connection parameters sent during WebSocket initialization (e.g. auth tokens).',
+      type: 'property',
+    },
+    {
+      name: 'SubscriptionsConfig.reconnect',
+      description: 'Whether to automatically reconnect on WebSocket disconnection.',
+      type: 'property',
+      default: 'false',
+    },
+    {
+      name: 'SubscriptionsConfig.reconnectInterval',
+      description: 'Interval in milliseconds between reconnection attempts.',
+      type: 'property',
+      default: '1000',
+    },
+    {
+      name: 'SubscriptionsConfig.maxReconnectAttempts',
+      description: 'Maximum number of reconnection attempts before giving up.',
+      type: 'property',
+      default: '10',
+    },
+    {
+      name: 'SUBSCRIPTIONS_CONFIG',
+      description: 'Angular InjectionToken used to provide SubscriptionsConfig to the subscriptions service.',
+      type: 'constant',
+    },
   ];
 
   protected readonly tocSections: TocSection[] = [
-  	{ id: 'graphql-subscription-service', title: 'GraphqlSubscriptionService' },
-  	{ id: 'subscribe', title: 'subscribe()' },
-  	{ id: 'graphql-transport-ws', title: 'graphql-transport-ws Protocol' },
+    { id: 'graphql-subscription-service', title: 'GraphqlSubscriptionService' },
+    { id: 'subscribe', title: 'subscribe()' },
+    { id: 'graphql-transport-ws', title: 'graphql-transport-ws Protocol' },
   ];
 
   constructor() {
-  	this.tocService.sections.set(this.tocSections);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly provideSubscriptionsCode = `import { provideDumbqlSubscriptions } from '@dumbql/subscriptions/angular';

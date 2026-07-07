@@ -9,27 +9,29 @@ describe('NullDetectionService', () => {
     service = new NullDetectionService();
   });
 
-  it('emits null-value event on reportNull', () => new Promise<void>((done) => {
-    service.onEvent.subscribe((event) => {
-      expect(event.type).toBe('null-value');
-      expect(event.path).toBe('data.foo');
-      expect(event.operationName).toBe('TestQuery');
-      expect(event.message).toBe('Null value at data.foo');
-      expect(typeof event.timestamp).toBe('number');
-      done();
-    });
-    service.reportNull('TestQuery', 'data.foo');
-  }));
+  it('emits null-value event on reportNull', () =>
+    new Promise<void>((done) => {
+      service.onEvent.subscribe((event) => {
+        expect(event.type).toBe('null-value');
+        expect(event.path).toBe('data.foo');
+        expect(event.operationName).toBe('TestQuery');
+        expect(event.message).toBe('Null value at data.foo');
+        expect(typeof event.timestamp).toBe('number');
+        done();
+      });
+      service.reportNull('TestQuery', 'data.foo');
+    }));
 
-  it('emits query-error event on reportError', () => new Promise<void>((done) => {
-    service.onEvent.subscribe((event) => {
-      expect(event.type).toBe('query-error');
-      expect(event.message).toBe('some error');
-      expect(event.operationName).toBe('MyMutation');
-      done();
-    });
-    service.reportError('MyMutation', 'some error');
-  }));
+  it('emits query-error event on reportError', () =>
+    new Promise<void>((done) => {
+      service.onEvent.subscribe((event) => {
+        expect(event.type).toBe('query-error');
+        expect(event.message).toBe('some error');
+        expect(event.operationName).toBe('MyMutation');
+        done();
+      });
+      service.reportError('MyMutation', 'some error');
+    }));
 
   it('sends postMessage to extension', () => {
     const postSpy = vi.fn();
@@ -56,8 +58,12 @@ describe('NullDetectionService', () => {
   it('each instance has independent stream', () => {
     const s2 = new NullDetectionService();
     let count = 0;
-    service.onEvent.subscribe(() => { count++; });
-    s2.onEvent.subscribe(() => { count++; });
+    service.onEvent.subscribe(() => {
+      count++;
+    });
+    s2.onEvent.subscribe(() => {
+      count++;
+    });
     s2.reportNull('Q', 'data.x');
     expect(count).toBe(1);
   });

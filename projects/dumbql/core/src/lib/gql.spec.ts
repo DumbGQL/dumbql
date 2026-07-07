@@ -5,7 +5,11 @@ import { parse } from 'graphql';
 
 describe('gql', () => {
   it('parses a simple query', () => {
-    const doc = gql`query { hello }`;
+    const doc = gql`
+      query {
+        hello
+      }
+    `;
     expect(doc.kind).toBe('Document');
     expect(doc.definitions).toHaveLength(1);
   });
@@ -25,7 +29,9 @@ describe('createTypedQuery', () => {
   });
 
   it('carries TResult and TVariables phantom types', () => {
-    interface Result { hello: string }
+    interface Result {
+      hello: string;
+    }
     const q = createTypedQuery<Result>('query { hello }');
     // Type-level check: q is TypedQueryString<Result, Record<string, never>>
     const typed: TypedQueryString<Result> = q;

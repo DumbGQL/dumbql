@@ -1,5 +1,4 @@
-import { Observable, of, throwError, timer } from 'rxjs';
-import { mergeMap, take } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { type GraphqlMiddleware, type GraphQLResult } from '@dumbql/core';
 
 export interface RateLimitConfig {

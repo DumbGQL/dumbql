@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { of } from 'rxjs';
 import { NullDetectionService } from '../null-detection.service';
 import type { GraphQLResult } from '../graphql.service';
-import type { GraphqlRequestContext, GraphqlMiddleware } from '../middleware';
+import type { GraphqlRequestContext } from '../middleware';
 import { provideNullDetection, nullDetectionMiddleware } from '../null-detection';
 
 function makeRequest(overrides: Partial<GraphqlRequestContext> = {}): GraphqlRequestContext {
@@ -39,21 +39,23 @@ describe('nullDetectionMiddleware', () => {
     expect(providers.length).toBeGreaterThan(0);
   });
 
-  it('reports null values in response data', () => new Promise<void>((done) => {
-    // Manually test the walk logic using detector
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('null-value');
-      expect(event.path).toBe('data.user.name');
-      done();
-    });
-    detector.reportNull('TestQuery', 'data.user.name');
-  }));
+  it('reports null values in response data', () =>
+    new Promise<void>((done) => {
+      // Manually test the walk logic using detector
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('null-value');
+        expect(event.path).toBe('data.user.name');
+        done();
+      });
+      detector.reportNull('TestQuery', 'data.user.name');
+    }));
 
-  it('reports errors in response', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('query-error');
-      done();
-    });
-    detector.reportError('TestQuery', 'fail');
-  }));
+  it('reports errors in response', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('query-error');
+        done();
+      });
+      detector.reportError('TestQuery', 'fail');
+    }));
 });

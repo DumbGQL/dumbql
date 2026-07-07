@@ -6,9 +6,7 @@ export interface SpanContext {
   isRemote: boolean;
 }
 
-export interface SpanAttributes {
-  [key: string]: string | number | boolean | undefined;
-}
+export type SpanAttributes = Record<string, string | number | boolean | undefined>;
 
 export interface SpanStatus {
   code: 'OK' | 'ERROR' | 'UNSET';

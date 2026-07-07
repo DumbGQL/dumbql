@@ -95,9 +95,7 @@ describe('authMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { Authorization: 'Bearer my-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { Authorization: 'Bearer my-token' } }));
   });
 
   it('does not duplicate Bearer prefix', async () => {
@@ -106,9 +104,7 @@ describe('authMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { Authorization: 'Bearer existing-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { Authorization: 'Bearer existing-token' } }));
   });
 
   it('uses custom header name', async () => {
@@ -117,9 +113,7 @@ describe('authMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { 'X-API-Key': 'Bearer my-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { 'X-API-Key': 'Bearer my-token' } }));
   });
 });
 
@@ -138,9 +132,7 @@ describe('devAuthMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { Authorization: 'Bearer provided-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { Authorization: 'Bearer provided-token' } }));
   });
 
   it('falls back to localStorage dev_token', async () => {
@@ -156,9 +148,7 @@ describe('devAuthMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { Authorization: 'Bearer stored-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { Authorization: 'Bearer stored-token' } }));
   });
 
   it('falls back to dev-token when nothing else available', async () => {
@@ -167,9 +157,7 @@ describe('devAuthMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ headers: { Authorization: 'Bearer dev-token' } }),
-    );
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ headers: { Authorization: 'Bearer dev-token' } }));
   });
 });
 
@@ -201,10 +189,7 @@ describe('loggingMiddleware', () => {
 
     await mw(createRequest(), next);
 
-    expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining('[MyApp]'),
-      expect.any(Object),
-    );
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('[MyApp]'), expect.any(Object));
   });
 
   it('passes through result unchanged', async () => {

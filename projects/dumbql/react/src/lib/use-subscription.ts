@@ -40,9 +40,7 @@ export function useSubscription<TData, TVariables extends Record<string, unknown
   const [loading, setLoading] = useState(true);
   const wsRef = useRef<WebSocket | null>(null);
 
-  const wsEndpoint =
-    options?.wsEndpoint ??
-    client.endpoint.replace(/^http/, 'ws');
+  const wsEndpoint = options?.wsEndpoint ?? client.endpoint.replace(/^http/, 'ws');
 
   const shouldSubscribe = options?.shouldSubscribe ?? true;
   const reconnect = options?.reconnect ?? false;
@@ -77,11 +75,13 @@ export function useSubscription<TData, TVariables extends Record<string, unknown
       ws.onopen = () => {
         setLoading(true);
         reconnectAttempt = 0;
-        ws!.send(JSON.stringify({
-          type: 'subscribe',
-          id: '1',
-          payload: { query: queryStr, variables: variables ?? {} },
-        }));
+        ws!.send(
+          JSON.stringify({
+            type: 'subscribe',
+            id: '1',
+            payload: { query: queryStr, variables: variables ?? {} },
+          }),
+        );
       };
 
       ws.onmessage = (event) => {

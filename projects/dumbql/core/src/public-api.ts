@@ -61,7 +61,12 @@ export {
 } from './lib/devtools';
 
 export { SchemaService, provideSchemaFetch, type SchemaServiceConfig } from './lib/schema.service';
-export { SchemaWatchService, provideSchemaWatch, type SchemaChangedEvent, type SchemaErrorEvent } from './lib/schema-watch';
+export {
+  SchemaWatchService,
+  provideSchemaWatch,
+  type SchemaChangedEvent,
+  type SchemaErrorEvent,
+} from './lib/schema-watch';
 export { SchemaStreamService, type SchemaProgressEvent, type SchemaStreamConfig } from './lib/schema-stream';
 
 export { provideDumbqlRouter, guardedRoute, canActivateWithGuards, type DumbqlRouteGuard } from './lib/dumbql-router';

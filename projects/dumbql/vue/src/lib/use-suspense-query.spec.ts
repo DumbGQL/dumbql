@@ -15,7 +15,14 @@ describe('useSuspenseQuery (Vue)', () => {
   });
 
   it('starts query immediately and returns loading ref', () => {
-    const client = { query: vi.fn().mockReturnValue(Promise.resolve({ status: 'success', data: { __typename: 'Book', id: '1', title: 'Dune' } })), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi
+        .fn()
+        .mockReturnValue(Promise.resolve({ status: 'success', data: { __typename: 'Book', id: '1', title: 'Dune' } })),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const result = useSuspenseQuery<{ __typename: string; id: string; title: string }>(BOOK_QUERY, { id: '1' });
@@ -26,7 +33,12 @@ describe('useSuspenseQuery (Vue)', () => {
   });
 
   it('resolves data when query completes', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { __typename: 'Book', id: '1', title: 'Dune' } }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi.fn().mockResolvedValue({ status: 'success', data: { __typename: 'Book', id: '1', title: 'Dune' } }),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const result = useSuspenseQuery<{ __typename: string; id: string; title: string }>(BOOK_QUERY);
@@ -38,7 +50,14 @@ describe('useSuspenseQuery (Vue)', () => {
   });
 
   it('sets error on query failure', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'error', error: 'Network error', errorCode: 'NETWORK_ERROR', networkError: true }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi
+        .fn()
+        .mockResolvedValue({ status: 'error', error: 'Network error', errorCode: 'NETWORK_ERROR', networkError: true }),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const result = useSuspenseQuery<unknown>(BOOK_QUERY);
@@ -51,7 +70,12 @@ describe('useSuspenseQuery (Vue)', () => {
   });
 
   it('exposes promise that resolves with data', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const result = useSuspenseQuery<{ title: string }>(BOOK_QUERY);
@@ -66,7 +90,12 @@ describe('useBackgroundQuery (Vue)', () => {
   });
 
   it('starts query immediately and returns QueryRef with loading ref', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const queryRef = useBackgroundQuery<{ title: string }>(BOOK_QUERY);
@@ -82,7 +111,12 @@ describe('useBackgroundQuery (Vue)', () => {
   });
 
   it('sets error on query failure', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'error', error: 'Failed', errorCode: 'NETWORK_ERROR' }), refetch: vi.fn(), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi.fn().mockResolvedValue({ status: 'error', error: 'Failed', errorCode: 'NETWORK_ERROR' }),
+      refetch: vi.fn(),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const queryRef = useBackgroundQuery<unknown>(BOOK_QUERY);
@@ -94,7 +128,12 @@ describe('useBackgroundQuery (Vue)', () => {
   });
 
   it('refetch calls client.refetch and updates refs', async () => {
-    const client = { query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }), refetch: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Updated' } }), endpoint: '/graphql', getCacheService: vi.fn() } as never;
+    const client = {
+      query: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Dune' } }),
+      refetch: vi.fn().mockResolvedValue({ status: 'success', data: { title: 'Updated' } }),
+      endpoint: '/graphql',
+      getCacheService: vi.fn(),
+    } as never;
     vi.mocked(useClient).mockReturnValue(client as never);
 
     const queryRef = useBackgroundQuery<{ title: string }>(BOOK_QUERY);

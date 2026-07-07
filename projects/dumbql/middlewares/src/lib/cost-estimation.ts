@@ -1,5 +1,5 @@
 import { parse, visit } from 'graphql';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import type { GraphqlMiddleware, GraphQLResult } from '@dumbql/core';
 
@@ -54,7 +54,7 @@ export function estimateQueryCost(query: string, depthFactor = 0.5): QueryCost {
         const fieldCost = 1 + (currentDepth - 1) * depthFactor;
         details.push(
           `${'  '.repeat(currentDepth - 1)}${node.name.value}: cost=${fieldCost.toFixed(1)} ` +
-          `(depth=${currentDepth - 1})`,
+            `(depth=${currentDepth - 1})`,
         );
       },
       leave() {
@@ -116,7 +116,7 @@ export function costEstimationMiddleware(config?: CostEstimationConfig): Graphql
     if (cost.cost > warnAt && typeof console !== 'undefined') {
       console.warn(
         `[DumbQL] Query complexity warning: cost=${cost.cost} (threshold=${warnAt}), ` +
-        `fields=${cost.fields}, depth=${cost.depth}, fragments=${cost.fragments}`,
+          `fields=${cost.fields}, depth=${cost.depth}, fragments=${cost.fragments}`,
       );
     }
 
@@ -129,7 +129,7 @@ export function costEstimationMiddleware(config?: CostEstimationConfig): Graphql
             if (actualCost > cost.cost * 2 && typeof console !== 'undefined') {
               console.warn(
                 `[DumbQL] Server-reported cost (${actualCost}) is much higher than estimated (${cost.cost}). ` +
-                `Consider reviewing query efficiency.`,
+                  'Consider reviewing query efficiency.',
               );
             }
           }

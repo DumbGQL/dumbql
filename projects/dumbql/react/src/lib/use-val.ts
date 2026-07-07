@@ -23,17 +23,50 @@ export function useVal<T>(initialValue: T): ReactVal<T> {
   const rerender = () => trigger((n) => n + 1);
 
   return {
-    get value(): T { return innerRef.current.peek(); },
-    set(v: T) { innerRef.current.value = v; rerender(); },
-    update(fn: (v: T) => T) { innerRef.current.tap(fn); rerender(); },
-    nullify() { const p = innerRef.current.nullify(); rerender(); return p; },
-    isNull() { return innerRef.current.isNull(); },
-    isEmpty() { return innerRef.current.isEmpty(); },
-    reset() { innerRef.current.reset(); rerender(); },
-    peek() { return innerRef.current.peek(); },
-    tap(fn: (v: T) => T) { innerRef.current.tap(fn); rerender(); return this; },
-    swap(v: T) { const p = innerRef.current.swap(v); rerender(); return p; },
-    orElse(fallback: T) { return innerRef.current.orElse(fallback); },
-    match<R>(onSome: (v: T) => R, onNone: () => R) { return innerRef.current.match(onSome, onNone); },
+    get value(): T {
+      return innerRef.current.peek();
+    },
+    set(v: T) {
+      innerRef.current.value = v;
+      rerender();
+    },
+    update(fn: (v: T) => T) {
+      innerRef.current.tap(fn);
+      rerender();
+    },
+    nullify() {
+      const p = innerRef.current.nullify();
+      rerender();
+      return p;
+    },
+    isNull() {
+      return innerRef.current.isNull();
+    },
+    isEmpty() {
+      return innerRef.current.isEmpty();
+    },
+    reset() {
+      innerRef.current.reset();
+      rerender();
+    },
+    peek() {
+      return innerRef.current.peek();
+    },
+    tap(fn: (v: T) => T) {
+      innerRef.current.tap(fn);
+      rerender();
+      return this;
+    },
+    swap(v: T) {
+      const p = innerRef.current.swap(v);
+      rerender();
+      return p;
+    },
+    orElse(fallback: T) {
+      return innerRef.current.orElse(fallback);
+    },
+    match<R>(onSome: (v: T) => R, onNone: () => R) {
+      return innerRef.current.match(onSome, onNone);
+    },
   };
 }

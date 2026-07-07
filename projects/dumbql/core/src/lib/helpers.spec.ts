@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { isSuccess, isError, unwrap, unwrapOrThrow, mapResult, hasPartialErrors, getGraphQLErrors, getNetworkError } from './helpers';
+import {
+  isSuccess,
+  isError,
+  unwrap,
+  unwrapOrThrow,
+  mapResult,
+  hasPartialErrors,
+  getGraphQLErrors,
+  getNetworkError,
+} from './helpers';
 
 describe('isSuccess', () => {
   it('returns true for success results', () => {
@@ -85,7 +94,10 @@ describe('getGraphQLErrors', () => {
 
 describe('getNetworkError', () => {
   it('returns networkError for error results', () => {
-    expect(getNetworkError({ status: 'error', networkError: { message: 'network failed', status: 500 } })).toEqual({ message: 'network failed', status: 500 });
+    expect(getNetworkError({ status: 'error', networkError: { message: 'network failed', status: 500 } })).toEqual({
+      message: 'network failed',
+      status: 500,
+    });
   });
 
   it('returns undefined for success results', () => {

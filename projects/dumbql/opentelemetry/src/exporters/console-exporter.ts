@@ -13,7 +13,7 @@ export function consoleExporter(options?: ConsoleExporterOptions): SpanExporter 
 
       if (options?.pretty) {
         console.groupCollapsed(
-          `%c[OTel] %c${name} %c(${(duration).toFixed(1)}ms)`,
+          `%c[OTel] %c${name} %c(${duration.toFixed(1)}ms)`,
           'color:#888',
           'font-weight:bold',
           'color:#888;font-size:0.9em',

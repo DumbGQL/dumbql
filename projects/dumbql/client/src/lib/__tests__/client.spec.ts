@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { DumbqlClient, createClient } from '../client';
-import type { ClientConfig } from '../config';
-import { applyMiddleware, authMiddleware, hasFiles } from '../middleware';
+import { authMiddleware } from '../middleware';
 
 function mockFetchOk(data: unknown, status = 200) {
   return vi.fn().mockResolvedValue({
@@ -143,29 +142,20 @@ describe('DumbqlClient.query', () => {
     const client = new DumbqlClient({ endpoint: '/graphql', dedup: true });
     const doc = { kind: 'Document', definitions: [] } as never;
 
-    const [r1, r2] = await Promise.all([
-      client.query(doc, { x: 1 }),
-      client.query(doc, { x: 1 }),
-    ]);
+    const [r1, r2] = await Promise.all([client.query(doc, { x: 1 }), client.query(doc, { x: 1 })]);
 
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(r1).toEqual(r2);
   });
 
   it('batches queries when batchWindow > 0', async () => {
-    const fetch = mockFetchOk([
-      { data: { a: 1 } },
-      { data: { b: 2 } },
-    ]);
+    const fetch = mockFetchOk([{ data: { a: 1 } }, { data: { b: 2 } }]);
     vi.stubGlobal('fetch', fetch);
 
     const client = new DumbqlClient({ endpoint: '/graphql', batchWindow: 50 });
     const doc = { kind: 'Document', definitions: [] } as never;
 
-    const [r1, r2] = await Promise.all([
-      client.query(doc, { id: 1 }),
-      client.query(doc, { id: 2 }),
-    ]);
+    const [r1, r2] = await Promise.all([client.query(doc, { id: 1 }), client.query(doc, { id: 2 })]);
 
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(r1).toEqual({ status: 'success', data: { a: 1 } });
@@ -196,10 +186,7 @@ describe('DumbqlClient.mutate', () => {
     const client = new DumbqlClient({ endpoint: '/graphql' });
     const result = await client.mutate({ kind: 'Document', definitions: [] } as never, { x: 1 });
 
-    expect(fetch).toHaveBeenCalledWith(
-      '/graphql',
-      expect.objectContaining({ method: 'POST' }),
-    );
+    expect(fetch).toHaveBeenCalledWith('/graphql', expect.objectContaining({ method: 'POST' }));
     expect(result).toEqual({ status: 'success', data: { id: '1' } });
   });
 
@@ -323,12 +310,14 @@ describe('DumbqlClient error handling', () => {
   });
 
   it('throws when middleware retries exhausted', async () => {
-    const breakingMw = async () => { throw new Error('Persistent middleware error'); };
+    const breakingMw = async () => {
+      throw new Error('Persistent middleware error');
+    };
     const client = new DumbqlClient({ endpoint: '/graphql', retryCount: 1, retryDelay: 10, middleware: [breakingMw] });
 
-    await expect(
-      client.query({ kind: 'Document', definitions: [] } as never),
-    ).rejects.toThrow('Persistent middleware error');
+    await expect(client.query({ kind: 'Document', definitions: [] } as never)).rejects.toThrow(
+      'Persistent middleware error',
+    );
   });
 });
 
@@ -440,10 +429,7 @@ describe('DumbqlClient.executeStreaming', () => {
   });
 
   it('yields single JSON result for non-multipart response', async () => {
-    const fetch = mockFetchStream(
-      [JSON.stringify({ data: { ok: true } })],
-      'application/json',
-    );
+    const fetch = mockFetchStream([JSON.stringify({ data: { ok: true } })], 'application/json');
     vi.stubGlobal('fetch', fetch);
 
     const client = new DumbqlClient({ endpoint: '/graphql' });
@@ -457,8 +443,6 @@ describe('DumbqlClient.executeStreaming', () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ status: 'success', data: { ok: true } });
   });
-
-
 });
 
 describe('DumbqlClient pipeline with middleware', () => {
@@ -484,12 +468,12 @@ describe('DumbqlClient pipeline with middleware', () => {
   });
 
   it('handles middleware error gracefully', async () => {
-    const breakingMw = async () => { throw new Error('Middleware crashed'); };
+    const breakingMw = async () => {
+      throw new Error('Middleware crashed');
+    };
     const client = new DumbqlClient({ endpoint: '/graphql', middleware: [breakingMw] });
 
-    await expect(
-      client.query({ kind: 'Document', definitions: [] } as never),
-    ).rejects.toThrow('Middleware crashed');
+    await expect(client.query({ kind: 'Document', definitions: [] } as never)).rejects.toThrow('Middleware crashed');
   });
 });
 

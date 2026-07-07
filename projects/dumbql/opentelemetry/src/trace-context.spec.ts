@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { parseTraceParent, formatTraceParent, generateTraceId, generateSpanId } from './trace-context';
 
 describe('parseTraceParent', () => {

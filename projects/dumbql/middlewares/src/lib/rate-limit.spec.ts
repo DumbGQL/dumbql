@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { TestScheduler } from 'rxjs/testing';
+import { describe, it, expect, vi } from 'vitest';
 import { Observable, of } from 'rxjs';
 import { rateLimitMiddleware } from './rate-limit';
 import type { GraphqlRequestContext, GraphQLResult } from '@dumbql/core';
@@ -12,7 +11,8 @@ describe('rateLimitMiddleware', () => {
     type: 'query',
   });
 
-  const makeNext = () => vi.fn((req: GraphqlRequestContext) => of({ status: 'success', data: null } as unknown as GraphQLResult<unknown>));
+  const makeNext = () =>
+    vi.fn((req: GraphqlRequestContext) => of({ status: 'success', data: null } as unknown as GraphQLResult<unknown>));
 
   it('allows requests within the rate limit', () => {
     const mw = rateLimitMiddleware({ maxRequests: 3, windowMs: 1000 });
@@ -21,9 +21,7 @@ describe('rateLimitMiddleware', () => {
 
     for (let i = 0; i < 3; i++) {
       const result$ = mw(req, next);
-      const result: GraphQLResult<unknown> = (result$ as Observable<GraphQLResult<unknown>>).pipe
-        ? null
-        : null;
+      const result: GraphQLResult<unknown> = (result$ as Observable<GraphQLResult<unknown>>).pipe ? null : null;
     }
 
     expect(next).toHaveBeenCalledTimes(3);
@@ -38,7 +36,9 @@ describe('rateLimitMiddleware', () => {
 
     for (let i = 0; i < 3; i++) {
       const result$ = mw(req, next) as Observable<GraphQLResult<unknown>>;
-      result$.subscribe((r) => { lastResult = r; });
+      result$.subscribe((r) => {
+        lastResult = r;
+      });
     }
 
     expect(next).toHaveBeenCalledTimes(2);

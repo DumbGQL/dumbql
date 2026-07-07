@@ -9,12 +9,12 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-file-upload',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './file-upload.html',
-	styleUrl: './file-upload.scss',
+  selector: 'app-docs-file-upload',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './file-upload.html',
+  styleUrl: './file-upload.scss',
 })
 export class DocsFileUpload {
   private readonly tocService = inject(TocService);
@@ -30,22 +30,45 @@ export class DocsFileUpload {
   protected readonly tabs = ['Docs', 'API', 'Starters'];
 
   protected readonly apiEntries: ApiEntry[] = [
-  	{ name: 'UploadService', description: 'Injectable Angular service that wraps GraphQL mutations with automatic multipart encoding for File/Blob values.', type: 'class' },
-  	{ name: 'UploadService.upload(document, variables)', description: 'Uploads a file-backed mutation. Detects File/Blob values, builds multipart FormData, and POSTs to the GraphQL endpoint.', type: 'method', default: 'document: DocumentNode, variables: Record<string, unknown>' },
-  	{ name: 'FileEntry', description: 'Interface representing a single file entry extracted from mutation variables.', type: 'interface' },
-  	{ name: 'FileEntry.path', description: 'Dot-notation path to the file within the variables object (e.g. variables.avatar).', type: 'property' },
-  	{ name: 'FileEntry.file', description: 'The File or Blob object.', type: 'property' },
-  	{ name: 'hasFiles(value)', description: 'Recursively checks if a value or any nested value is a File or Blob instance.', type: 'function' },
+    {
+      name: 'UploadService',
+      description:
+        'Injectable Angular service that wraps GraphQL mutations with automatic multipart encoding for File/Blob values.',
+      type: 'class',
+    },
+    {
+      name: 'UploadService.upload(document, variables)',
+      description:
+        'Uploads a file-backed mutation. Detects File/Blob values, builds multipart FormData, and POSTs to the GraphQL endpoint.',
+      type: 'method',
+      default: 'document: DocumentNode, variables: Record<string, unknown>',
+    },
+    {
+      name: 'FileEntry',
+      description: 'Interface representing a single file entry extracted from mutation variables.',
+      type: 'interface',
+    },
+    {
+      name: 'FileEntry.path',
+      description: 'Dot-notation path to the file within the variables object (e.g. variables.avatar).',
+      type: 'property',
+    },
+    { name: 'FileEntry.file', description: 'The File or Blob object.', type: 'property' },
+    {
+      name: 'hasFiles(value)',
+      description: 'Recursively checks if a value or any nested value is a File or Blob instance.',
+      type: 'function',
+    },
   ];
 
   protected readonly tocSections: TocSection[] = [
-  	{ id: 'upload-service', title: 'UploadService' },
-  	{ id: 'multipart-spec', title: 'Multipart Spec' },
-  	{ id: 'auto-detection', title: 'Auto Detection' },
+    { id: 'upload-service', title: 'UploadService' },
+    { id: 'multipart-spec', title: 'Multipart Spec' },
+    { id: 'auto-detection', title: 'Auto Detection' },
   ];
 
   constructor() {
-  	this.tocService.sections.set(this.tocSections);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly uploadServiceCode = `import { UploadService, gql } from '@dumbql/file-upload';

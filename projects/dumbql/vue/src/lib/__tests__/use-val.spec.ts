@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Val } from '@dumbql/client';
 
 // useVal wraps Vue's ref() + Val in a composable. We test the Val primitives here.
@@ -59,7 +59,17 @@ describe('useVal (Vue)', () => {
   });
 
   it('match', () => {
-    expect(new Val(5).match((x) => x * 2, () => 0)).toBe(10);
-    expect(new Val(null).match((x) => x * 2, () => 0)).toBe(0);
+    expect(
+      new Val(5).match(
+        (x) => x * 2,
+        () => 0,
+      ),
+    ).toBe(10);
+    expect(
+      new Val(null).match(
+        (x) => x * 2,
+        () => 0,
+      ),
+    ).toBe(0);
   });
 });

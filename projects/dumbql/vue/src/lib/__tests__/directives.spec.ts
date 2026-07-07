@@ -4,7 +4,11 @@ import { registerDirectives } from '../directives';
 
 function captureDirectives() {
   const defs: Record<string, any> = {};
-  const app = { directive: (name: string, def: any) => { defs[name] = def; } } as unknown as App;
+  const app = {
+    directive: (name: string, def: any) => {
+      defs[name] = def;
+    },
+  } as unknown as App;
   return { app, defs };
 }
 
@@ -17,7 +21,10 @@ describe('registerDirectives', () => {
 
     expect(directive).toHaveBeenCalledTimes(2);
     expect(directive).toHaveBeenCalledWith('dql-mutate', expect.objectContaining({ mounted: expect.any(Function) }));
-    expect(directive).toHaveBeenCalledWith('dql-loading', expect.objectContaining({ mounted: expect.any(Function), updated: expect.any(Function) }));
+    expect(directive).toHaveBeenCalledWith(
+      'dql-loading',
+      expect.objectContaining({ mounted: expect.any(Function), updated: expect.any(Function) }),
+    );
   });
 
   describe('v-dql-mutate', () => {
@@ -27,7 +34,10 @@ describe('registerDirectives', () => {
       registerDirectives(app, client as any);
 
       const addEventListener = vi.fn();
-      defs['dql-mutate'].mounted({ style: {}, addEventListener }, { value: { mutation: 'mutation { x }', variables: { id: 1 } } });
+      defs['dql-mutate'].mounted(
+        { style: {}, addEventListener },
+        { value: { mutation: 'mutation { x }', variables: { id: 1 } } },
+      );
 
       const handler = addEventListener.mock.calls[0][1];
       await handler();

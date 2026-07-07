@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 let callCount = 0;
 const mockRandomValues = vi.fn((buf: Uint8Array) => {
   for (let i = 0; i < buf.length; i++) {
-    buf[i] = ((i * 17 + callCount * 13) % 256);
+    buf[i] = (i * 17 + callCount * 13) % 256;
   }
   callCount++;
 });

@@ -16,9 +16,7 @@ export function createDumbqlPlugin(client: DumbqlClient) {
 export function useClient(): DumbqlClient {
   const client = inject(DUMBQL_CLIENT_KEY, null);
   if (!client) {
-    throw new Error(
-      'No DumbqlClient found. Install the plugin: app.use(createDumbqlPlugin(client))',
-    );
+    throw new Error('No DumbqlClient found. Install the plugin: app.use(createDumbqlPlugin(client))');
   }
   return client;
 }

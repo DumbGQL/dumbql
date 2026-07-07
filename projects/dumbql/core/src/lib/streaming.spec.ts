@@ -86,7 +86,8 @@ describe('parseMultipartResponse', () => {
   });
 
   it('emits errors from incremental payload', async () => {
-    const body = '\n--b\nContent-Type: application/json\n\n{"incremental":[{"path":["items"],"errors":[{"message":"oops"}]}]}\n--b--\n';
+    const body =
+      '\n--b\nContent-Type: application/json\n\n{"incremental":[{"path":["items"],"errors":[{"message":"oops"}]}]}\n--b--\n';
     const observable = parseMultipartResponse(body, 'b');
     const results = await lastValueFrom(observable.pipe(toArray()));
     expect(results).toHaveLength(1);

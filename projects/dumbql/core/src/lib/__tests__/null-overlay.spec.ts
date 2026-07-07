@@ -16,23 +16,25 @@ describe('NullOverlay integration', () => {
     vi.useRealTimers();
   });
 
-  it('reports null and triggers visibility', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('null-value');
-      expect(event.path).toBe('data.foo');
-      done();
-    });
-    detector.reportNull('Q', 'data.foo');
-  }));
+  it('reports null and triggers visibility', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('null-value');
+        expect(event.path).toBe('data.foo');
+        done();
+      });
+      detector.reportNull('Q', 'data.foo');
+    }));
 
-  it('reports error and triggers visibility', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('query-error');
-      expect(event.message).toBe('err');
-      done();
-    });
-    detector.reportError('Q', 'err');
-  }));
+  it('reports error and triggers visibility', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('query-error');
+        expect(event.message).toBe('err');
+        done();
+      });
+      detector.reportError('Q', 'err');
+    }));
 
   it('handles multiple events', () => {
     const spy = vi.fn();

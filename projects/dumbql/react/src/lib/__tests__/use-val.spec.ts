@@ -58,8 +58,18 @@ describe('useVal (React)', () => {
   });
 
   it('match', () => {
-    expect(new Val(1).match((x) => x + 1, () => 0)).toBe(2);
-    expect(new Val(null).match((x) => x + 1, () => 0)).toBe(0);
+    expect(
+      new Val(1).match(
+        (x) => x + 1,
+        () => 0,
+      ),
+    ).toBe(2);
+    expect(
+      new Val(null).match(
+        (x) => x + 1,
+        () => 0,
+      ),
+    ).toBe(0);
   });
 
   it('toJSON', () => {

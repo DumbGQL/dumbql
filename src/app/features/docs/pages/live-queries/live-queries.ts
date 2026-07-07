@@ -9,12 +9,12 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-live-queries',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './live-queries.html',
-	styleUrl: './live-queries.scss',
+  selector: 'app-docs-live-queries',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './live-queries.html',
+  styleUrl: './live-queries.scss',
 })
 export class DocsLiveQueries {
   private readonly tocService = inject(TocService);
@@ -28,9 +28,24 @@ export class DocsLiveQueries {
   protected readonly tabs = ['Docs', 'API', 'Starters'];
 
   protected readonly apiEntries: ApiEntry[] = [
-  	{ name: 'GraphqlLiveQuery', description: 'Framework-agnostic class that combines an initial HTTP query fetch with a WebSocket subscription for real-time updates.', type: 'class' },
-  	{ name: 'GraphqlLiveQuery.constructor', description: 'Creates a new GraphqlLiveQuery instance with the GraphQL endpoint URL.', type: 'constructor', default: 'endpoint: string' },
-  	{ name: 'GraphqlLiveQuery.execute(query, variables?, callbacks?)', description: 'Executes initial HTTP POST fetch, then subscribes via WebSocket using the graphql-transport-ws protocol. Returns a Promise resolving to an unsubscribe function.', type: 'method' },
+    {
+      name: 'GraphqlLiveQuery',
+      description:
+        'Framework-agnostic class that combines an initial HTTP query fetch with a WebSocket subscription for real-time updates.',
+      type: 'class',
+    },
+    {
+      name: 'GraphqlLiveQuery.constructor',
+      description: 'Creates a new GraphqlLiveQuery instance with the GraphQL endpoint URL.',
+      type: 'constructor',
+      default: 'endpoint: string',
+    },
+    {
+      name: 'GraphqlLiveQuery.execute(query, variables?, callbacks?)',
+      description:
+        'Executes initial HTTP POST fetch, then subscribes via WebSocket using the graphql-transport-ws protocol. Returns a Promise resolving to an unsubscribe function.',
+      type: 'method',
+    },
   ];
 
   protected readonly liveQueryStarters: StarterCodes = {
@@ -125,16 +140,16 @@ const { data, loading } = useLiveQuery(gql\`subscription {
   };
 
   protected readonly tocSections: TocSection[] = [
-  	{ id: 'overview', title: 'Overview' },
-  	{ id: 'react', title: 'React: useLiveQuery' },
-  	{ id: 'vue', title: 'Vue: useLiveQuery' },
-  	{ id: 'angular', title: 'Angular: Live Queries' },
-  	{ id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
-  	{ id: 'protocol', title: 'WebSocket Protocol' },
+    { id: 'overview', title: 'Overview' },
+    { id: 'react', title: 'React: useLiveQuery' },
+    { id: 'vue', title: 'Vue: useLiveQuery' },
+    { id: 'angular', title: 'Angular: Live Queries' },
+    { id: 'graphql-live-query', title: 'GraphqlLiveQuery Class' },
+    { id: 'protocol', title: 'WebSocket Protocol' },
   ];
 
   constructor() {
-  	this.tocService.sections.set(this.tocSections);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly reactCode = `import { useLiveQuery } from '@dumbql/react';

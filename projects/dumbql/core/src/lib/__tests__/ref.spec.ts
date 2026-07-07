@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Val } from '@dumbql/client';
 
 // createVal depends on Angular core signal() which isn't available in node.
@@ -64,9 +64,15 @@ describe('createVal (Angular)', () => {
   });
 
   it('match dispatches correctly', () => {
-    const r1 = new Val(42).match((x) => x * 2, () => 0);
+    const r1 = new Val(42).match(
+      (x) => x * 2,
+      () => 0,
+    );
     expect(r1).toBe(84);
-    const r2 = new Val(null).match((x) => x * 2, () => 0);
+    const r2 = new Val(null).match(
+      (x) => x * 2,
+      () => 0,
+    );
     expect(r2).toBe(0);
   });
 

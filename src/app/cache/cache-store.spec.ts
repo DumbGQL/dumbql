@@ -253,7 +253,7 @@ describe('CacheStore', () => {
             merge: (existing, incoming) => ({
               ...(incoming as Record<string, unknown>),
               items: [
-                ...((existing as Record<string, unknown> | undefined)?.['items'] as unknown[] ?? []),
+                ...(((existing as Record<string, unknown> | undefined)?.['items'] as unknown[]) ?? []),
                 ...((incoming as Record<string, unknown>)['items'] as unknown[]),
               ],
             }),
@@ -265,7 +265,7 @@ describe('CacheStore', () => {
       policyStore.merge({ __typename: 'Page', id: '1', items: [{ id: 'b' }] } as never);
 
       const result = policyStore.query('Page', '1') as Record<string, unknown>;
-      expect((result['items'] as unknown[])).toHaveLength(2);
+      expect(result['items'] as unknown[]).toHaveLength(2);
     });
   });
 });

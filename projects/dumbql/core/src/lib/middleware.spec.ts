@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { applyMiddleware, authMiddleware, devAuthMiddleware, loggingMiddleware, hasFiles } from './middleware';
+import { applyMiddleware, authMiddleware, loggingMiddleware, hasFiles } from './middleware';
 import { Observable, of } from 'rxjs';
 import type { GraphqlRequestContext, GraphQLResult } from './graphql.service';
 
@@ -19,11 +19,17 @@ describe('applyMiddleware', () => {
 
   it('chains middleware in order', () => {
     const order: number[] = [];
-    const mw1 = (req: GraphqlRequestContext, next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>) => {
+    const mw1 = (
+      req: GraphqlRequestContext,
+      next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>,
+    ) => {
       order.push(1);
       return next(req);
     };
-    const mw2 = (req: GraphqlRequestContext, next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>) => {
+    const mw2 = (
+      req: GraphqlRequestContext,
+      next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>,
+    ) => {
       order.push(2);
       return next(req);
     };
@@ -43,9 +49,14 @@ describe('applyMiddleware', () => {
   });
 
   it('passes request modifications through the chain', () => {
-    const mw: (req: GraphqlRequestContext, next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>) => Observable<GraphQLResult<unknown>> =
-      (req, next) => next({ ...req, headers: { ...req.headers, 'x-added': 'yes' } });
-    const final = vi.fn((req: GraphqlRequestContext) => of({ status: 'success', data: { header: req.headers['x-added'] } } as unknown as GraphQLResult<unknown>));
+    const mw: (
+      req: GraphqlRequestContext,
+      next: (req: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>,
+    ) => Observable<GraphQLResult<unknown>> = (req, next) =>
+      next({ ...req, headers: { ...req.headers, 'x-added': 'yes' } });
+    const final = vi.fn((req: GraphqlRequestContext) =>
+      of({ status: 'success', data: { header: req.headers['x-added'] } } as unknown as GraphQLResult<unknown>),
+    );
     const pipeline = applyMiddleware([mw], final);
     const request: GraphqlRequestContext = {
       query: 'query { hi }',

@@ -9,12 +9,12 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-	selector: 'app-docs-fragments',
-	standalone: true,
-	imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './fragments.html',
-	styleUrl: './fragments.scss',
+  selector: 'app-docs-fragments',
+  standalone: true,
+  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './fragments.html',
+  styleUrl: './fragments.scss',
 })
 export class DocsFragments {
   private readonly tocService = inject(TocService);
@@ -124,25 +124,57 @@ const { data, complete } = useFragment(TODO_FIELDS, {
   };
 
   protected readonly apiEntries: ApiEntry[] = [
-  	{ name: 'fragment(strings, ...values)', description: 'Tagged template literal that defines a typed fragment reference from a GraphQL fragment string.', type: 'function' },
-  	{ name: 'getFragment(def)', description: 'Extracts the underlying DocumentNode from a FragmentDefinition.', type: 'function' },
-  	{ name: 'spread(def)', description: 'Returns the fragment spread string (...FragmentName) for use in a GraphQL document.', type: 'function' },
-  	{ name: 'compose(...defs)', description: 'Composes multiple FragmentDefinitions into a single DocumentNode by merging their definitions.', type: 'function' },
-  	{ name: 'useFragment(fragment, data)', description: 'Extracts typed fragment data from a parent query result. Returns null when data is nullish.', type: 'function' },
-  	{ name: 'FragmentDefinition', description: 'Interface defining a typed fragment reference with its parsed DocumentNode and fragment name.', type: 'interface' },
-  	{ name: 'FragmentDefinition.document', description: 'The parsed GraphQL DocumentNode for the fragment.', type: 'property' },
-  	{ name: 'FragmentDefinition.name', description: 'The name of the fragment extracted from the definition.', type: 'property' },
+    {
+      name: 'fragment(strings, ...values)',
+      description: 'Tagged template literal that defines a typed fragment reference from a GraphQL fragment string.',
+      type: 'function',
+    },
+    {
+      name: 'getFragment(def)',
+      description: 'Extracts the underlying DocumentNode from a FragmentDefinition.',
+      type: 'function',
+    },
+    {
+      name: 'spread(def)',
+      description: 'Returns the fragment spread string (...FragmentName) for use in a GraphQL document.',
+      type: 'function',
+    },
+    {
+      name: 'compose(...defs)',
+      description: 'Composes multiple FragmentDefinitions into a single DocumentNode by merging their definitions.',
+      type: 'function',
+    },
+    {
+      name: 'useFragment(fragment, data)',
+      description: 'Extracts typed fragment data from a parent query result. Returns null when data is nullish.',
+      type: 'function',
+    },
+    {
+      name: 'FragmentDefinition',
+      description: 'Interface defining a typed fragment reference with its parsed DocumentNode and fragment name.',
+      type: 'interface',
+    },
+    {
+      name: 'FragmentDefinition.document',
+      description: 'The parsed GraphQL DocumentNode for the fragment.',
+      type: 'property',
+    },
+    {
+      name: 'FragmentDefinition.name',
+      description: 'The name of the fragment extracted from the definition.',
+      type: 'property',
+    },
   ];
 
   protected readonly tocSections: TocSection[] = [
-  	{ id: 'fragment', title: 'fragment()' },
-  	{ id: 'spread', title: 'spread()' },
-  	{ id: 'compose', title: 'compose()' },
-  	{ id: 'use-fragment', title: 'useFragment()' },
+    { id: 'fragment', title: 'fragment()' },
+    { id: 'spread', title: 'spread()' },
+    { id: 'compose', title: 'compose()' },
+    { id: 'use-fragment', title: 'useFragment()' },
   ];
 
   constructor() {
-  	this.tocService.sections.set(this.tocSections);
+    this.tocService.sections.set(this.tocSections);
   }
 
   protected readonly fragmentCode = `import { fragment } from '@dumbql/fragments';

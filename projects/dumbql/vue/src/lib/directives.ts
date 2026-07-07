@@ -5,7 +5,12 @@ import type { DumbqlClient } from '@dumbql/client';
 type MutateValue =
   | DocumentNode
   | TypedDocumentNode
-  | { mutation: DocumentNode | TypedDocumentNode; variables?: Record<string, unknown>; onCompleted?: () => void; onError?: (err: string) => void };
+  | {
+      mutation: DocumentNode | TypedDocumentNode;
+      variables?: Record<string, unknown>;
+      onCompleted?: () => void;
+      onError?: (err: string) => void;
+    };
 
 let _client: DumbqlClient | null = null;
 
@@ -17,10 +22,20 @@ export function registerDirectives(app: App, client: DumbqlClient): void {
       el.style.cursor = 'pointer';
       el.addEventListener('click', async () => {
         const value = binding.value;
-        const mutation = value && typeof value === 'object' && 'mutation' in value ? value.mutation : value as DocumentNode;
-        const variables = value && typeof value === 'object' && 'mutation' in value ? (value as { variables?: Record<string, unknown> }).variables : undefined;
-        const onCompleted = value && typeof value === 'object' && 'mutation' in value ? (value as { onCompleted?: () => void }).onCompleted : undefined;
-        const onError = value && typeof value === 'object' && 'mutation' in value ? (value as { onError?: (err: string) => void }).onError : undefined;
+        const mutation =
+          value && typeof value === 'object' && 'mutation' in value ? value.mutation : (value as DocumentNode);
+        const variables =
+          value && typeof value === 'object' && 'mutation' in value
+            ? (value as { variables?: Record<string, unknown> }).variables
+            : undefined;
+        const onCompleted =
+          value && typeof value === 'object' && 'mutation' in value
+            ? (value as { onCompleted?: () => void }).onCompleted
+            : undefined;
+        const onError =
+          value && typeof value === 'object' && 'mutation' in value
+            ? (value as { onError?: (err: string) => void }).onError
+            : undefined;
 
         const result = await _client!.mutate(mutation, variables);
         if (result.status === 'success') {

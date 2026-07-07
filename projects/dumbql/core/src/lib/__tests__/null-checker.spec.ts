@@ -15,7 +15,9 @@ class FakeChecker {
 }
 
 function walkObject(
-  obj: unknown, path: string, operationName: string | undefined,
+  obj: unknown,
+  path: string,
+  operationName: string | undefined,
   detector: NullDetectionService,
 ): void {
   if (obj === null) {
@@ -46,31 +48,34 @@ describe('NullCheckerService', () => {
     checker.detector = detector;
   });
 
-  it('reports null values via checkResponse', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('null-value');
-      expect(event.path).toBe('data.user.name');
-      done();
-    });
-    checker.checkResponse({ user: { name: null } }, 'TestQuery');
-  }));
+  it('reports null values via checkResponse', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('null-value');
+        expect(event.path).toBe('data.user.name');
+        done();
+      });
+      checker.checkResponse({ user: { name: null } }, 'TestQuery');
+    }));
 
-  it('reports null in arrays', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.path).toBe('data.items[1]');
-      done();
-    });
-    checker.checkResponse({ items: ['a', null, 'c'] }, 'Q');
-  }));
+  it('reports null in arrays', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.path).toBe('data.items[1]');
+        done();
+      });
+      checker.checkResponse({ items: ['a', null, 'c'] }, 'Q');
+    }));
 
-  it('reports error via reportError', () => new Promise<void>((done) => {
-    detector.onEvent.subscribe((event) => {
-      expect(event.type).toBe('query-error');
-      expect(event.message).toBe('fail');
-      done();
-    });
-    checker.reportError('Q', 'fail');
-  }));
+  it('reports error via reportError', () =>
+    new Promise<void>((done) => {
+      detector.onEvent.subscribe((event) => {
+        expect(event.type).toBe('query-error');
+        expect(event.message).toBe('fail');
+        done();
+      });
+      checker.reportError('Q', 'fail');
+    }));
 
   it('does nothing when detector is null', () => {
     checker.detector = null;

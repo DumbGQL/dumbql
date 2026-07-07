@@ -97,11 +97,14 @@ export function useQuery<TData, TVariables extends Record<string, unknown> = Rec
     }
   });
 
-  watch(() => JSON.stringify(variables ?? {}), () => {
-    if (!skip) {
-      execute(variables);
-    }
-  });
+  watch(
+    () => JSON.stringify(variables ?? {}),
+    () => {
+      if (!skip) {
+        execute(variables);
+      }
+    },
+  );
 
   const refetch = async (vars?: TVariables) => {
     networkStatus.value = 'refetching';

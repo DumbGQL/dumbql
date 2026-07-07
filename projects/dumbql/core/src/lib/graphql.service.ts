@@ -191,9 +191,7 @@ export class GraphqlService {
     variables?: TVariables,
     endpoint?: string,
   ): Observable<GraphQLResult<TResponse>> {
-    return timer(0, intervalMs).pipe(
-      switchMap(() => this.refetch(document, variables, endpoint)),
-    );
+    return timer(0, intervalMs).pipe(switchMap(() => this.refetch(document, variables, endpoint)));
   }
 
   private executeQuery<T>(

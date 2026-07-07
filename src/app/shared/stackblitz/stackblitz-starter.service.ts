@@ -58,7 +58,6 @@ const VITE_DEV_DEPS = {
   vite: '^5.4.0',
 };
 
-const INDEX_HTML = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>\n<body>\n</body>\n</html>';
 const STYLES_CSS = 'body { font-family: system-ui, sans-serif; padding: 1rem; }';
 
 const ANGULAR_GENERIC = `import { Component } from '@angular/core';
@@ -202,19 +201,27 @@ export class StackblitzStarterService {
 
   private entryFile(framework: string): string {
     switch (framework) {
-      case 'angular': return 'src/app/app.component.ts';
-      case 'react': return 'src/App.tsx';
-      case 'vue': return 'src/App.vue';
-      default: return 'index.html';
+      case 'angular':
+        return 'src/app/app.component.ts';
+      case 'react':
+        return 'src/App.tsx';
+      case 'vue':
+        return 'src/App.vue';
+      default:
+        return 'index.html';
     }
   }
 
   private buildProject(code: string, framework: string, title: string): Project {
     switch (framework) {
-      case 'angular': return this.angularProject(code, title);
-      case 'react': return this.reactProject(code, title);
-      case 'vue': return this.vueProject(code, title);
-      default: return this.vanillaProject(code, title);
+      case 'angular':
+        return this.angularProject(code, title);
+      case 'react':
+        return this.reactProject(code, title);
+      case 'vue':
+        return this.vueProject(code, title);
+      default:
+        return this.vanillaProject(code, title);
     }
   }
 
@@ -225,77 +232,93 @@ export class StackblitzStarterService {
       description: `DumbQL Angular starter — ${title}`,
       template: 'node',
       files: {
-        'package.json': JSON.stringify({
-          name: `dumbql-angular-${name}`,
-          private: true,
-          scripts: { start: 'ng serve --host 0.0.0.0 --port 4200', build: 'ng build' },
-          dependencies: ANGULAR_DEPS,
-          devDependencies: ANGULAR_DEV_DEPS,
-        }, null, 2),
-        'angular.json': JSON.stringify({
-          $schema: './node_modules/@angular/cli/lib/config/schema.json',
-          version: 1,
-          newProjectRoot: 'projects',
-          projects: {
-            starter: {
-              projectType: 'application',
-              root: '',
-              sourceRoot: 'src',
-              prefix: 'app',
-              architect: {
-                build: {
-                  builder: '@angular/build:application',
-                  options: {
-                    browser: 'src/main.ts',
-                    tsConfig: 'tsconfig.app.json',
-                    outputPath: 'dist',
-                    assets: [],
-                    styles: ['src/styles.css'],
+        'package.json': JSON.stringify(
+          {
+            name: `dumbql-angular-${name}`,
+            private: true,
+            scripts: { start: 'ng serve --host 0.0.0.0 --port 4200', build: 'ng build' },
+            dependencies: ANGULAR_DEPS,
+            devDependencies: ANGULAR_DEV_DEPS,
+          },
+          null,
+          2,
+        ),
+        'angular.json': JSON.stringify(
+          {
+            $schema: './node_modules/@angular/cli/lib/config/schema.json',
+            version: 1,
+            newProjectRoot: 'projects',
+            projects: {
+              starter: {
+                projectType: 'application',
+                root: '',
+                sourceRoot: 'src',
+                prefix: 'app',
+                architect: {
+                  build: {
+                    builder: '@angular/build:application',
+                    options: {
+                      browser: 'src/main.ts',
+                      tsConfig: 'tsconfig.app.json',
+                      outputPath: 'dist',
+                      assets: [],
+                      styles: ['src/styles.css'],
+                    },
+                    configurations: { production: { optimization: true } },
                   },
-                  configurations: { production: { optimization: true } },
-                },
-                serve: {
-                  builder: '@angular/build:dev-server',
-                  options: { buildTarget: 'starter:build' },
-                  configurations: { production: { buildTarget: 'starter:build:production' } },
+                  serve: {
+                    builder: '@angular/build:dev-server',
+                    options: { buildTarget: 'starter:build' },
+                    configurations: { production: { buildTarget: 'starter:build:production' } },
+                  },
                 },
               },
             },
           },
-        }, null, 2),
-        'tsconfig.json': JSON.stringify({
-          compileOnSave: false,
-          compilerOptions: {
-            outDir: './dist',
-            strict: true,
-            noImplicitOverride: true,
-            noPropertyAccessFromIndexSignature: true,
-            noImplicitReturns: true,
-            noFallthroughCasesInSwitch: true,
-            skipLibCheck: true,
-            esModuleInterop: true,
-            sourceMap: true,
-            declaration: false,
-            experimentalDecorators: true,
-            moduleResolution: 'bundler',
-            importHelpers: true,
-            target: 'ES2022',
-            module: 'ESNext',
-            useDefineForClassFields: false,
-            lib: ['ES2022', 'dom'],
+          null,
+          2,
+        ),
+        'tsconfig.json': JSON.stringify(
+          {
+            compileOnSave: false,
+            compilerOptions: {
+              outDir: './dist',
+              strict: true,
+              noImplicitOverride: true,
+              noPropertyAccessFromIndexSignature: true,
+              noImplicitReturns: true,
+              noFallthroughCasesInSwitch: true,
+              skipLibCheck: true,
+              esModuleInterop: true,
+              sourceMap: true,
+              declaration: false,
+              experimentalDecorators: true,
+              moduleResolution: 'bundler',
+              importHelpers: true,
+              target: 'ES2022',
+              module: 'ESNext',
+              useDefineForClassFields: false,
+              lib: ['ES2022', 'dom'],
+            },
+            angularCompilerOptions: {
+              enableI18nLegacyMessageIdFormat: false,
+              strictInjectionParameters: true,
+              strictInputAccessModifiers: true,
+              strictTemplates: true,
+            },
           },
-          angularCompilerOptions: {
-            enableI18nLegacyMessageIdFormat: false,
-            strictInjectionParameters: true,
-            strictInputAccessModifiers: true,
-            strictTemplates: true,
+          null,
+          2,
+        ),
+        'tsconfig.app.json': JSON.stringify(
+          {
+            extends: './tsconfig.json',
+            compilerOptions: { outDir: './out-tsc/app', types: [] },
+            files: ['src/main.ts'],
           },
-        }, null, 2),
-        'tsconfig.app.json': JSON.stringify({
-          extends: './tsconfig.json',
-          compilerOptions: { outDir: './out-tsc/app', types: [] },
-          files: ['src/main.ts'],
-        }, null, 2),
+          null,
+          2,
+        ),
         'src/index.html':
           '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Angular</title>\n  <base href="/">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>',
         'src/styles.css': STYLES_CSS,
@@ -334,26 +357,39 @@ export const appConfig: ApplicationConfig = {
       description: `DumbQL React starter — ${title}`,
       template: 'node',
       files: {
-        'package.json': JSON.stringify({
-          name: `dumbql-react-${name}`,
-          private: true,
-          scripts: { start: 'vite --port 5173', build: 'vite build' },
-          dependencies: REACT_DEPS,
-          devDependencies: { ...VITE_DEV_DEPS, '@vitejs/plugin-react': '^4.2.0', '@types/react': '^18.2.0', '@types/react-dom': '^18.2.0' },
-        }, null, 2),
+        'package.json': JSON.stringify(
+          {
+            name: `dumbql-react-${name}`,
+            private: true,
+            scripts: { start: 'vite --port 5173', build: 'vite build' },
+            dependencies: REACT_DEPS,
+            devDependencies: {
+              ...VITE_DEV_DEPS,
+              '@vitejs/plugin-react': '^4.2.0',
+              '@types/react': '^18.2.0',
+              '@types/react-dom': '^18.2.0',
+            },
+          },
+          null,
+          2,
+        ),
         'index.html':
           '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + React</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="module" src="/src/main.tsx"></script>\n</body>\n</html>',
-        'tsconfig.json': JSON.stringify({
-          compilerOptions: {
-            target: 'ES2020',
-            module: 'ESNext',
-            moduleResolution: 'bundler',
-            jsx: 'react-jsx',
-            strict: true,
-            skipLibCheck: true,
-            esModuleInterop: true,
+        'tsconfig.json': JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2020',
+              module: 'ESNext',
+              moduleResolution: 'bundler',
+              jsx: 'react-jsx',
+              strict: true,
+              skipLibCheck: true,
+              esModuleInterop: true,
+            },
           },
-        }, null, 2),
+          null,
+          2,
+        ),
         'vite.config.ts': `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -393,25 +429,33 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       description: `DumbQL Vue starter — ${title}`,
       template: 'node',
       files: {
-        'package.json': JSON.stringify({
-          name: `dumbql-vue-${name}`,
-          private: true,
-          scripts: { start: 'vite --port 5173', build: 'vite build' },
-          dependencies: VUE_DEPS,
-          devDependencies: { ...VITE_DEV_DEPS, '@vitejs/plugin-vue': '^5.0.0', 'vue-tsc': '^2.0.0' },
-        }, null, 2),
+        'package.json': JSON.stringify(
+          {
+            name: `dumbql-vue-${name}`,
+            private: true,
+            scripts: { start: 'vite --port 5173', build: 'vite build' },
+            dependencies: VUE_DEPS,
+            devDependencies: { ...VITE_DEV_DEPS, '@vitejs/plugin-vue': '^5.0.0', 'vue-tsc': '^2.0.0' },
+          },
+          null,
+          2,
+        ),
         'index.html':
           '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>DumbQL + Vue</title>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="/src/main.ts"></script>\n</body>\n</html>',
-        'tsconfig.json': JSON.stringify({
-          compilerOptions: {
-            target: 'ES2020',
-            module: 'ESNext',
-            moduleResolution: 'bundler',
-            strict: true,
-            skipLibCheck: true,
-            esModuleInterop: true,
+        'tsconfig.json': JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2020',
+              module: 'ESNext',
+              moduleResolution: 'bundler',
+              strict: true,
+              skipLibCheck: true,
+              esModuleInterop: true,
+            },
           },
-        }, null, 2),
+          null,
+          2,
+        ),
         'vite.config.ts': `import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
@@ -444,15 +488,19 @@ app.mount('#app');`,
       description: `DumbQL vanilla starter — ${title}`,
       template: 'node',
       files: {
-        'package.json': JSON.stringify({
-          name: 'dumbql-vanilla-starter',
-          private: true,
-          scripts: { start: 'npx serve .', build: 'echo no-build' },
-          dependencies: {
-            '@dumbql/client': '^1.0.2',
-            graphql: '^17.0.0',
+        'package.json': JSON.stringify(
+          {
+            name: 'dumbql-vanilla-starter',
+            private: true,
+            scripts: { start: 'npx serve .', build: 'echo no-build' },
+            dependencies: {
+              '@dumbql/client': '^1.0.2',
+              graphql: '^17.0.0',
+            },
           },
-        }, null, 2),
+          null,
+          2,
+        ),
         'index.html': code,
       },
     };

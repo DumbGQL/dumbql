@@ -8,6 +8,7 @@ export interface UseMutationOptions<TData, TVariables> {
   onCompleted?: (data: TData) => void;
   onError?: (error: string, errorCode?: ErrorCode) => void;
   update?: (cache: CacheStore, result: GraphQLResult<TData>) => void;
+  optimistic?: (cache: CacheStore) => string;
 }
 
 export type UseMutationFn<TData, TVariables> = (
@@ -34,6 +35,8 @@ export function useMutation<TData, TVariables extends Record<string, unknown> = 
   const errorCode = ref<ErrorCode | undefined>(undefined);
   const called = ref(false);
 
+  let optimisticId: string | undefined;
+
   const mutate: UseMutationFn<TData, TVariables> = async (variables?: TVariables) => {
     loading.value = true;
     called.value = true;
@@ -41,21 +44,31 @@ export function useMutation<TData, TVariables extends Record<string, unknown> = 
     errorCode.value = undefined;
     data.value = null;
 
+    const cache = client.getCacheService();
+    if (cache && options?.optimistic) {
+      optimisticId = options.optimistic(cache);
+    }
+
     const result = await client.mutate<TData, TVariables>(document, variables ?? (options?.variables as TVariables | undefined));
 
     if (result.status === 'success') {
       data.value = result.data;
       options?.onCompleted?.(result.data);
-      if (options?.update) {
-        const cache = client.getCacheService();
-        if (cache) {
-          options.update(cache, result);
-        }
+      if (cache && options?.update) {
+        options.update(cache, result);
+      }
+      if (cache && optimisticId) {
+        cache.commitOptimistic(optimisticId);
+        optimisticId = undefined;
       }
     } else {
       error.value = result.error;
       errorCode.value = result.errorCode;
       options?.onError?.(result.error, result.errorCode);
+      if (cache && optimisticId) {
+        cache.rollbackOptimistic(optimisticId);
+        optimisticId = undefined;
+      }
     }
 
     loading.value = false;

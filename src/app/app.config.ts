@@ -2,7 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideTaiga, TuiNotificationService } from '@taiga-ui/core';
-import { provideDumbql, loggingMiddleware, devtoolsMiddleware, provideDevtools } from '@dumbql/core';
+import { provideDumbql, loggingMiddleware, devtoolsMiddleware, provideDevtools, nullDetectionMiddleware, provideNullDetection } from '@dumbql/core';
 import type { DevtoolsConfig } from '@dumbql/core';
 import dumbqlConfig from '../../dumbql.config';
 
@@ -21,6 +21,7 @@ export const appConfig: ApplicationConfig = {
 			middleware: [
 				loggingMiddleware('DumbQL'),
 				...(devtoolsCfg ? [devtoolsMiddleware(devtoolsCfg)] : []),
+				nullDetectionMiddleware(),
 			],
 			onError: {
 				provide: TuiNotificationService,
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
 			},
 		}),
 		...(devtoolsCfg ? provideDevtools(devtoolsCfg) : []),
+		provideNullDetection(),
 		provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })),
 	],
 };

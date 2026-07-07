@@ -1,16 +1,10 @@
 {
   "manifest_version": 3,
   "name": "DumbQL GraphQL Debugger",
-  "version": "1.0.0",
+  "version": "1.0.1-beta.0",
   "description": "Capture, inspect, and debug GraphQL queries, mutations, and subscriptions from your app. View request/response details, timing, schema browser, cache snapshots, and field projection analysis.",
-  "permissions": [
-    "storage",
-    "activeTab"
-  ],
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

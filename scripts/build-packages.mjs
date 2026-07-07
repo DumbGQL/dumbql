@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { existsSync, rmSync, symlinkSync, mkdirSync, cpSync } from 'node:fs';
+import { existsSync, rmSync, symlinkSync, mkdirSync, cpSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
@@ -8,9 +8,9 @@ const NM = join(ROOT, 'node_modules', '@dumbql');
 
 const BUILD_ORDER = [
   'errors',
-  'core',
   'cache',
   'client',
+  'core',
   'dev-server',
   'fragments',
   'downloader',
@@ -24,6 +24,7 @@ const BUILD_ORDER = [
   'debugging',
   'testing',
   'apollo-adapter',
+  'opentelemetry',
   'react',
   'vue',
 ];
@@ -41,6 +42,42 @@ function linkPackage(pkg, distOut) {
     symlinkSync(resolve(distOut), nmLink, 'dir');
     console.log(`  🔗 Linked @dumbql/${pkg} → ${resolve(distOut)}`);
   }
+}
+
+function fixDistPackageJson(distOut) {
+  const pkgPath = join(distOut, 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+
+  function fixPath(path) {
+    if (typeof path !== 'string') return path;
+    let fixed = path.replace(/^\.\/src\//, './');
+    fixed = fixed.replace(/^(.*)\.ts$/, '$1.js');
+    return fixed;
+  }
+
+  function fixTypesPath(path) {
+    if (typeof path !== 'string') return path;
+    let fixed = path.replace(/^\.\/src\//, './');
+    if (fixed.endsWith('.d.ts')) return fixed;
+    fixed = fixed.replace(/^(.*)\.ts$/, '$1.d.ts');
+    return fixed;
+  }
+
+  function fixExports(obj) {
+    if (typeof obj === 'string') return fixPath(obj);
+    if (obj && typeof obj === 'object') {
+      for (const [k, v] of Object.entries(obj)) {
+        obj[k] = k === 'types' ? fixTypesPath(v) : fixExports(v);
+      }
+    }
+    return obj;
+  }
+
+  if (pkg.main) pkg.main = fixPath(pkg.main);
+  if (pkg.types) pkg.types = fixTypesPath(pkg.types);
+  if (pkg.exports) pkg.exports = fixExports(pkg.exports);
+
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
 
 function build(pkg) {
@@ -70,6 +107,7 @@ function build(pkg) {
     mkdirSync(distOut, { recursive: true });
     execSync(`npx tsc -p ${tsconfig}`, { cwd: ROOT, stdio: 'inherit' });
     cpSync(join(pkgDir, 'package.json'), join(distOut, 'package.json'));
+    fixDistPackageJson(distOut);
     // Copy subdirectories (angular/, bin/ etc.)
     for (const sub of ['angular', 'bin']) {
       const subDir = join(pkgDir, sub);

@@ -672,7 +672,7 @@ function onSearch() {
 }
 
 function renderList() {
-	listEl.innerHTML = '';
+	listEl.replaceChildren();
 	if (navMode === 'requests') {
 		let filtered = requests;
 		if (searchFilter) {

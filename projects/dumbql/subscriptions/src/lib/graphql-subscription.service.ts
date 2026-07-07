@@ -20,14 +20,53 @@ export class GraphqlSubscriptionService {
     variables?: Record<string, unknown>,
   ): Observable<T> {
     const query = print(document);
+    const { reconnect, reconnectInterval, maxReconnectAttempts } = this.subsConfig ?? {};
+
+    if (!reconnect) {
+      return new Observable<T>((subscriber: Subscriber<T>) => {
+        const unsubscribe = this.core.subscribe<T>(query, variables, {
+          next: (data) => subscriber.next(data),
+          error: (err) => subscriber.error(err),
+          complete: () => subscriber.complete(),
+        });
+        return () => unsubscribe();
+      });
+    }
+
+    const baseInterval = reconnectInterval ?? 2000;
+    const maxAttempts = maxReconnectAttempts ?? 5;
 
     return new Observable<T>((subscriber: Subscriber<T>) => {
-      const unsubscribe = this.core.subscribe<T>(query, variables, {
-        next: (data) => subscriber.next(data),
-        error: (err) => subscriber.error(err),
-        complete: () => subscriber.complete(),
-      });
-      return () => unsubscribe();
+      let currentUnsubscribe: (() => void) | null = null;
+      let attempt = 0;
+      let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+      let destroyed = false;
+
+      const connect = () => {
+        if (destroyed) return;
+
+        currentUnsubscribe = this.core.subscribe<T>(query, variables, {
+          next: (data) => subscriber.next(data),
+          error: (err) => subscriber.error(err),
+          complete: () => {
+            if (!destroyed && attempt < maxAttempts) {
+              const delay = baseInterval * Math.pow(2, attempt) + Math.random() * 1000;
+              attempt++;
+              reconnectTimer = setTimeout(connect, delay);
+            } else if (!destroyed) {
+              subscriber.complete();
+            }
+          },
+        });
+      };
+
+      connect();
+
+      return () => {
+        destroyed = true;
+        if (reconnectTimer) clearTimeout(reconnectTimer);
+        if (currentUnsubscribe) currentUnsubscribe();
+      };
     });
   }
 }

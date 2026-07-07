@@ -1,6 +1,7 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TuiNotification, TuiButton } from '@taiga-ui/core';
+
 import { Logo } from '../../../../shared/ui/logo/logo';
 import { DocFeatureCard } from '../../../../shared/ui/doc-feature-card/doc-feature-card';
 import { DocsToc } from '../../../../shared/ui/docs-toc/docs-toc';
@@ -102,8 +103,14 @@ export class DocsOverview {
     {
       icon: '🔍',
       title: '@dumbql/debugging',
-      description: 'Operation inspector, field tree parser, mutation chart.',
+      description: 'Browser extension, DevTools service, field tree parser, mutation chart.',
       link: '/docs/debugging',
+    },
+    {
+      icon: '📡',
+      title: '@dumbql/opentelemetry',
+      description: 'W3C Trace Context propagation, middleware, Angular integration.',
+      link: '/docs/opentelemetry',
     },
     {
       icon: '📦',
@@ -116,6 +123,24 @@ export class DocsOverview {
       title: '@dumbql/testing',
       description: 'MockGraphqlService, when/respond, testing utilities.',
       link: '/docs/testing',
+    },
+    {
+      icon: '🔄',
+      title: '@dumbql/apollo-adapter',
+      description: 'Migration helpers — bring your Apollo cache, type policies, and links.',
+      link: '/docs/apollo-adapter',
+    },
+    {
+      icon: '🏗️',
+      title: '@dumbql/codegen',
+      description: 'Typed codegen client preset, fragment masking, schema merge.',
+      link: '/docs/codegen',
+    },
+    {
+      icon: '⚠️',
+      title: '@dumbql/errors',
+      description: 'Typed error system — DumbqlError, error codes, error handlers.',
+      link: '/docs/errors',
     },
   ];
 

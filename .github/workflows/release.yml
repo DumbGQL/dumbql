@@ -1,6 +1,11 @@
 name: Release
 
 on:
+  push:
+    branches:
+      - rc
+      - beta
+      - alpha
   workflow_dispatch:
     inputs:
       version:
@@ -25,101 +30,11 @@ on:
           - rc
           - beta
           - alpha
-      tag_cache:
-        description: '@dumbql/cache'
-        default: 'latest'
+      npm_tag:
+        description: 'npm dist-tag for all packages (auto = derived from version bump type)'
+        default: 'auto'
         type: choice
-        options: [latest, rc, skip]
-      tag_client:
-        description: '@dumbql/client'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_codegen:
-        description: '@dumbql/codegen'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_core:
-        description: '@dumbql/core'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_dev_server:
-        description: '@dumbql/dev-server'
-        default: 'rc'
-        type: choice
-        options: [latest, rc, skip]
-      tag_errors:
-        description: '@dumbql/errors'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_fragments:
-        description: '@dumbql/fragments'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_downloader:
-        description: '@dumbql/downloader'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_ssr:
-        description: '@dumbql/ssr'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_subscriptions:
-        description: '@dumbql/subscriptions'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_middlewares:
-        description: '@dumbql/middlewares'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_pagination:
-        description: '@dumbql/pagination'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_persisted_queries:
-        description: '@dumbql/persisted-queries'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_file_upload:
-        description: '@dumbql/file-upload'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_debugging:
-        description: '@dumbql/debugging'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_testing:
-        description: '@dumbql/testing'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_apollo_adapter:
-        description: '@dumbql/apollo-adapter'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_react:
-        description: '@dumbql/react'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
-      tag_vue:
-        description: '@dumbql/vue'
-        default: 'latest'
-        type: choice
-        options: [latest, rc, skip]
+        options: [auto, latest, rc, beta, alpha, skip]
 permissions:
   contents: write
 
@@ -139,26 +54,67 @@ jobs:
 
       - run: npm ci
 
+      - name: Test + coverage
+        run: npx vitest run --coverage --coverage.reporter=lcovonly --coverage.reporter=text
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: false
+          verbose: true
+
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Resolve workflow inputs for push-triggered runs
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "BUMP_TYPE=${{ inputs.type }}" >> "$GITHUB_ENV"
+            echo "EXACT_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+            echo "DEV_SERVER_VERSION=${{ inputs.version_dev_server }}" >> "$GITHUB_ENV"
+
+            # Derive npm tag: auto = follow version bump type
+            NPM_TAG="${{ inputs.npm_tag }}"
+            if [ "$NPM_TAG" = "auto" ]; then
+              case "${{ inputs.type }}" in
+                rc|beta|alpha) NPM_TAG="${{ inputs.type }}" ;;
+                *) NPM_TAG="latest" ;;
+              esac
+            fi
+            echo "NPM_TAG=$NPM_TAG" >> "$GITHUB_ENV"
+          else
+            BRANCH="${{ github.ref_name }}"
+            # Extract base channel from branch: beta/v1.0.5 → beta
+            CHANNEL="${BRANCH%%/*}"
+            case "$CHANNEL" in
+              rc|beta|alpha) ;;
+              *) CHANNEL="$BRANCH" ;;
+            esac
+            echo "BUMP_TYPE=$CHANNEL" >> "$GITHUB_ENV"
+            echo "EXACT_VERSION=" >> "$GITHUB_ENV"
+            echo "DEV_SERVER_VERSION=" >> "$GITHUB_ENV"
+            echo "NPM_TAG=$CHANNEL" >> "$GITHUB_ENV"
+          fi
+
       - name: Bump version
         run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            node scripts/version.mjs custom --version '${{ inputs.version }}'
+          if [ -n "$EXACT_VERSION" ]; then
+            node scripts/version.mjs custom --version "$EXACT_VERSION"
           else
-            node scripts/version.mjs ${{ inputs.type }}
+            node scripts/version.mjs "$BUMP_TYPE"
           fi
 
       - name: Set dev-server version (if specified)
-        if: inputs.version_dev_server != ''
+        if: env.DEV_SERVER_VERSION != ''
         run: |
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('projects/dumbql/dev-server/package.json', 'utf-8'));
-            pkg.version = '${{ inputs.version_dev_server }}';
+            pkg.version = '$DEV_SERVER_VERSION';
             fs.writeFileSync('projects/dumbql/dev-server/package.json', JSON.stringify(pkg, null, 2) + '\n');
             console.log('  @dumbql/dev-server → ' + pkg.version);
           "
@@ -188,38 +144,16 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          declare -A TAG_MAP
-          TAG_MAP["@dumbql/cache"]="${{ inputs.tag_cache }}"
-          TAG_MAP["@dumbql/client"]="${{ inputs.tag_client }}"
-          TAG_MAP["@dumbql/codegen"]="${{ inputs.tag_codegen }}"
-          TAG_MAP["@dumbql/core"]="${{ inputs.tag_core }}"
-          TAG_MAP["@dumbql/dev-server"]="${{ inputs.tag_dev_server }}"
-          TAG_MAP["@dumbql/errors"]="${{ inputs.tag_errors }}"
-          TAG_MAP["@dumbql/fragments"]="${{ inputs.tag_fragments }}"
-          TAG_MAP["@dumbql/downloader"]="${{ inputs.tag_downloader }}"
-          TAG_MAP["@dumbql/ssr"]="${{ inputs.tag_ssr }}"
-          TAG_MAP["@dumbql/subscriptions"]="${{ inputs.tag_subscriptions }}"
-          TAG_MAP["@dumbql/middlewares"]="${{ inputs.tag_middlewares }}"
-          TAG_MAP["@dumbql/pagination"]="${{ inputs.tag_pagination }}"
-          TAG_MAP["@dumbql/persisted-queries"]="${{ inputs.tag_persisted_queries }}"
-          TAG_MAP["@dumbql/file-upload"]="${{ inputs.tag_file_upload }}"
-          TAG_MAP["@dumbql/debugging"]="${{ inputs.tag_debugging }}"
-          TAG_MAP["@dumbql/testing"]="${{ inputs.tag_testing }}"
-          TAG_MAP["@dumbql/apollo-adapter"]="${{ inputs.tag_apollo_adapter }}"
-          TAG_MAP["@dumbql/react"]="${{ inputs.tag_react }}"
-          TAG_MAP["@dumbql/vue"]="${{ inputs.tag_vue }}"
+          TAG="$NPM_TAG"
+          if [ "$TAG" = "skip" ] || [ -z "$TAG" ]; then
+            echo "  ⏭️  Skipping all packages (NPM_TAG=skip)"
+            exit 0
+          fi
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
-              tag="${TAG_MAP[$name]}"
-
-              if [ "$tag" = "skip" ] || [ -z "$tag" ]; then
-                echo "  ⏭️  Skipping $name"
-                continue
-              fi
-
-              echo "  Publishing $name → tag: $tag"
-              npm publish "$pkg" --access public --tag "$tag"
+              echo "  Publishing $name → tag: $TAG"
+              npm publish "$pkg" --access public --tag "$TAG"
             fi
           done
 
@@ -228,58 +162,9 @@ jobs:
           git push origin "HEAD:${{ github.ref_name }}" --no-verify
           git push origin --tags --no-verify
 
-      - name: Generate release body
-        id: changelog
-        run: |
-          export TAG="${{ steps.tag.outputs.name }}"
-          export VER="${TAG#v}"
-          export PREV_TAG="$(git tag --sort=-creatordate | head -2 | tail -1)"
-
-          node --input-type=module -e "
-            import { readFileSync, writeFileSync } from 'node:fs';
-            import { execSync } from 'node:child_process';
-
-            const ver = process.env.VER;
-            const prevTag = process.env.PREV_TAG;
-            const lines = readFileSync('CHANGELOG.md','utf-8').split('\n');
-
-            let inside = false;
-            const body = [];
-            const headerRe = /^##\s+\[/;
-            const escVer = ver.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&');
-            const versionRe = new RegExp('^##\\\\s+\\\\[' + escVer + '\\\\]');
-
-            for (const l of lines) {
-              if (l.match(versionRe)) { inside = true; continue; }
-              if (inside && l.match(headerRe)) break;
-              if (inside) body.push(l);
-            }
-
-            let releaseBody = body.join('\n').trim();
-
-            if (!releaseBody) {
-              try {
-                const cutoff = prevTag || '';
-                const range = cutoff ? cutoff + '..HEAD' : '--all';
-                const log = execSync('git log ' + range + ' --oneline --no-decorate', { encoding: 'utf-8' });
-                const commits = log.trim().split('\n').filter(Boolean);
-                const items = commits.map(c => {
-                  const m = c.match(/^[\da-f]+\s+(.*)/);
-                  return m ? '- ' + m[1] : '- ' + c;
-                });
-                const today = new Date().toISOString().slice(0, 10);
-                releaseBody = '## [' + ver + '] — ' + today + '\n\n### Changed\n' + items.join('\n');
-              } catch {
-                releaseBody = 'No changelog entry found for ' + ver;
-              }
-            }
-
-            writeFileSync('release_body.md', releaseBody);
-          "
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.name }}
           name: ${{ steps.tag.outputs.name }}
-          body_path: release_body.md
+          body_path: CHANGELOG.md

@@ -1,5 +1,114 @@
 # Changelog
 
+## [1.0.5] — 2026-07-06
+
+### Added
+- **Optimistic updates** for `useMutation` (React + Vue):
+  - New `optimistic(cache: CacheStore) => string` option — called before mutation, receives `CacheStore`, returns an optimistic ID
+  - On success: `cache.commitOptimistic(id)` — writes optimistic update to cache
+  - On error: `cache.rollbackOptimistic(id)` — reverts optimistic update
+  - React: uses `useRef` to track optimistic ID across renders; commit/rollback in `.then()`
+  - Vue: uses closure variable; commit/rollback after mutation resolves
+- **Subscription auto-reconnect** — exponential backoff with jitter:
+  - React `useSubscription`: new `reconnect`, `reconnectInterval`, `maxReconnects` options
+  - Vue `useSubscription`: identical options
+  - Angular `GraphqlSubscriptionService`: respects `reconnect`, `reconnectInterval`, `maxReconnectAttempts` from `SubscriptionsConfig`
+  - Backoff formula: `Math.pow(2, attempt) * baseInterval` + jitter `Math.random() * 1000`
+  - Cleanup: timers cleared and WebSocket unsubscribed on component unmount/destroy
+- **Vue directives** (`v-dql-mutate`, `v-dql-loading`):
+  - `v-dql-mutate` triggers mutation on click — accepts `{ mutation, variables, options }` value
+  - `v-dql-loading` adds/removes CSS class based on loading state — usage: `v-dql-loading="'my-loading-class'"`
+  - Registered via `registerDirectives(app, client)` in `createDumbqlPlugin.install()`
+  - 6 unit tests
+- **Vue `useFragment`** — cache-backed fragment reading:
+  - `useFragment(fragmentDoc, typename, id)` — reads from cache by `__typename` + `id`
+  - Returns `ref<TData | null>` — reactive: updates when cache changes
+  - Mirrors React `useFragment` API
+  - 8 unit tests
+- **Vue `usePrefetch`** — returns `(vars?: TVariables) => Promise<GraphQLResult<TData>>` — mirrors React `usePrefetch`
+- **Vue `RateLimitGate`** — countdown banner component:
+  - `defineComponent` + `h()` render function
+  - Props: `isLimited`, `retryAfter`, `onRetry`, `error`
+  - Countdown timer via `setInterval`, auto-triggers `onRetry` when countdown reaches 0
+  - Default UI: SVG icon, "Rate limit exceeded" message, countdown in seconds
+  - Customizable via `fallback` slot (named) and `default` slot
+- **Vue `QueryRef` + `useReadQuery`**:
+  - `useBackgroundQuery(document, variables)` now returns `QueryRef<TData>` instead of `Promise<TData>`
+  - `QueryRef` interface: `data`, `error`, `loading` (reactive refs), `refetch(vars?)`, `promise`
+  - `useReadQuery(queryRef)` — unwraps `queryRef.data` into a standalone reactive `Ref<TData | null>`
+  - Updated tests for new `QueryRef` API
+- **Angular `injectLiveQuery`**:
+  - Standalone function returning `Observable<T>`
+  - Uses `GraphqlLiveQuery` (from `@dumbql/subscriptions/angular`) — initial HTTP fetch + WebSocket subscribe
+  - Deferred injection via `defer()` — safe to call outside injection context
+  - Cleans up subscription on `Observable` unsubscribe
+- **Angular `injectQuery` / `injectMutation`**:
+  - `injectQuery(document, variables?, config?)` — alias for `query()`, returns `Observable<GraphQLResult<TData>>`
+  - `injectMutation(document, variables?, config?)` — alias for `mutate()`, returns `Observable<GraphQLResult<TData>>`
+- **Angular `injectFragment`**:
+  - `injectFragment(fragmentDoc, typename, id)` — synchronous cache lookup via `CacheService`
+  - Uses `CacheService.query()` directly (not `GraphqlCacheLike` token which lacks `query()`)
+  - Returns `signal<TData | null>` (Angular reactive signal)
+- **Angular `injectPrefetch`**:
+  - `injectPrefetch(document)` — returns `(vars?: TVariables) => Observable<GraphQLResult<TData>>`
+  - Uses `defer()` to allow calling returned function outside injection context
+- **Reactive `useVal`** (React + Vue):
+  - Renamed from `useSmthRef` — reactive value container with null-handling utilities
+  - API: `nullify()`, `isNull()`, `isEmpty()`, `reset()`, `tap(fn)`, `swap(v)`, `orElse(fallback)`, `match(onSome, onNone)`, `toJSON()`
+  - React: wraps `useRef` + `useState`
+  - Vue: wraps `ref()` + `Val` class from `@dumbql/client`
+- **Client tests** — new test files:
+  - `client.spec.ts` — 34 tests: construction, query, mutation, middleware pipeline, error handling, retry, cache integration, polling, WebSocket subscription
+  - `middleware.spec.ts` — 21 tests: middleware registration, execution order, error propagation, retry middleware, auto-mock
+- **React tests** — new test files:
+  - `use-mutation.spec.tsx` — 4 optimistic update tests (commit, rollback, with error)
+  - `use-subscription.spec.tsx` — 7 reconnect tests (exponential backoff, max reconnects, cleanup)
+- **Vue tests** — new test files:
+  - `use-mutation.spec.ts` — 7 tests (optimistic, error rollback, cache update)
+  - `use-subscription.spec.ts` — 9 tests (reconnect, backoff, max attempts, cleanup)
+  - `use-fragment.spec.ts` — 8 tests (basic, missing, cache change)
+- **Middleware docs** — 5 missing sections added:
+  - `autoMock` — schema-driven mock data generation
+  - `errorHandler` — custom error handling middleware
+  - `rateLimit` — client-side rate limiting
+  - `dedup` — in-flight request deduplication
+  - `costEstimation` — query cost estimation
+- **All docs update** — every framework/package doc page updated with:
+  - API entries for all new composables, hooks, directives, components
+  - Version label `v1.0.5` (was `v1.0.5-beta.3`)
+  - Reactive `useVal` replaces `useSmthRef` references
+  - Optimistic update and subscription reconnect option documentation
+
+### Changed
+- Branch renamed from `feature/opentelemetry-tracing` to `beta/v1.0.5`.
+- `useSmthRef` renamed to `useVal` across React and Vue — all imports and re-exports updated.
+- `useBackgroundQuery` (Vue) return type changed from `Promise<TData>` to `QueryRef<TData>` — existing callers must use `.promise` or destructure `data`/`error`/`loading` reactive refs.
+- `GraphqlSubscriptionService` (Angular) — `subscribe()` now accepts `reconnect`, `reconnectInterval`, `maxReconnectAttempts` from `SubscriptionsConfig`. Without `reconnect: true`, behavior is unchanged.
+- `npm_tag: auto` now derives dist-tag from version bump type (`rc`/`beta`/`alpha` → that tag, `patch`/`minor`/`major` → `latest`).
+- **Build order**: `errors → cache → client → core → ...` — `cache` and `client` built before `core` to resolve ng-packagr dependency chain.
+- **Circular dependency resolution**:
+  - `GRAPHQL_CACHE` token moved from `@dumbql/core` → `@dumbql/cache` (new `tokens.ts`)
+  - `Val`, `walkObject`, `extractOpName` inlined into `@dumbql/core` (removed `core → @dumbql/client` import)
+  - `@dumbql/core` re-exports `{ GRAPHQL_CACHE, GraphqlCacheLike }` from `@dumbql/cache`
+  - Peer deps: `@dumbql/cache` removed `@dumbql/core` peer dep; `@dumbql/core` added `@dumbql/cache` (optional) peer dep
+- **CI/CD publishing**:
+  - Release workflow triggers on `push` to `rc`, `beta`, `alpha` branches (in addition to `workflow_dispatch`)
+  - Single `npm_tag` input replaces 19 per-package `tag_*` dropdowns — options: `auto`, `latest`, `rc`, `beta`, `alpha`, `skip`
+  - `body_path: CHANGELOG.md` — full changelog in release body instead of extracted section
+  - "Resolve workflow inputs" step derives version, npm tag, and branch from event type (push vs dispatch)
+
+### Fixed
+- **Build pipeline** — all 19 packages now build successfully:
+  - `cache`, `client`, `core`, `dev-server`, `fragments`, `downloader`, `codegen`, `ssr`, `subscriptions`, `middlewares`, `pagination`, `persisted-queries`, `file-upload`, `debugging`, `testing`, `apollo-adapter`, `opentelemetry`, `react`, `vue`
+  - Build order `cache → client → core` ensures cross-package symlinks exist before compilation
+- **`@dumbql/client` package.json** — reverted `main`/`types`/`exports` from `./public-api.js` back to `./src/public-api.ts` so that workspace symlink resolution works correctly in CI (no dist directory).
+- **Build script** — new `fixDistPackageJson()` transforms source paths (`./src/X.ts` → `./X.js`/`.d.ts`) when copying `package.json` to dist, so published packages have correct compiled output paths.
+- **`react/null-overlay.tsx`** — TS4111: bracket notation (`styles[key]`) for index-signature `Record` access
+- **`react/use-query.ts`** — TS7006: explicit `GraphQLResult<TData>` type annotation for `res` parameter
+- **`vue/rate-limit-gate.ts`** — TS4111: bracket notation (`this.$slots['default']`) for index-signature `Slots` access
+- **`vue/use-val.ts`** — TS2352: double cast `as unknown as VueVal<T>` for incompatible ref types
+- **`client/package.json`** — build script now correctly transforms source `./src/public-api.ts` paths to dist `./public-api.js`/`.d.ts` paths for all TSC packages
+
 ## [1.1.6] — 2026-07-01
 
 ### Added

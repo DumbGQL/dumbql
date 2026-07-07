@@ -8,6 +8,8 @@ export interface GraphqlRequestContext {
   endpoint?: string;
   extensions?: Record<string, unknown>;
   onTypenamesExtracted?: (typenames: Set<string>) => void;
+  /** HTTP method override. Defaults to POST. Use GET for CDN-cacheable hash-only persisted queries. */
+  method?: 'GET' | 'POST';
 }
 
 export type GraphqlMiddlewareNext = (request: GraphqlRequestContext) => Promise<GraphQLResult<unknown>>;

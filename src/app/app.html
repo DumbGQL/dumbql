@@ -1,4 +1,5 @@
 <tui-root>
+  <app-null-overlay />
   <header class="app-header">
     @if (showDocsMenu()) {
       <button
@@ -34,16 +35,27 @@
       <a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
       <a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
     </nav>
-    <tui-textfield readonly class="version-select" tuiTextfieldSize="s" [tuiTextfieldCleaner]="false">
-      <input
-        tuiComboBox
-        readonly
-        placeholder="v{{ versionService.currentVersion() }}"
-        [ngModel]="versionService.currentVersion()"
-        (ngModelChange)="versionService.setVersion($event)"
-      />
-      <tui-data-list-wrapper *tuiDropdown [items]="versionService.allVersions" />
-    </tui-textfield>
+    <button
+      tuiButton
+      appearance="flat"
+      size="s"
+      iconStart="@tui.chevron-down"
+      class="version-select"
+      [tuiDropdown]="versionMenu"
+      [tuiDropdownManual]="open()"
+      (tuiActiveZoneChange)="open.set($event)"
+      (tuiObscured)="open.set(false)"
+      (click)="open.update((v) => !v)"
+    >
+      v{{ versionService.currentVersion() }}
+    </button>
+    <ng-template #versionMenu>
+      <tui-data-list>
+        @for (v of versionService.allVersions; track v) {
+          <button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
+        }
+      </tui-data-list>
+    </ng-template>
     <button tuiButton appearance="secondary" size="s" class="theme-toggle" (click)="toggleTheme()">
       {{ isDarkMode() ? '☀️' : '🌙' }}
     </button>

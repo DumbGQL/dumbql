@@ -11,6 +11,18 @@ var typeCountEl = document.getElementById('typeCount');
 var avgDurEl = document.getElementById('avgDur');
 var recentListEl = document.getElementById('recentList');
 var bridgeStatusEl = document.getElementById('bridgeStatus');
+var epicFetusToggle = document.getElementById('epicFetusToggle');
+
+// ── Epic Fetus toggle ──
+if (epicFetusToggle && runtime) {
+  runtime.storage.local.get('epicFetusEnabled', function (data) {
+    epicFetusToggle.checked = data.epicFetusEnabled !== false;
+  });
+
+  epicFetusToggle.addEventListener('change', function () {
+    runtime.storage.local.set({ epicFetusEnabled: epicFetusToggle.checked });
+  });
+}
 
 function setBridgeStatus(ok, msg) {
   if (!bridgeStatusEl) return;
@@ -94,6 +106,7 @@ function updateStats(requests) {
         '</div>';
   }
   setSafeHtml(recentListEl, html);
+  }
 }
 
 function setSafeHtml(element, htmlString) {

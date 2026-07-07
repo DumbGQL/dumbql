@@ -74,6 +74,16 @@ export const docsRoutes: Routes = [
         loadComponent: () => import('./pages/debugging/debugging').then((m) => m.DocsDebugging),
       },
       {
+        path: 'opentelemetry',
+        data: { since: '1.0.5-beta.3' },
+        loadComponent: () => import('./pages/opentelemetry/opentelemetry').then((m) => m.DocsOpentelemetry),
+      },
+      {
+        path: 'epic-fetus',
+        data: { since: '1.0.5-beta.4' },
+        loadComponent: () => import('./pages/epic-fetus/epic-fetus').then((m) => m.DocsEpicFetus),
+      },
+      {
         path: 'downloader',
         loadComponent: () => import('./pages/downloader/downloader').then((m) => m.DocsDownloader),
       },
@@ -96,8 +106,23 @@ export const docsRoutes: Routes = [
       },
       {
         path: 'dev-server',
-        data: { since: '1.1.0' },
+        data: { since: '0.0.3' },
         loadComponent: () => import('./pages/dev-server/dev-server').then((m) => m.DocsDevServer),
+      },
+      {
+        path: 'apollo-adapter',
+        data: { since: '0.0.3' },
+        loadComponent: () => import('./pages/apollo-adapter/apollo-adapter').then((m) => m.DocsApolloAdapter),
+      },
+      {
+        path: 'codegen',
+        data: { since: '0.0.1' },
+        loadComponent: () => import('./pages/codegen/codegen').then((m) => m.DocsCodegen),
+      },
+      {
+        path: 'errors',
+        data: { since: '0.0.3' },
+        loadComponent: () => import('./pages/errors/errors').then((m) => m.DocsErrors),
       },
       {
         path: 'devcontainers',

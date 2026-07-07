@@ -10,18 +10,22 @@ export type {
   SsrConfig,
   TestingConfig,
   CodegenConfig,
+  TelemetryConfig,
 } from './lib/dumbql-config';
 export { DumbqlConfigService, provideDumbql } from './lib/config.service';
 export { DUMBQL_CONFIG, GRAPHQL_CONFIG, GRAPHQL_CACHE, type GraphqlCacheLike } from './lib/dumbql-config';
 export type { OnErrorServiceConfig, SchemaConfig, DumbqlPlugin } from './lib/dumbql-config';
 export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCode } from './lib/graphql.service';
-export { gql, print } from './lib/gql';
-export type { DocumentNode, TypedDocumentNode } from './lib/gql';
+export { gql, print, createTypedQuery } from './lib/gql';
+export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';
 export { query, type QueryHandle } from './lib/query';
+export { query as injectQuery, type QueryHandle as InjectQueryHandle } from './lib/query';
 export { GraphqlEndpoint, provideEndpoint, injectEndpoint, type MutateEndpointOptions } from './lib/endpoint';
 export { mutate, type MutateOptions } from './lib/mutate';
+export { mutate as injectMutation, type MutateOptions as InjectMutationOptions } from './lib/mutate';
 export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
+export { injectPrefetch } from './lib/prefetch';
 export {
   isSuccess,
   isError,
@@ -57,6 +61,8 @@ export {
 } from './lib/devtools';
 
 export { SchemaService, provideSchemaFetch, type SchemaServiceConfig } from './lib/schema.service';
+export { SchemaWatchService, provideSchemaWatch, type SchemaChangedEvent, type SchemaErrorEvent } from './lib/schema-watch';
+export { SchemaStreamService, type SchemaProgressEvent, type SchemaStreamConfig } from './lib/schema-stream';
 
 export { provideDumbqlRouter, guardedRoute, canActivateWithGuards, type DumbqlRouteGuard } from './lib/dumbql-router';
 
@@ -66,6 +72,10 @@ export { cacheMiddleware } from './lib/cache-middleware';
 export { SCHEMA_SERVICE_CONFIG } from './lib/schema.service';
 
 export { DEVTOLS_CONFIG } from './lib/devtools';
+export { NullDetectionService, type NullDetectionEvent } from './lib/null-detection.service';
+export { nullDetectionMiddleware, provideNullDetection } from './lib/null-detection';
+export { NullCheckerService, provideNullChecker } from './lib/null-checker';
+export { NullOverlay } from './lib/null-overlay';
 
 export { makeVar, ReactiveVar } from './lib/reactive-vars';
 export { clientDirectiveMiddleware } from './lib/client-directive';
@@ -78,3 +88,5 @@ export {
   type IncrementalPayload,
   type IncrementalResponse,
 } from './lib/streaming';
+
+export { createVal, type AngularVal } from './lib/ref';

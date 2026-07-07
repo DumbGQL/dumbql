@@ -1,0 +1,25 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+    patch:
+      default:
+        target: 80%
+        threshold: 10%
+  precision: 2
+  round: down
+
+comment:
+  layout: "header, diff, files, footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+ignore:
+  - "projects/dumbql/*/node_modules/**"
+  - "**/*.d.ts"
+  - "**/*.spec.ts"
+  - "**/*.test.ts"

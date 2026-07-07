@@ -1,5 +1,6 @@
 import { inject, type App, type InjectionKey } from 'vue';
 import type { DumbqlClient } from '@dumbql/client';
+import { registerDirectives } from './directives';
 
 export const DUMBQL_CLIENT_KEY: InjectionKey<DumbqlClient> = Symbol('dumbql-client');
 
@@ -7,6 +8,7 @@ export function createDumbqlPlugin(client: DumbqlClient) {
   return {
     install(app: App): void {
       app.provide(DUMBQL_CLIENT_KEY, client);
+      registerDirectives(app, client);
     },
   };
 }

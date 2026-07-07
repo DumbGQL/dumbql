@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
-import type { DocumentNode, TypedDocumentNode } from './gql';
+import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { GraphqlCacheLike } from './dumbql-config';
 
 export interface MutateOptions {
@@ -10,7 +10,7 @@ export interface MutateOptions {
 }
 
 export function mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-  document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+  document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
   variables?: TVariables,
   options?: MutateOptions,
 ): Observable<GraphQLResult<TResponse>> {

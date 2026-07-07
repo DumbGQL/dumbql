@@ -9,6 +9,7 @@ import {
   parseFragmentFile,
   generateFragmentCode,
   generateFragmentIndex,
+  type FragmentTypeInfo,
 } from '@dumbql/codegen';
 
 const args = process.argv.slice(2);
@@ -22,6 +23,7 @@ function parseArgs(args) {
       case '--watch': case '-w': opts.watch = true; break;
       case '--schema-only': opts.schemaOnly = true; break;
       case '--documents-only': opts.documentsOnly = true; break;
+      case '--client-preset': opts.clientPreset = true; break;
       case '--output': case '-o': opts.output = args[++i]; break;
       case '--help': case '-h':
         console.log(`
@@ -32,6 +34,7 @@ Options:
   --watch, -w             Watch .graphql files for changes
   --schema-only           Generate only schema types
   --documents-only        Generate only typed documents from .graphql files
+  --client-preset         Generate createTypedQuery() instead of gql — skips runtime parse()
   --output, -o <dir>      Output directory for generated types
   --help, -h              Show this help
 `);
@@ -121,14 +124,53 @@ async function generateDocuments(typesDir, codegenConfig, typesConfig) {
 
   if (operations.length === 0) return 0;
 
+  // ── Fragment types from .graphql files ──
+  const fragments = files
+    .map((f) => parseFragmentFile(f))
+    .filter((f) => f !== null)
+    .flat();
+
+  // Build fragment type map for document result type generation
+  const fragmentTypeMap = new Map();
+  const fragsDir = resolve(typesDir, 'fragments');
+  if (fragments.length > 0) {
+    if (!existsSync(fragsDir)) mkdirSync(fragsDir, { recursive: true });
+
+    const typesPath = resolve(typesDir, 'index.ts');
+    const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
+
+    for (const frag of fragments) {
+      const code = generateFragmentCode([frag], typesCode, clientPreset);
+      writeFileSync(join(fragsDir, `${frag.name}.ts`), code);
+
+      // Build fragment type info map for document generation
+      const keyName = `${frag.name}Fragment$key`;
+      const relPath = `../fragments/${frag.name}`;
+      fragmentTypeMap.set(frag.name, {
+        name: frag.name,
+        keyName,
+        typeCondition: frag.typeCondition,
+        importRelative: relPath,
+      });
+
+      console.log(`  Fragment: ${frag.name}.ts`);
+    }
+
+    writeFileSync(join(fragsDir, 'index.ts'), generateFragmentIndex(fragments));
+    console.log(`Generated ${fragments.length} fragment type(s) in ${fragsDir}`);
+  }
+
+  // ── Typed documents ──
   const docsDir = resolve(typesDir, 'documents');
   if (!existsSync(docsDir)) mkdirSync(docsDir, { recursive: true });
 
   const typesPath = resolve(typesDir, 'index.ts');
   const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
 
+  const clientPreset = opts.clientPreset === true;
+
   for (const op of operations) {
-    const code = generateTypedDocumentsCode([op], typesCode);
+    const code = generateTypedDocumentsCode([op], typesCode, { clientPreset }, fragmentTypeMap.size > 0 ? fragmentTypeMap : undefined);
     writeFileSync(join(docsDir, `${op.name}.ts`), code);
     console.log(`  Generated: ${op.name}.ts`);
   }
@@ -136,29 +178,6 @@ async function generateDocuments(typesDir, codegenConfig, typesConfig) {
   const index = generateIndexCode(operations);
   writeFileSync(join(docsDir, 'index.ts'), index);
   console.log(`Generated ${operations.length} typed document(s) in ${docsDir}`);
-
-  // ── Fragment types from .graphql files ──
-  const fragments = files
-    .map((f) => parseFragmentFile(f))
-    .filter((f) => f !== null)
-    .flat();
-
-  if (fragments.length > 0) {
-    const fragsDir = resolve(typesDir, 'fragments');
-    if (!existsSync(fragsDir)) mkdirSync(fragsDir, { recursive: true });
-
-    const typesPath = resolve(typesDir, 'index.ts');
-    const typesCode = existsSync(typesPath) ? readFileSync(typesPath, 'utf-8') : undefined;
-
-    for (const frag of fragments) {
-      const code = generateFragmentCode([frag], typesCode);
-      writeFileSync(join(fragsDir, `${frag.name}.ts`), code);
-      console.log(`  Fragment: ${frag.name}.ts`);
-    }
-
-    writeFileSync(join(fragsDir, 'index.ts'), generateFragmentIndex(fragments));
-    console.log(`Generated ${fragments.length} fragment type(s) in ${fragsDir}`);
-  }
 
   return operations.length + fragments.length;
 }

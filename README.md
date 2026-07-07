@@ -2,6 +2,15 @@
 
 > **Framework-native GraphQL client. ~10KB core, 12 modular packages. Built for Angular, React, and Vue — not ported from another framework. Zero-boilerplate. Signals-ready.**
 
+<p align="center">
+  <a href="https://github.com/DumbGQL/dumbql/actions/workflows/release.yml">
+    <img src="https://github.com/DumbGQL/dumbql/actions/workflows/release.yml/badge.svg" alt="Release"/>
+  </a>
+  <a href="https://codecov.io/gh/DumbGQL/dumbql">
+    <img src="https://codecov.io/gh/DumbGQL/dumbql/branch/main/graph/badge.svg" alt="codecov"/>
+  </a>
+</p>
+
 **If you're tired of:**
 
 > - Framework bindings that lag 6 months behind every major release
@@ -183,6 +192,7 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 | Package                     | Description                                                                   | README                                                |
 | --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------- |
 | `@dumbql/core`              | Central GraphQL client — query, mutate, middleware, pipes, directives, config | [README](projects/dumbql/core/README.md)              |
+| `@dumbql/client`            | Framework-agnostic core — `createClient`, `gql`, middleware, helpers, `Val`   | [README](projects/dumbql/client/README.md)            |
 | `@dumbql/cache`             | Normalized entity cache with GC, persistence, optimistic updates              | [README](projects/dumbql/cache/README.md)             |
 | `@dumbql/ssr`               | Server-Side Rendering — TransferState cache transfer + streaming              | [README](projects/dumbql/ssr/README.md)               |
 | `@dumbql/subscriptions`     | WebSocket GraphQL subscriptions (graphql-transport-ws)                        | [README](projects/dumbql/subscriptions/README.md)     |
@@ -193,11 +203,14 @@ DumbQL is organized as a set of scoped npm packages under `@dumbql/*`. Each pack
 | `@dumbql/file-upload`       | Multipart file upload (graphql-multipart-request-spec)                        | [README](projects/dumbql/file-upload/README.md)       |
 | `@dumbql/debugging`         | Operation recording, field tree parsing, timing charts                        | [README](projects/dumbql/debugging/README.md)         |
 | `@dumbql/testing`           | Mock GraphQL backend for unit tests                                           | [README](projects/dumbql/testing/README.md)           |
+| `@dumbql/errors`            | Typed error hierarchy — `GraphQLError`, `NetworkError`, `CacheError`, handler | [README](projects/dumbql/errors/README.md)            |
 | `@dumbql/downloader`        | Schema introspection downloader (Node.js CLI)                                 | [README](projects/dumbql/downloader/README.md)        |
 | `@dumbql/codegen`           | TypeScript codegen from GraphQL schema + `.graphql` files                     | [README](projects/dumbql/codegen/README.md)           |
 | `@dumbql/dev-server`        | Unified mock GraphQL + proxy dev server (CLI + API)                           | [README](projects/dumbql/dev-server/README.md)        |
 | `@dumbql/react`             | React bindings — `useQuery`, `DumbqlProvider`                                 | [README](projects/dumbql/react/README.md)             |
 | `@dumbql/vue`               | Vue 3 bindings — `useQuery`, `createDumbqlPlugin`                             | [README](projects/dumbql/vue/README.md)               |
+| `@dumbql/apollo-adapter`    | Apollo Cache migration — `fromApolloCache`, `FromApolloCacheOptions`          | [README](projects/dumbql/apollo-adapter/README.md)    |
+| `@dumbql/opentelemetry`     | OpenTelemetry tracing — W3C Trace Context, middleware, exporters, Angular     | [README](projects/dumbql/opentelemetry/README.md)     |
 
 ---
 

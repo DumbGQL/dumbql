@@ -18,7 +18,7 @@ function compareVersions(a: string, b: string): number {
   if (!va.pre && vb.pre) return 1;
   if (!va.pre && !vb.pre) return 0;
 
-  const typeOrder: Record<string, number> = { alpha: 0, rc: 1, build: 2 };
+  const typeOrder: Record<string, number> = { alpha: 0, beta: 1, rc: 2, build: 3 };
   const pa = va.pre!.split('.');
   const pb = vb.pre!.split('.');
   const ta = typeOrder[pa[0]] ?? 99;
@@ -30,17 +30,17 @@ function compareVersions(a: string, b: string): number {
 @Injectable({ providedIn: 'root' })
 export class VersionService {
   readonly allVersions: readonly string[] = [
-    '1.1.7',
-    '1.1.6',
-    '1.1.5',
-    '1.1.4',
-    '1.1.3',
-    '1.1.2',
-    '1.1.1',
-    '1.1.0',
+    '1.0.5-beta.4',
+    '1.0.5-beta.3',
+    '1.0.4',
+    '1.0.3',
+    '1.0.2',
     '1.0.1',
     '1.0.0',
+    '0.0.12',
+    '0.0.11',
     '0.0.10',
+    '0.0.9',
     '0.0.8',
     '0.0.7',
     '0.0.6',
@@ -52,11 +52,16 @@ export class VersionService {
     '0.0.1',
   ];
 
+  // Each package's first public release version (git tag).
+  // v0.0.1: initial scaffold (core, cache, react, vue, client, and 9 others)
+  // v0.0.3: errors, apollo-adapter, dev-server
+  // v1.0.5-beta.4: epic-fetus, Val (createVal, useVal, VueVal, ReactVal, AngularVal), extension 1.0.1-beta.0
+  // v1.0.5-beta.3: opentelemetry
   private readonly packageSinceMap: Record<string, string> = {
+    '@dumbql/core': '0.0.1',
     '@dumbql/client': '0.0.1',
     '@dumbql/react': '0.0.1',
     '@dumbql/vue': '0.0.1',
-    '@dumbql/core': '0.0.1',
     '@dumbql/cache': '0.0.1',
     '@dumbql/subscriptions': '0.0.1',
     '@dumbql/file-upload': '0.0.1',
@@ -68,7 +73,11 @@ export class VersionService {
     '@dumbql/debugging': '0.0.1',
     '@dumbql/downloader': '0.0.1',
     '@dumbql/testing': '0.0.1',
-    '@dumbql/dev-server': '1.1.0',
+    '@dumbql/codegen': '0.0.1',
+    '@dumbql/errors': '0.0.3',
+    '@dumbql/apollo-adapter': '0.0.3',
+    '@dumbql/dev-server': '0.0.3',
+    '@dumbql/opentelemetry': '1.0.5-beta.3',
   };
   private readonly storageKey = 'dumbql-docs-version';
 

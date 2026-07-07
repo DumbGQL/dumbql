@@ -125,6 +125,9 @@ export interface PersistedQueriesConfig {
   enabled?: boolean;
   hash?: 'sha256' | 'simple';
   autoPersist?: boolean;
+  /** Send hash-only requests via GET instead of POST to enable CDN caching.
+   *  Only applies when `hash` is set and the query body is empty (hash-only). */
+  useGetForHashedQueries?: boolean;
 }
 
 // ─── File Upload ────────────────────────────────────────────────────────────
@@ -160,6 +163,21 @@ export interface TestingConfig {
 export interface SsrConfig {
   transferState?: boolean;
   cacheTtl?: number;
+}
+
+// ─── Telemetry / OpenTelemetry ───────────────────────────────────────────────
+
+export interface TelemetryConfig {
+  enabled?: boolean;
+  /** OpenTelemetry tracing configuration */
+  tracing?: {
+    enabled?: boolean;
+    exporter?: 'console' | 'otlp';
+    endpoint?: string;
+    serviceName?: string;
+  };
+  /** Middleware-level tracing tags */
+  tags?: Record<string, string>;
 }
 
 // ─── Codegen (CLI-only, ignored at runtime) ─────────────────────────────────
@@ -207,6 +225,7 @@ export interface DumbqlConfig extends GraphqlCoreConfig {
   ssr?: SsrConfig;
   codegen?: CodegenConfig;
   devtools?: boolean | DevtoolsConfig;
+  telemetry?: TelemetryConfig;
   plugins?: DumbqlPlugin[];
 }
 
@@ -222,19 +241,7 @@ export const DUMBQL_CONFIG = new InjectionToken<DumbqlConfig>('DUMBQL_CONFIG');
 /** @deprecated Use DUMBQL_CONFIG instead */
 export const GRAPHQL_CONFIG = DUMBQL_CONFIG;
 
-export interface GraphqlCacheLike {
-  merge(entity: { __typename: string; id: string; [key: string]: unknown }): void;
-  readLocal(key: string): unknown;
-  writeLocalWithTypes<T>(key: string, value: T, types: Set<string>): void;
-  clearLocalStateByTypes(types: string[]): void;
-  setTypePolicies(policies: Record<string, { keyFields?: string[]; merge?: unknown }>): void;
-  applyOptimistic(update: { id: string; entities: { __typename: string; id: string }[] }): string;
-  commitOptimistic(id: string): void;
-  rollbackOptimistic(id: string): void;
-}
-
-/** Injection token for the cache service. Provide via `provideCacheService()` from @dumbql/cache/angular */
-export const GRAPHQL_CACHE = new InjectionToken<GraphqlCacheLike>('GRAPHQL_CACHE');
+export { GRAPHQL_CACHE, type GraphqlCacheLike } from '@dumbql/cache';
 
 // ─── Provider ───────────────────────────────────────────────────────────────
 

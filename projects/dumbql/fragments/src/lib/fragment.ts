@@ -37,12 +37,30 @@ export function compose(...defs: FragmentDefinition[]): DocumentNode {
 	} as unknown as DocumentNode;
 }
 
+type FragmentKey<TData> = { readonly [K: ` ${string}`]: TData };
+
+/** Inline typed fragment with optional phantom type params */
+type TypedDoc = { __resultType?: unknown; __variablesType?: Record<string, unknown> };
+
 export function useFragment<TData>(
-	_fragment: FragmentDefinition<TData>,
+	_fragment: FragmentDefinition<TData> | TypedDoc,
 	data: TData | null | undefined,
+): TData | null;
+export function useFragment<TData>(
+	_fragment: FragmentDefinition<TData> | TypedDoc,
+	data: FragmentKey<TData> | null | undefined,
+): TData | null;
+export function useFragment<TData>(
+	_fragment: FragmentDefinition<TData> | TypedDoc,
+	data: TData | FragmentKey<TData> | null | undefined,
 ): TData | null {
 	if (data == null) return null;
-	return data;
+	if (typeof data === 'object' && data !== null) {
+		for (const key of Object.keys(data)) {
+			if (key.startsWith(' ')) return (data as Record<string, unknown>)[key] as TData;
+		}
+	}
+	return data as TData;
 }
 
 function extractFragmentName(doc: DocumentNode): string {

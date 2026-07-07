@@ -98,10 +98,14 @@ export class DumbqlClient {
     const result = await result$;
 
     if (result.status === 'success' && result.data && this._cacheService) {
-      const typeNames = new Set<string>();
-      extractTypeNames(result.data, typeNames);
-      if (typeNames.size > 0) {
-        this._cacheService.clearLocalStateByTypes(Array.from(typeNames));
+      try {
+        const typeNames = new Set<string>();
+        extractTypeNames(result.data, typeNames);
+        if (typeNames.size > 0) {
+          this._cacheService.clearLocalStateByTypes(Array.from(typeNames));
+        }
+      } catch {
+        // cache invalidation is best-effort
       }
     }
 
@@ -164,7 +168,11 @@ export class DumbqlClient {
     const mw: GraphqlMiddleware[] = [...(config.middleware ?? [])];
 
     if (config.cache?.enabled !== false && this._cacheService) {
-      mw.push(cacheMiddleware(this._cacheService, config.cache));
+      try {
+        mw.push(cacheMiddleware(this._cacheService, config.cache));
+      } catch {
+        // cache middleware not available
+      }
     }
 
     if (config.devAuth?.enabled !== false) {
@@ -176,12 +184,36 @@ export class DumbqlClient {
 
   private async executeHttp(request: GraphqlRequestContext): Promise<GraphQLResult<unknown>> {
     try {
+      const url = request.endpoint || this._endpoint;
+
+      if (request.method === 'GET') {
+        const params = new URLSearchParams();
+        params.set('query', request.query);
+        if (request.variables && Object.keys(request.variables).length > 0) {
+          params.set('variables', JSON.stringify(request.variables));
+        }
+        if (request.extensions) {
+          params.set('extensions', JSON.stringify(request.extensions));
+        }
+        const response = await fetch(`${url}?${params.toString()}`, {
+          method: 'GET',
+          headers: request.headers,
+        });
+        if (!response.ok) {
+          return this.toHttpError({
+            message: `HTTP ${response.status}`,
+            status: response.status,
+            statusText: response.statusText,
+          });
+        }
+        const json = await response.json() as GraphQLResponse<unknown>;
+        return this.toResult(json);
+      }
+
       const body: Record<string, unknown> = { query: request.query, variables: request.variables };
       if (request.extensions) {
         body['extensions'] = request.extensions;
       }
-      const url = request.endpoint || this._endpoint;
-
       const response = await fetch(url, {
         method: 'POST',
         headers: request.headers,

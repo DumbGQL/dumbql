@@ -3,6 +3,8 @@ export type Resolvers = Record<string, Record<string, (parent: any, args: any, c
 export interface MockConfig {
   schema?: string;
   resolvers?: Resolvers;
+  /** Watch schema files for changes and hot-reload. Notifies connected clients via WebSocket at /schema-ws. */
+  watchSchema?: boolean;
 }
 
 export interface ProxyConfig {

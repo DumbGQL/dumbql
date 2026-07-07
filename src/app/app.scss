@@ -47,17 +47,10 @@
 .version-select {
   min-width: 8rem;
 
-  [tuiTextfield] {
-    text-align: center;
-    padding-inline: 0.5rem;
-
-    input {
-      text-align: center;
-      cursor: pointer;
-      font-size: 0.8125rem;
-      caret-color: transparent;
-      user-select: none;
-    }
+  [tuiButton] {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.8125rem;
   }
 }
 

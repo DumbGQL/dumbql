@@ -1,6 +1,6 @@
 {
   "name": "@dumbql/codegen",
-  "version": "1.0.5-beta.3",
+  "version": "1.0.5-beta.4",
   "type": "module",
   "keywords": [
     "graphql",

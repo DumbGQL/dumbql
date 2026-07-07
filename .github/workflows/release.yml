@@ -40,6 +40,19 @@ on:
         default: 'auto'
         type: choice
         options: [auto, latest, rc, beta, alpha, skip]
+      packages:
+        description: |
+          Per-package overrides. One per line.
+          Format: <package-name>[:tag[:version]]
+          Tag: latest|rc|beta|alpha|skip (skip = don't publish)
+          Version: exact version override (optional)
+          Examples:
+            @dumbql/cache:rc
+            @dumbql/opentelemetry:skip
+            @dumbql/core:latest:1.0.6
+        required: false
+        default: ''
+        type: string
 permissions:
   contents: write
 
@@ -91,6 +104,19 @@ jobs:
               esac
             fi
             echo "NPM_TAG=$NPM_TAG" >> "$GITHUB_ENV"
+
+            # Parse per-package config
+            node -e "
+              const raw = process.env.PACKAGES_RAW || '';
+              const config = {};
+              for (const line of raw.split('\n').map(l => l.trim()).filter(Boolean)) {
+                const [name, tag, ver] = line.split(':');
+                if (!name) continue;
+                config[name] = { tag: tag || '', version: ver || '' };
+              }
+              require('fs').writeFileSync('packages-config.json', JSON.stringify(config));
+            "
+            echo "PACKAGES_CONFIG=packages-config.json" >> "$GITHUB_ENV"
           else
             BRANCH="${{ github.ref_name }}"
             # Extract base channel from branch: beta/v1.0.5 → beta
@@ -103,6 +129,8 @@ jobs:
             echo "EXACT_VERSION=" >> "$GITHUB_ENV"
             echo "NPM_TAG=$CHANNEL" >> "$GITHUB_ENV"
           fi
+        env:
+          PACKAGES_RAW: ${{ inputs.packages }}
 
       - name: Bump version
         run: |
@@ -110,6 +138,27 @@ jobs:
             node scripts/version.mjs custom --version "$EXACT_VERSION"
           else
             node scripts/version.mjs "$BUMP_TYPE"
+          fi
+
+          # Apply per-package version overrides
+          if [ -f packages-config.json ]; then
+            node -e "
+              const config = JSON.parse(require('fs').readFileSync('packages-config.json', 'utf-8'));
+              const fs = require('fs');
+              const path = require('path');
+              const dirs = fs.readdirSync('projects/dumbql');
+              for (const dir of dirs) {
+                const pkgPath = path.join('projects/dumbql', dir, 'package.json');
+                if (!fs.existsSync(pkgPath)) continue;
+                const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+                const cfg = config[pkg.name];
+                if (cfg && cfg.version) {
+                  pkg.version = cfg.version;
+                  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+                  console.log('  ' + pkg.name + ' → ' + cfg.version + ' (override)');
+                }
+              }
+            "
           fi
 
       - name: Read tag
@@ -137,14 +186,36 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          TAG="$NPM_TAG"
-          if [ "$TAG" = "skip" ] || [ -z "$TAG" ]; then
+          DEFAULT_TAG="$NPM_TAG"
+          if [ "$DEFAULT_TAG" = "skip" ] || [ -z "$DEFAULT_TAG" ]; then
             echo "  ⏭️  Skipping all packages (NPM_TAG=skip)"
             exit 0
           fi
+
           for pkg in dist/dumbql/*/; do
             if [ -f "${pkg}package.json" ]; then
               name=$(node -p "require('./${pkg}package.json').name")
+
+              TAG="$DEFAULT_TAG"
+              PUBLISH=true
+
+              if [ -f packages-config.json ]; then
+                result=$(node -e "
+                  const cfg = JSON.parse(require('fs').readFileSync('packages-config.json', 'utf-8'));
+                  const entry = cfg[process.argv[1]];
+                  if (entry && entry.tag === 'skip') process.exit(1);
+                  console.log(entry && entry.tag ? entry.tag : process.argv[2]);
+                " "$name" "$DEFAULT_TAG") && PUBLISH=true || PUBLISH=false
+                if [ "$PUBLISH" = "true" ]; then
+                  TAG="$result"
+                fi
+              fi
+
+              if [ "$PUBLISH" = "false" ]; then
+                echo "  ⏭️  Skipping $name (per-package config)"
+                continue
+              fi
+
               echo "  Publishing $name → tag: $TAG"
               npm publish "$pkg" --access public --tag "$TAG"
             fi

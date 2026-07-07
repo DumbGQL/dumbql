@@ -30,6 +30,7 @@ function compareVersions(a: string, b: string): number {
 @Injectable({ providedIn: 'root' })
 export class VersionService {
 	readonly allVersions: readonly string[] = [
+		'1.0.5',
 		'1.0.5-beta.4',
 		'1.0.5-beta.3',
 		'1.0.4',
@@ -55,8 +56,7 @@ export class VersionService {
 	// Each package's first public release version (git tag).
 	// v0.0.1: initial scaffold (core, cache, react, vue, client, and 9 others)
 	// v0.0.3: errors, apollo-adapter, dev-server
-	// v1.0.5-beta.4: epic-fetus, Val (createVal, useVal, VueVal, ReactVal, AngularVal), extension 1.0.1-beta.0
-	// v1.0.5-beta.3: opentelemetry
+	// v1.0.5: epic-fetus, Val (createVal, useVal, VueVal, ReactVal, AngularVal), extension 1.0.1-beta.0, opentelemetry
 	private readonly packageSinceMap: Record<string, string> = {
 		'@dumbql/core': '0.0.1',
 		'@dumbql/client': '0.0.1',
@@ -77,7 +77,7 @@ export class VersionService {
 		'@dumbql/errors': '0.0.3',
 		'@dumbql/apollo-adapter': '0.0.3',
 		'@dumbql/dev-server': '0.0.3',
-		'@dumbql/opentelemetry': '1.0.5-beta.3',
+		'@dumbql/opentelemetry': '1.0.5',
 	};
 	private readonly storageKey = 'dumbql-docs-version';
 

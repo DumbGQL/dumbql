@@ -75,12 +75,12 @@ export const docsRoutes: Routes = [
 			},
 			{
 				path: 'opentelemetry',
-				data: { since: '1.0.5-beta.3' },
+				data: { since: '1.0.5' },
 				loadComponent: () => import('./pages/opentelemetry/opentelemetry').then((m) => m.DocsOpentelemetry),
 			},
 			{
 				path: 'epic-fetus',
-				data: { since: '1.0.5-beta.4' },
+				data: { since: '1.0.5' },
 				loadComponent: () => import('./pages/epic-fetus/epic-fetus').then((m) => m.DocsEpicFetus),
 			},
 			{

@@ -22,26 +22,26 @@ const ANGULAR_DEPS = {
 	'@angular/platform-browser': '^22.0.0',
 	'@angular/platform-browser-dynamic': '^22.0.0',
 	'@angular/router': '^22.0.0',
-	'@dumbql/client': '^1.0.2',
-	'@dumbql/core': '1.0.5-beta.2',
-	'@dumbql/cache': '^1.0.3',
+	'@dumbql/client': '^1.0.5',
+	'@dumbql/core': '^1.0.5',
+	'@dumbql/cache': '^1.0.5',
 	graphql: '^17.0.0',
 	'reflect-metadata': '^0.2.0',
 	rxjs: '^7.8.0',
 };
 
 const REACT_DEPS = {
-	'@dumbql/client': '^1.0.2',
-	'@dumbql/react': '^1.0.0',
-	'@dumbql/cache': '^1.0.3',
+	'@dumbql/client': '^1.0.5',
+	'@dumbql/react': '^1.0.5',
+	'@dumbql/cache': '^1.0.5',
 	graphql: '^17.0.0',
 	react: '^18.2.0',
 	'react-dom': '^18.2.0',
 };
 
 const VUE_DEPS = {
-	'@dumbql/client': '^1.0.2',
-	'@dumbql/vue': '^1.0.0',
+	'@dumbql/client': '^1.0.5',
+	'@dumbql/vue': '^1.0.5',
 	graphql: '^17.0.0',
 	vue: '^3.4.0',
 };
@@ -494,7 +494,7 @@ app.mount('#app');`,
 						private: true,
 						scripts: { start: 'npx serve .', build: 'echo no-build' },
 						dependencies: {
-							'@dumbql/client': '^1.0.2',
+							'@dumbql/client': '^1.0.5',
 							graphql: '^17.0.0',
 						},
 					},

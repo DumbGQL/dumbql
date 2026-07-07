@@ -30,18 +30,18 @@ export class SchemaService {
 		}
 
 		if (!this.schema$) {
-			this.schema$ = this.http.post<{ data: Record<string, unknown> }>(
-				this.config.url,
-				{ query: INTROSPECTION_QUERY },
-				{ headers: this.config.headers ?? {} },
-			).pipe(
-				map((res) => {
-					schemaDataCache = res.data;
-					return res.data;
-				}),
-				catchError(() => of(null)),
-				shareReplay(1),
-			);
+			this.schema$ = this.http
+				.post<{
+					data: Record<string, unknown>;
+				}>(this.config.url, { query: INTROSPECTION_QUERY }, { headers: this.config.headers ?? {} })
+				.pipe(
+					map((res) => {
+						schemaDataCache = res.data;
+						return res.data;
+					}),
+					catchError(() => of(null)),
+					shareReplay(1),
+				);
 		}
 
 		return this.schema$;

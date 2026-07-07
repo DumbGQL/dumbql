@@ -14,11 +14,11 @@ export function focusRefetchMiddleware(config?: FocusRefetchConfig): GraphqlMidd
 
 	const focus$ = visibilityOnly
 		? fromEvent(document, 'visibilitychange').pipe(
-			switchMap(() => document.visibilityState === 'visible' ? of(null) : new Observable<never>()),
+			switchMap(() => (document.visibilityState === 'visible' ? of(null) : new Observable<never>())),
 		)
 		: merge(
 			fromEvent(document, 'visibilitychange').pipe(
-				switchMap(() => document.visibilityState === 'visible' ? of(null) : new Observable<never>()),
+				switchMap(() => (document.visibilityState === 'visible' ? of(null) : new Observable<never>())),
 			),
 			fromEvent(window, 'focus'),
 		);

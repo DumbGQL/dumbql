@@ -3,6 +3,7 @@
 ## [1.0.5] — 2026-07-06
 
 ### Added
+
 - **Optimistic updates** for `useMutation` (React + Vue):
   - New `optimistic(cache: CacheStore) => string` option — called before mutation, receives `CacheStore`, returns an optimistic ID
   - On success: `cache.commitOptimistic(id)` — writes optimistic update to cache
@@ -80,6 +81,7 @@
   - Optimistic update and subscription reconnect option documentation
 
 ### Changed
+
 - Branch renamed from `feature/opentelemetry-tracing` to `beta/v1.0.5`.
 - `useSmthRef` renamed to `useVal` across React and Vue — all imports and re-exports updated.
 - `useBackgroundQuery` (Vue) return type changed from `Promise<TData>` to `QueryRef<TData>` — existing callers must use `.promise` or destructure `data`/`error`/`loading` reactive refs.
@@ -98,6 +100,7 @@
   - "Resolve workflow inputs" step derives version, npm tag, and branch from event type (push vs dispatch)
 
 ### Fixed
+
 - **Build pipeline** — all 19 packages now build successfully:
   - `cache`, `client`, `core`, `dev-server`, `fragments`, `downloader`, `codegen`, `ssr`, `subscriptions`, `middlewares`, `pagination`, `persisted-queries`, `file-upload`, `debugging`, `testing`, `apollo-adapter`, `opentelemetry`, `react`, `vue`
   - Build order `cache → client → core` ensures cross-package symlinks exist before compilation
@@ -112,11 +115,13 @@
 ## [1.1.6] — 2026-07-01
 
 ### Added
+
 - **`@dumbql/dev-server` `--static` flag** — serve pre-built static files instead of proxying to a dev server.
   - Usage: `dumbql-dev --port 4200 --static dist/browser`
   - All PNA/CORS headers are applied to static responses
 
 ### Changed
+
 - **StackBlitz starters** — `dumbql-dev` starts immediately, loads loading page while `ng build` / `vite build` runs in background via `spawn.cmd` config. When build completes, static files are served automatically.
   - `package.json` start: just `dumbql-dev --port 4200`
   - `dumbql.config.json`: `{ spawn: { cmd: "ng build" }, staticDir: "dist/browser" }`
@@ -124,26 +129,31 @@
   - No hardcoded localhost URLs — all traffic through StackBlitz public HTTPS URL, no PNA block
 
 ### Fixed
+
 - **StackBlitz preview white page** — credentialless iframe blocks all `localhost:*` requests at the browser level (PNA). Build + static approach keeps all traffic on a single container port through StackBlitz's HTTPS proxy. dumbql-dev starts immediately so the port is always open, serving loading page until build finishes.
 
 ## [1.1.7] — 2026-07-01
 
 ### Changed
+
 - **`staticDir` auto-detection** — when `staticDir` is set, the server now checks both `index.html` and `browser/index.html` inside the directory. Handles both Angular output structures (`dist/` or `dist/browser/`).
 
 ## [1.1.5] — 2026-07-01
 
 ### Added
+
 - **Proxy content-aware buffering** — proxy now buffers HTML responses and checks for meaningful content before forwarding. If `ng serve`/Vite returns an empty stub page (as happens during initial build), the proxy shows the loading page instead.
 
 ## [1.1.4] — 2026-07-01
 
 ### Added
+
 - **`@dumbql/dev-server` `--static` flag** — initial implementation.
 
 ## [1.1.3] — 2026-07-01
 
 ### Added
+
 - **`@dumbql/dev-server`** — unified development server with mock GraphQL backend + proxy to any frontend dev server:
   - CLI — `npx dumbql-dev --proxy http://localhost:4200`
   - Configuration via `dumbql.config.json` with inline schema support
@@ -156,12 +166,14 @@
 - **Improved starters** — `start` command simplified to just `dumbql-dev` (spawn.cmd handles frontend server), version ranges bumped to latest
 
 ### Changed
+
 - File-based starters (angular/react/vue) now use `dumbql-dev` as the sole start command instead of separate terminals
 - Version dropdown migrated to `tuiComboBox` with read-only input, docs-themed styling
 - Non-existent versions removed from version selector (0.0.9, 0.0.11, 0.0.12, 0.0.2-rc.1, 0.0.2-rc.2)
 - `@dumbql/dev-server` version bumped `^1.0.0` → `^1.1.3` in all starters
 
 ### Fixed
+
 - **CI `package-lock.json`** — regenerated lock file to remove stale workspace symlink entries that caused `npm ci` to fail with "Missing: @dumbql/cache@1.0.3 from lock file"
 - **StackBlitz preview fix** — all three StackBlitz starters (Angular, React, Vue) now start with just `dumbql-dev` and spawn the frontend dev server internally via `spawn.cmd`. StackBlitz auto-detects port 4000 first, so the preview opens through the proxy with URL rewriting enabled (`proxy.rewrite: true`), avoiding PNA/CORS blocks from `credentialless` iframes
 - **URL rewriting** — proxy now uses `ProxyConfig.target` dynamically instead of hardcoded `localhost:4200`, works for any frontend framework (React/Vue/Angular)
@@ -170,6 +182,7 @@
 ## [0.0.3-rc.1] — 2026-06-30
 
 ### Added
+
 - **FieldPolicy (typePolicies) support** in `@dumbql/cache`:
   - `TypePolicy` interface with `keyFields` (composite keys via dot-separated values) and custom `merge` functions
   - `NormalizedCache.setTypePolicies()` — configure policies at runtime
@@ -187,11 +200,13 @@
 - **`tools/generate-types.mjs`** refactored to use `@dumbql/codegen` library instead of duplicating schema generation / merge logic; now generates typed documents from `.graphql` files
 
 ### Changed
+
 - Version bumped from `0.0.2-rc.4` → `0.0.3-rc.1` across all 18 packages
 
 ## [0.0.2-rc.4] — 2026-06-29
 
 ### Added
+
 - **React/Vue hooks v2** — all three hooks (`useQuery`, `useMutation`, `useSubscription`) now accept an options object with:
   - `onCompleted` / `onError` callbacks for side effects
   - `errorCode` in return value for typed error handling
@@ -213,12 +228,14 @@
 - **Apollo adapter** added to build order in `scripts/build-packages.mjs`
 
 ### Changed
+
 - **Backward-incompatible**: `useQuery`, `useMutation`, `useSubscription` in `@dumbql/react` and `@dumbql/vue` now accept an options object as second argument instead of positional `variables`. Update: `useQuery(doc, { variables })` instead of `useQuery(doc, variables)`.
 - Version bumped from `0.0.2-rc.2` → `0.0.2-rc.4` across all 19 packages
 
 ## [0.0.2-alpha.1] — 2026-06-29
 
 ### Added
+
 - **`@dumbql/errors`** — typed error classes for GraphQL, network, cache, validation errors with `ErrorHandler` (#542e556)
   - `DumbqlError` — base class with `code`, `timestamp`, `context`, `toJSON()`
   - `GraphQLError` — server-side GraphQL errors (locations, path, extensions)
@@ -231,6 +248,7 @@
 - **`errorHandlerMiddleware()`** — new middleware in `@dumbql/middlewares` that catches pipeline errors and routes through custom handler (#542e556)
 
 ### Fixed
+
 - **CI release workflow** — two bugs fixed (#a10da8d):
   - `scripts/build-packages.mjs`: `linkPackage()` now creates `node_modules/@dumbql/` parent directory before symlink (crashed on fresh CI)
   - `.github/workflows/release.yml`: `require()` paths prefixed with `./` — without it Node.js resolves them as module names, not relative paths
@@ -238,10 +256,12 @@
 - **GraphQLResult type** — error variant no longer includes nullable `data` field when server returns `{"data": null, "errors": [...]}` (already worked correctly, confirmed by review)
 
 ### Changed
+
 - Version bumped from `0.0.2-rc.2` → `0.0.2-alpha.1` across all 17 packages
 - README updated with auto-mock, prefetch, playground, starters as adoption reasons
 
 ### Starters
+
 - **React StackBlitz starter** at `starters/react/` — Vite + React 18 + `@dumbql/react` + mock backend
 - **Vue StackBlitz starter** at `starters/vue/` — Vite + Vue 3 + `@dumbql/vue` + mock backend
 - Docs getting-started replaced "coming soon" placeholders with live StackBlitz links
@@ -249,17 +269,20 @@
 ## [0.0.2-rc.2] — 2026-06-29
 
 ### Added
+
 - **Auto-mock middleware** — `autoMockMiddleware(config)` in `@dumbql/middlewares` — schema-driven or heuristic mock data generation with custom resolvers, simulated delay, and passthrough mode
 - **Prefetch resolver** — `prefetchedRoute(route, prefetch)` and `fromPrefeched(route, key)` in `@dumbql/core` — Angular Router `ResolveFn` that executes queries before route activation, resolves data into `ActivatedRoute.data`
 - **GraphQL Playground** at `/playground` — standalone component with query/variables/headers editors, execute button, JSON response viewer, execution history
 - NPM_TOKEN added to GitHub repo secrets
 
 ### Changed
+
 - Version bumped from `0.0.2-rc.1` → `0.0.2-rc.2` across all 16 packages
 
 ## [0.0.2-rc.1] — 2026-06-28
 
 ### Added
+
 - Initial public release candidate
 - `@dumbql/cache` — normalized in-memory entity cache with GC, persistence, optimistic updates
 - `@dumbql/core` — Angular GraphQL service with middleware pipeline, directives, pipes

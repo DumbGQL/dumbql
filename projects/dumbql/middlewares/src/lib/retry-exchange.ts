@@ -41,9 +41,7 @@ export function retryExchange(config?: RetryExchangeConfig): GraphqlMiddleware {
 					}
 					attempts++;
 					const delay = calculateDelay(attempts, config ?? {});
-					return timer(delay).pipe(
-						mergeMap(() => attempt()),
-					);
+					return timer(delay).pipe(mergeMap(() => attempt()));
 				}),
 			);
 		}

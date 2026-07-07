@@ -4,14 +4,14 @@ import type { DocumentNode, GraphQLResult } from '@dumbql/core';
 import { GraphqlService } from '@dumbql/core';
 
 export interface GraphqlDebugEntry {
-  type: 'query' | 'mutate';
-  document: string;
-  variables?: Record<string, unknown>;
-  timestamp: number;
-  duration: number;
-  result: GraphQLResult<unknown>;
-  operationName?: string;
-  fields?: string[];
+	type: 'query' | 'mutate';
+	document: string;
+	variables?: Record<string, unknown>;
+	timestamp: number;
+	duration: number;
+	result: GraphQLResult<unknown>;
+	operationName?: string;
+	fields?: string[];
 }
 
 function extractOperationName(query: string): string | undefined {
@@ -30,8 +30,12 @@ function extractFields(query: string): string[] {
 		if (!trimmed) continue;
 
 		for (const c of trimmed) {
-			if (c === '{') { depth++; }
-			else if (c === '}') { depth--; if (path.length) path.pop(); }
+			if (c === '{') {
+				depth++;
+			} else if (c === '}') {
+				depth--;
+				if (path.length) path.pop();
+			}
 		}
 
 		const match = trimmed.match(/^\s*(\w+)/);
@@ -49,69 +53,69 @@ function extractFields(query: string): string[] {
 
 @Injectable({ providedIn: 'root' })
 export class GraphqlDebugService {
-  private readonly svc = inject(GraphqlService);
+	private readonly svc = inject(GraphqlService);
 
-  readonly entries: GraphqlDebugEntry[] = [];
-  enabled = true;
+	readonly entries: GraphqlDebugEntry[] = [];
+	enabled = true;
 
-  private push(entry: GraphqlDebugEntry): void {
-  	if (this.entries.length > 500) {
-  		this.entries.splice(0, this.entries.length - 500);
-  	}
-  	this.entries.push(entry);
-  }
+	private push(entry: GraphqlDebugEntry): void {
+		if (this.entries.length > 500) {
+			this.entries.splice(0, this.entries.length - 500);
+		}
+		this.entries.push(entry);
+	}
 
-  query<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-  	document: DocumentNode,
-  	variables?: TVariables,
-  ): Observable<GraphQLResult<TResponse>> {
-  	const start = performance.now();
-  	const printed = document.loc?.source?.body ?? '(unknown)';
+	query<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+		document: DocumentNode,
+		variables?: TVariables,
+	): Observable<GraphQLResult<TResponse>> {
+		const start = performance.now();
+		const printed = document.loc?.source?.body ?? '(unknown)';
 
-  	return this.svc.query<TResponse, TVariables>(document, variables).pipe(
-  		tap((result) => {
-  			if (this.enabled) {
-  				this.push({
-  					type: 'query',
-  					document: printed,
-  					variables: variables as Record<string, unknown> | undefined,
-  					timestamp: start,
-  					duration: performance.now() - start,
-  					result: result as GraphQLResult<unknown>,
-  					operationName: extractOperationName(printed),
-  					fields: extractFields(printed),
-  				});
-  			}
-  		}),
-  	);
-  }
+		return this.svc.query<TResponse, TVariables>(document, variables).pipe(
+			tap((result) => {
+				if (this.enabled) {
+					this.push({
+						type: 'query',
+						document: printed,
+						variables: variables as Record<string, unknown> | undefined,
+						timestamp: start,
+						duration: performance.now() - start,
+						result: result as GraphQLResult<unknown>,
+						operationName: extractOperationName(printed),
+						fields: extractFields(printed),
+					});
+				}
+			}),
+		);
+	}
 
-  mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
-  	document: DocumentNode,
-  	variables?: TVariables,
-  ): Observable<GraphQLResult<TResponse>> {
-  	const start = performance.now();
-  	const printed = document.loc?.source?.body ?? '(unknown)';
+	mutate<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+		document: DocumentNode,
+		variables?: TVariables,
+	): Observable<GraphQLResult<TResponse>> {
+		const start = performance.now();
+		const printed = document.loc?.source?.body ?? '(unknown)';
 
-  	return this.svc.mutate<TResponse, TVariables>(document, variables).pipe(
-  		tap((result) => {
-  			if (this.enabled) {
-  				this.push({
-  					type: 'mutate',
-  					document: printed,
-  					variables: variables as Record<string, unknown> | undefined,
-  					timestamp: start,
-  					duration: performance.now() - start,
-  					result: result as GraphQLResult<unknown>,
-  					operationName: extractOperationName(printed),
-  					fields: extractFields(printed),
-  				});
-  			}
-  		}),
-  	);
-  }
+		return this.svc.mutate<TResponse, TVariables>(document, variables).pipe(
+			tap((result) => {
+				if (this.enabled) {
+					this.push({
+						type: 'mutate',
+						document: printed,
+						variables: variables as Record<string, unknown> | undefined,
+						timestamp: start,
+						duration: performance.now() - start,
+						result: result as GraphQLResult<unknown>,
+						operationName: extractOperationName(printed),
+						fields: extractFields(printed),
+					});
+				}
+			}),
+		);
+	}
 
-  clear(): void {
-  	this.entries.length = 0;
-  }
+	clear(): void {
+		this.entries.length = 0;
+	}
 }

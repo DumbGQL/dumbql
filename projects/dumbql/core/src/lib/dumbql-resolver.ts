@@ -16,7 +16,9 @@ function resolveVariables<TVars extends Record<string, unknown>>(
 	def: PrefetchDefinition<TVars>,
 	route: ActivatedRouteSnapshot,
 ): TVars | undefined {
-	return typeof def.variables === 'function' ? (def.variables as (r: ActivatedRouteSnapshot) => TVars)(route) : def.variables;
+	return typeof def.variables === 'function'
+		? (def.variables as (r: ActivatedRouteSnapshot) => TVars)(route)
+		: def.variables;
 }
 
 function prefetchResolverFn(def: PrefetchDefinition): ResolveFn<GraphQLResult<unknown>> {

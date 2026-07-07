@@ -1,92 +1,92 @@
 <div class="docs-layout">
-  @if (sidebar.open()) {
-    <button class="sidebar-overlay" (click)="closeSidebar()" aria-label="Close sidebar"></button>
-  }
+	@if (sidebar.open()) {
+		<button class="sidebar-overlay" (click)="closeSidebar()" aria-label="Close sidebar"></button>
+	}
 
-  <aside class="docs-sidebar" [class.open]="sidebar.open()">
-    <div class="sidebar-header">
-      <div class="sidebar-title">Documentation</div>
-      <button
-        tuiIconButton
-        type="button"
-        iconStart="@tui.x"
-        appearance="flat"
-        size="s"
-        class="sidebar-close"
-        (click)="closeSidebar()"
-        aria-label="Close sidebar"
-      ></button>
-    </div>
-    <div class="sidebar-version">
-      <label class="version-label" for="sidebar-version-input">Version</label>
-      <button
-        id="sidebar-version-input"
-        tuiButton
-        appearance="flat"
-        size="s"
-        iconStart="@tui.chevron-down"
-        class="version-select-button"
-        [tuiDropdown]="versionMenu"
-        [tuiDropdownManual]="open()"
-        (tuiActiveZoneChange)="open.set($event)"
-        (tuiObscured)="open.set(false)"
-        (click)="open.update((v) => !v)"
-      >
-        v{{ versionService.currentVersion() }}
-      </button>
-      <ng-template #versionMenu>
-        <tui-data-list>
-          @for (v of versionService.allVersions; track v) {
-            <button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
-          }
-        </tui-data-list>
-      </ng-template>
-    </div>
-    <nav class="sidebar-nav">
-      @for (item of navItems(); track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: false }"
-          class="nav-link"
-          (click)="closeSidebar()"
-        >
-          {{ item.label }}
-        </a>
-      }
-    </nav>
-    <div class="sidebar-footer">
-      <a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub →</a>
-    </div>
-  </aside>
-  <div class="docs-content">
-    @if (contentLoading()) {
-      <div class="docs-loader">
-        <app-logo size="icon" class="docs-loader-logo" />
-      </div>
-    }
-    <router-outlet />
-  </div>
+	<aside class="docs-sidebar" [class.open]="sidebar.open()">
+		<div class="sidebar-header">
+			<div class="sidebar-title">Documentation</div>
+			<button
+				tuiIconButton
+				type="button"
+				iconStart="@tui.x"
+				appearance="flat"
+				size="s"
+				class="sidebar-close"
+				(click)="closeSidebar()"
+				aria-label="Close sidebar"
+			></button>
+		</div>
+		<div class="sidebar-version">
+			<label class="version-label" for="sidebar-version-input">Version</label>
+			<button
+				id="sidebar-version-input"
+				tuiButton
+				appearance="flat"
+				size="s"
+				iconStart="@tui.chevron-down"
+				class="version-select-button"
+				[tuiDropdown]="versionMenu"
+				[tuiDropdownManual]="open()"
+				(tuiActiveZoneChange)="open.set($event)"
+				(tuiObscured)="open.set(false)"
+				(click)="open.update((v) => !v)"
+			>
+				v{{ versionService.currentVersion() }}
+			</button>
+			<ng-template #versionMenu>
+				<tui-data-list>
+					@for (v of versionService.allVersions; track v) {
+						<button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
+					}
+				</tui-data-list>
+			</ng-template>
+		</div>
+		<nav class="sidebar-nav">
+			@for (item of navItems(); track item.path) {
+				<a
+					[routerLink]="item.path"
+					routerLinkActive="active"
+					[routerLinkActiveOptions]="{ exact: false }"
+					class="nav-link"
+					(click)="closeSidebar()"
+				>
+					{{ item.label }}
+				</a>
+			}
+		</nav>
+		<div class="sidebar-footer">
+			<a class="repo-link" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub →</a>
+		</div>
+	</aside>
+	<div class="docs-content">
+		@if (contentLoading()) {
+			<div class="docs-loader">
+				<app-logo size="icon" class="docs-loader-logo" />
+			</div>
+		}
+		<router-outlet />
+	</div>
 
-  @if (tocService.sections().length) {
-    @if (tocService.open()) {
-      <button class="toc-overlay" (click)="closeToc()" aria-label="Close table of contents"></button>
-    }
-    <aside class="docs-toc" [class.open]="tocService.open()">
-      <div class="toc-header">
-        <div class="toc-heading">On this page</div>
-        <button
-          tuiIconButton
-          type="button"
-          iconStart="@tui.x"
-          appearance="flat"
-          size="s"
-          class="toc-close"
-          (click)="closeToc()"
-          aria-label="Close table of contents"
-        ></button>
-      </div>
-      <app-docs-toc [sections]="tocService.sections()" />
-    </aside>
-  }
+	@if (tocService.sections().length) {
+		@if (tocService.open()) {
+			<button class="toc-overlay" (click)="closeToc()" aria-label="Close table of contents"></button>
+		}
+		<aside class="docs-toc" [class.open]="tocService.open()">
+			<div class="toc-header">
+				<div class="toc-heading">On this page</div>
+				<button
+					tuiIconButton
+					type="button"
+					iconStart="@tui.x"
+					appearance="flat"
+					size="s"
+					class="toc-close"
+					(click)="closeToc()"
+					aria-label="Close table of contents"
+				></button>
+			</div>
+			<app-docs-toc [sections]="tocService.sections()" />
+		</aside>
+	}
 </div>

@@ -1,4 +1,12 @@
-import { Component, viewChild, ElementRef, afterNextRender, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+	Component,
+	viewChild,
+	ElementRef,
+	afterNextRender,
+	DestroyRef,
+	inject,
+	ChangeDetectionStrategy,
+} from '@angular/core';
 
 const SNIPPETS = [
 	'{ posts { id title } }',
@@ -31,15 +39,17 @@ interface TextParticle {
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: '<canvas #canvas></canvas>',
-	styles: [`
-		canvas {
-			position: fixed;
-			inset: 0;
-			z-index: 0;
-			pointer-events: none;
-			display: block;
-		}
-	`],
+	styles: [
+		`
+			canvas {
+				position: fixed;
+				inset: 0;
+				z-index: 0;
+				pointer-events: none;
+				display: block;
+			}
+		`,
+	],
 })
 export class HeroParticles {
 	private readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
@@ -71,11 +81,7 @@ export class HeroParticles {
 		window.addEventListener('resize', resize);
 		this.destroyRef.onDestroy(() => window.removeEventListener('resize', resize));
 
-		const colors = [
-			'rgba(0, 200, 255, VAR)',
-			'rgba(108, 92, 231, VAR)',
-			'rgba(255, 255, 255, VAR)',
-		];
+		const colors = ['rgba(0, 200, 255, VAR)', 'rgba(108, 92, 231, VAR)', 'rgba(255, 255, 255, VAR)'];
 
 		for (let i = 0; i < 12; i++) {
 			this.particles.push(this.spawn(canvas, colors));
@@ -133,10 +139,7 @@ export class HeroParticles {
 						if (dist < 50) {
 							p.opacity -= 0.02;
 						} else {
-							const targetOpacity = Math.min(
-								0.7,
-								Math.max(0.1, 1 - dist / 600),
-							);
+							const targetOpacity = Math.min(0.7, Math.max(0.1, 1 - dist / 600));
 							p.opacity += (targetOpacity - p.opacity) * 0.05;
 						}
 					}
@@ -148,9 +151,7 @@ export class HeroParticles {
 					p.x += (targetX + waveX - p.x) * 0.006;
 					p.y += (targetY + waveY - p.y) * 0.006;
 
-					const scatterDist = Math.sqrt(
-						(p.x - cx) ** 2 + (p.y - cy) ** 2,
-					);
+					const scatterDist = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
 					p.opacity += (0.25 + (1 - Math.min(1, scatterDist / 500)) * 0.3 - p.opacity) * 0.03;
 				}
 

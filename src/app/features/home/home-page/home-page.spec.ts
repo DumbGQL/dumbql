@@ -28,11 +28,7 @@ describe('HomePage', () => {
 		await TestBed.resetTestingModule()
 			.configureTestingModule({
 				imports: [HomePage],
-				providers: [
-					provideHttpClient(),
-					provideRouter([]),
-					provideTaiga(),
-				],
+				providers: [provideHttpClient(), provideRouter([]), provideTaiga()],
 			})
 			.compileComponents();
 

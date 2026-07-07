@@ -18,10 +18,10 @@ export { DevToolsPanelComponent } from './devtools-panel.component';
  * Then add `<dumbql-devtools-panel>` in your root component template.
  */
 export function provideDevToolsPanel(): EnvironmentProviders {
-  return makeEnvironmentProviders([
-    provideAppInitializer(() => {
-      const service = inject(DevToolsService);
-      service.init();
-    }),
-  ]);
+	return makeEnvironmentProviders([
+		provideAppInitializer(() => {
+			const service = inject(DevToolsService);
+			service.init();
+		}),
+	]);
 }

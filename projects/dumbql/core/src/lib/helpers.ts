@@ -18,10 +18,7 @@ export function unwrapOrThrow<T>(result: GraphQLResult<T>): T {
 	return result.data;
 }
 
-export function mapResult<T, U>(
-	result: GraphQLResult<T>,
-	fn: (data: T) => U,
-): GraphQLResult<U> {
+export function mapResult<T, U>(result: GraphQLResult<T>, fn: (data: T) => U): GraphQLResult<U> {
 	if (result.status === 'error') return result as unknown as GraphQLResult<U>;
 	return { status: 'success', data: fn(result.data) };
 }

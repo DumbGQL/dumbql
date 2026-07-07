@@ -1,90 +1,100 @@
 <div class="playground">
-  <h1>GraphQL Playground</h1>
+	<h1>GraphQL Playground</h1>
 
-  <div class="layout">
-    <div class="editor-panel">
-      <div class="field">
-        <label for="query">Query</label>
-        <textarea
-          id="query"
-          class="code-editor"
-          [ngModel]="query()"
-          (ngModelChange)="query.set($event)"
-          rows="12"
-          spellcheck="false"
-        ></textarea>
-      </div>
+	<div class="layout">
+		<div class="editor-panel">
+			<div class="field">
+				<label for="query">Query</label>
+				<textarea
+					id="query"
+					class="code-editor"
+					[ngModel]="query()"
+					(ngModelChange)="query.set($event)"
+					rows="12"
+					spellcheck="false"
+				></textarea>
+			</div>
 
-      <div class="field-row">
-        <div class="field">
-          <label for="variables">Variables (JSON)</label>
-          <textarea
-            id="variables"
-            class="code-editor"
-            [ngModel]="variables()"
-            (ngModelChange)="variables.set($event)"
-            rows="6"
-            spellcheck="false"
-          ></textarea>
-        </div>
+			<div class="field-row">
+				<div class="field">
+					<label for="variables">Variables (JSON)</label>
+					<textarea
+						id="variables"
+						class="code-editor"
+						[ngModel]="variables()"
+						(ngModelChange)="variables.set($event)"
+						rows="6"
+						spellcheck="false"
+					></textarea>
+				</div>
 
-        <div class="field">
-          <label for="headers">Headers (JSON)</label>
-          <textarea
-            id="headers"
-            class="code-editor"
-            [ngModel]="headers()"
-            (ngModelChange)="headers.set($event)"
-            rows="6"
-            spellcheck="false"
-          ></textarea>
-        </div>
-      </div>
+				<div class="field">
+					<label for="headers">Headers (JSON)</label>
+					<textarea
+						id="headers"
+						class="code-editor"
+						[ngModel]="headers()"
+						(ngModelChange)="headers.set($event)"
+						rows="6"
+						spellcheck="false"
+					></textarea>
+				</div>
+			</div>
 
-      <div class="actions">
-        <button tuiButton size="m" (click)="execute()" [disabled]="loading()">
-          {{ loading() ? 'Executing…' : 'Execute' }}
-        </button>
-      </div>
+			<div class="actions">
+				<button tuiButton size="m" (click)="execute()" [disabled]="loading()">
+					{{ loading() ? 'Executing…' : 'Execute' }}
+				</button>
+			</div>
 
-      @if (error()) {
-        <div class="error-notification">{{ error() }}</div>
-      }
-    </div>
+			@if (error()) {
+				<div class="error-notification">{{ error() }}</div>
+			}
+		</div>
 
-    <div class="response-panel">
-      <h2>Response</h2>
-      @if (loading()) {
-        <div class="loading">Loading...</div>
-      } @else if (result(); as r) {
-        <div class="result">
-          <div class="status-badge" [class.success]="r.status === 'success'" [class.error]="r.status === 'error'">
-            {{ r.status === 'success' ? 'Success' : 'Error' }}
-          </div>
-          <pre class="response-json">{{ formatJson(r) }}</pre>
-        </div>
-      } @else {
-        <div class="placeholder">Execute a query to see the response</div>
-      }
-    </div>
-  </div>
+		<div class="response-panel">
+			<h2>Response</h2>
+			@if (loading()) {
+				<div class="loading">Loading...</div>
+			} @else if (result(); as r) {
+				<div class="result">
+					<div class="status-badge" [class.success]="r.status === 'success'" [class.error]="r.status === 'error'">
+						{{ r.status === 'success' ? 'Success' : 'Error' }}
+					</div>
+					<pre class="response-json">{{ formatJson(r) }}</pre>
+				</div>
+			} @else {
+				<div class="placeholder">Execute a query to see the response</div>
+			}
+		</div>
+	</div>
 
-  @if (history().length > 0) {
-    <div class="history">
-      <div class="history-header">
-        <h2>History</h2>
-        <button tuiButton size="s" appearance="secondary" (click)="clearHistory()">Clear</button>
-      </div>
-      <div class="history-list">
-        @for (entry of history(); track entry.timestamp) {
-          <div class="history-item" (click)="restore(entry)" (keydown.enter)="restore(entry)" tabindex="0" role="button">
-            <code>{{ entry.query.slice(0, 80) }}{{ entry.query.length > 80 ? '…' : '' }}</code>
-            <span class="history-status" [class.success]="entry.result?.status === 'success'" [class.error]="entry.result?.status === 'error'">
-              {{ entry.result?.status === 'success' ? '✓' : '✗' }}
-            </span>
-          </div>
-        }
-      </div>
-    </div>
-  }
+	@if (history().length > 0) {
+		<div class="history">
+			<div class="history-header">
+				<h2>History</h2>
+				<button tuiButton size="s" appearance="secondary" (click)="clearHistory()">Clear</button>
+			</div>
+			<div class="history-list">
+				@for (entry of history(); track entry.timestamp) {
+					<div
+						class="history-item"
+						(click)="restore(entry)"
+						(keydown.enter)="restore(entry)"
+						tabindex="0"
+						role="button"
+					>
+						<code>{{ entry.query.slice(0, 80) }}{{ entry.query.length > 80 ? '…' : '' }}</code>
+						<span
+							class="history-status"
+							[class.success]="entry.result?.status === 'success'"
+							[class.error]="entry.result?.status === 'error'"
+						>
+							{{ entry.result?.status === 'success' ? '✓' : '✗' }}
+						</span>
+					</div>
+				}
+			</div>
+		</div>
+	}
 </div>

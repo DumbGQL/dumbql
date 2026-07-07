@@ -25,9 +25,11 @@ export function authRefreshMiddleware(config: AuthRefreshConfig): GraphqlMiddlew
 			return next(request).pipe(
 				switchMap((result) => {
 					const httpStatus = result.status === 'error' ? result.networkError?.status : undefined;
-					const isAuthError = result.status === 'error'
-						&& triggerStatuses.size > 0
-						&& (httpStatus !== undefined && triggerStatuses.has(httpStatus));
+					const isAuthError =
+						result.status === 'error' &&
+						triggerStatuses.size > 0 &&
+						httpStatus !== undefined &&
+						triggerStatuses.has(httpStatus);
 
 					if (!isAuthError || attempts >= maxAttempts) {
 						return of(result);
@@ -44,15 +46,21 @@ export function authRefreshMiddleware(config: AuthRefreshConfig): GraphqlMiddlew
 					isRefreshing = true;
 					const token$ = config.refreshToken();
 
-					const obs$ = token$ instanceof Observable
-						? token$
-						: token$ instanceof Promise
-							? new Observable<string>((sub) => {
-								token$.then((t) => {
-									sub.next(t); sub.complete();
-								}).catch((e: unknown) => { sub.error(e); });
-							})
-							: of(token$);
+					const obs$ =
+						token$ instanceof Observable
+							? token$
+							: token$ instanceof Promise
+								? new Observable<string>((sub) => {
+									token$
+										.then((t) => {
+											sub.next(t);
+											sub.complete();
+										})
+										.catch((e: unknown) => {
+											sub.error(e);
+										});
+								})
+								: of(token$);
 
 					return obs$.pipe(
 						tap((newToken) => {

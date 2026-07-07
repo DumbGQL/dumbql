@@ -9,20 +9,20 @@ import { type GraphqlMiddleware, type GraphQLResult } from '@dumbql/core';
  * of creating a new HTTP request.
  */
 export function dedupMiddleware(): GraphqlMiddleware {
-  const inFlight = new Map<string, Observable<GraphQLResult<unknown>>>();
+	const inFlight = new Map<string, Observable<GraphQLResult<unknown>>>();
 
-  return (request, next) => {
-    const key = request.type + '|' + request.query + '|' + JSON.stringify(request.variables ?? {});
+	return (request, next) => {
+		const key = request.type + '|' + request.query + '|' + JSON.stringify(request.variables ?? {});
 
-    const existing = inFlight.get(key);
-    if (existing) return existing;
+		const existing = inFlight.get(key);
+		if (existing) return existing;
 
-    const shared$ = next(request).pipe(
-      share(),
-      finalize(() => inFlight.delete(key)),
-    );
+		const shared$ = next(request).pipe(
+			share(),
+			finalize(() => inFlight.delete(key)),
+		);
 
-    inFlight.set(key, shared$);
-    return shared$;
-  };
+		inFlight.set(key, shared$);
+		return shared$;
+	};
 }

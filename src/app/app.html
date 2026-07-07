@@ -1,72 +1,72 @@
 <tui-root>
-  <app-null-overlay />
-  <header class="app-header">
-    @if (showDocsMenu()) {
-      <button
-        tuiIconButton
-        type="button"
-        iconStart="@tui.menu"
-        appearance="flat"
-        size="s"
-        class="docs-menu-btn"
-        (click)="sidebar.toggle()"
-        aria-label="Toggle sidebar"
-      ></button>
-      @if (tocService.sections().length) {
-        <button
-          tuiIconButton
-          type="button"
-          iconStart="@tui.list"
-          appearance="flat"
-          size="s"
-          class="docs-toc-btn"
-          (click)="tocService.toggle()"
-          aria-label="Toggle table of contents"
-        ></button>
-      }
-    }
-    <a class="app-logo" routerLink="/">
-      <app-logo size="icon" />
-      <span class="app-name">DumbQL</span>
-    </a>
-    <nav class="app-nav">
-      <a tuiLink routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-      <a tuiLink routerLink="/docs" routerLinkActive="active">Docs</a>
-      <a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
-      <a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
-    </nav>
-    <button
-      tuiButton
-      appearance="flat"
-      size="s"
-      iconStart="@tui.chevron-down"
-      class="version-select"
-      [tuiDropdown]="versionMenu"
-      [tuiDropdownManual]="open()"
-      (tuiActiveZoneChange)="open.set($event)"
-      (tuiObscured)="open.set(false)"
-      (click)="open.update((v) => !v)"
-    >
-      v{{ versionService.currentVersion() }}
-    </button>
-    <ng-template #versionMenu>
-      <tui-data-list>
-        @for (v of versionService.allVersions; track v) {
-          <button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
-        }
-      </tui-data-list>
-    </ng-template>
-    <button tuiButton appearance="secondary" size="s" class="theme-toggle" (click)="toggleTheme()">
-      {{ isDarkMode() ? '☀️' : '🌙' }}
-    </button>
-  </header>
-  <main class="app-main">
-    <div class="app-loader" [class.app-loader--hidden]="!loading()">
-      <app-logo size="icon" class="app-loader-logo" />
-    </div>
-    <router-outlet class="app-outlet" />
-  </main>
-  <footer class="app-footer">
-    <span>DumbQL — GraphQL for the rest of us</span>
-  </footer>
+	<app-null-overlay />
+	<header class="app-header">
+		@if (showDocsMenu()) {
+			<button
+				tuiIconButton
+				type="button"
+				iconStart="@tui.menu"
+				appearance="flat"
+				size="s"
+				class="docs-menu-btn"
+				(click)="sidebar.toggle()"
+				aria-label="Toggle sidebar"
+			></button>
+			@if (tocService.sections().length) {
+				<button
+					tuiIconButton
+					type="button"
+					iconStart="@tui.list"
+					appearance="flat"
+					size="s"
+					class="docs-toc-btn"
+					(click)="tocService.toggle()"
+					aria-label="Toggle table of contents"
+				></button>
+			}
+		}
+		<a class="app-logo" routerLink="/">
+			<app-logo size="icon" />
+			<span class="app-name">DumbQL</span>
+		</a>
+		<nav class="app-nav">
+			<a tuiLink routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+			<a tuiLink routerLink="/docs" routerLinkActive="active">Docs</a>
+			<a tuiLink routerLink="/playground" routerLinkActive="active">Playground</a>
+			<a tuiLink href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">GitHub</a>
+		</nav>
+		<button
+			tuiButton
+			appearance="flat"
+			size="s"
+			iconStart="@tui.chevron-down"
+			class="version-select"
+			[tuiDropdown]="versionMenu"
+			[tuiDropdownManual]="open()"
+			(tuiActiveZoneChange)="open.set($event)"
+			(tuiObscured)="open.set(false)"
+			(click)="open.update((v) => !v)"
+		>
+			v{{ versionService.currentVersion() }}
+		</button>
+		<ng-template #versionMenu>
+			<tui-data-list>
+				@for (v of versionService.allVersions; track v) {
+					<button type="button" tuiOption (click)="versionService.setVersion(v); open.set(false)">v{{ v }}</button>
+				}
+			</tui-data-list>
+		</ng-template>
+		<button tuiButton appearance="secondary" size="s" class="theme-toggle" (click)="toggleTheme()">
+			{{ isDarkMode() ? '☀️' : '🌙' }}
+		</button>
+	</header>
+	<main class="app-main">
+		<div class="app-loader" [class.app-loader--hidden]="!loading()">
+			<app-logo size="icon" class="app-loader-logo" />
+		</div>
+		<router-outlet class="app-outlet" />
+	</main>
+	<footer class="app-footer">
+		<span>DumbQL — GraphQL for the rest of us</span>
+	</footer>
 </tui-root>

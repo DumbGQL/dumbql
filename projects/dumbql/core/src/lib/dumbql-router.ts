@@ -8,9 +8,18 @@ export const ROUTE_GUARD_MAP = new InjectionToken<Record<string, DumbqlRouteGuar
 
 function toObservable(value: boolean | Observable<boolean> | Promise<boolean>): Observable<boolean> {
 	if (isObservable(value)) return value;
-	if (value instanceof Promise) return new Observable<boolean>((sub) => {
-		value.then((v) => { sub.next(v); sub.complete(); }).catch(() => { sub.next(false); sub.complete(); });
-	});
+	if (value instanceof Promise)
+		return new Observable<boolean>((sub) => {
+			value
+				.then((v) => {
+					sub.next(v);
+					sub.complete();
+				})
+				.catch(() => {
+					sub.next(false);
+					sub.complete();
+				});
+		});
 	return of(value);
 }
 
@@ -33,14 +42,19 @@ export function canActivateWithGuards(...guardKeys: string[]): CanActivateFn {
 				}
 				const guard = guards[idx++];
 				let result: boolean | Observable<boolean> | Promise<boolean>;
-				try { result = guard(); } catch {
+				try {
+					result = guard();
+				} catch {
 					sub.next(false);
 					sub.complete();
 					return;
 				}
 				toObservable(result).subscribe({
-					next: (ok) => ok ? check() : (sub.next(false), sub.complete()),
-					error: () => { sub.next(false); sub.complete(); },
+					next: (ok) => (ok ? check() : (sub.next(false), sub.complete())),
+					error: () => {
+						sub.next(false);
+						sub.complete();
+					},
 				});
 			};
 			check();
@@ -59,8 +73,5 @@ export function provideDumbqlRouter(
 	routes: Routes,
 	guards: Record<string, DumbqlRouteGuard>,
 ): (Provider | EnvironmentProviders)[] {
-	return [
-		{ provide: ROUTE_GUARD_MAP, useValue: guards },
-		provideRouter(routes),
-	];
+	return [{ provide: ROUTE_GUARD_MAP, useValue: guards }, provideRouter(routes)];
 }

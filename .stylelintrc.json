@@ -1,14 +1,17 @@
 {
-  "extends": "stylelint-config-standard-scss",
-  "rules": {
-    "property-no-vendor-prefix": [true, {
-      "ignoreProperties": [
-        "backdrop-filter",
-        "background-clip"
-      ]
-    }],
-    "selector-pseudo-element-no-unknown": [true, {
-      "ignorePseudoElements": ["ng-deep"]
-    }]
-  }
+	"extends": "stylelint-config-standard-scss",
+	"rules": {
+		"property-no-vendor-prefix": [
+			true,
+			{
+				"ignoreProperties": ["backdrop-filter", "background-clip"]
+			}
+		],
+		"selector-pseudo-element-no-unknown": [
+			true,
+			{
+				"ignorePseudoElements": ["ng-deep"]
+			}
+		]
+	}
 }

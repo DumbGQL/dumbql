@@ -1,35 +1,35 @@
 <nav class="toc">
-  <div class="toc-title">On this page</div>
-  <ul class="toc-list">
-    @for (section of sections(); track section.id) {
-      <li class="toc-item">
-        <a
-          class="toc-link"
-          [class.toc-link_active]="activeId() === section.id"
-          (click)="scrollTo(section.id)"
-          (keydown.enter)="scrollTo(section.id)"
-          (keydown.space)="scrollTo(section.id); $event.preventDefault()"
-          tabindex="0"
-          >{{ section.title }}</a
-        >
-        @if (section.children?.length) {
-          <ul class="toc-sublist">
-            @for (child of section.children; track child.id) {
-              <li class="toc-subitem">
-                <a
-                  class="toc-sublink"
-                  [class.toc-sublink_active]="activeId() === child.id"
-                  (click)="scrollTo(child.id)"
-                  (keydown.enter)="scrollTo(child.id)"
-                  (keydown.space)="scrollTo(child.id); $event.preventDefault()"
-                  tabindex="0"
-                  >{{ child.title }}</a
-                >
-              </li>
-            }
-          </ul>
-        }
-      </li>
-    }
-  </ul>
+	<div class="toc-title">On this page</div>
+	<ul class="toc-list">
+		@for (section of sections(); track section.id) {
+			<li class="toc-item">
+				<a
+					class="toc-link"
+					[class.toc-link_active]="activeId() === section.id"
+					(click)="scrollTo(section.id)"
+					(keydown.enter)="scrollTo(section.id)"
+					(keydown.space)="scrollTo(section.id); $event.preventDefault()"
+					tabindex="0"
+					>{{ section.title }}</a
+				>
+				@if (section.children?.length) {
+					<ul class="toc-sublist">
+						@for (child of section.children; track child.id) {
+							<li class="toc-subitem">
+								<a
+									class="toc-sublink"
+									[class.toc-sublink_active]="activeId() === child.id"
+									(click)="scrollTo(child.id)"
+									(keydown.enter)="scrollTo(child.id)"
+									(keydown.space)="scrollTo(child.id); $event.preventDefault()"
+									tabindex="0"
+									>{{ child.title }}</a
+								>
+							</li>
+						}
+					</ul>
+				}
+			</li>
+		}
+	</ul>
 </nav>

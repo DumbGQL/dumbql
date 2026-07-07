@@ -15,25 +15,25 @@ import { TocService } from '../../../../shared/services/toc.service';
 	styleUrl: './epic-fetus.scss',
 })
 export class DocsEpicFetus {
-  private readonly tocService = inject(TocService);
+	private readonly tocService = inject(TocService);
 
-  protected readonly tocSections: TocSection[] = [
-  	{ id: 'what-is', title: 'What is Epic Fetus?' },
-  	{ id: 'how-it-works', title: 'How It Works' },
-  	{ id: 'disabling', title: 'Disabling Epic Fetus' },
-  	{ id: 'framework-adapters', title: 'Framework Adapters' },
-  ];
+	protected readonly tocSections: TocSection[] = [
+		{ id: 'what-is', title: 'What is Epic Fetus?' },
+		{ id: 'how-it-works', title: 'How It Works' },
+		{ id: 'disabling', title: 'Disabling Epic Fetus' },
+		{ id: 'framework-adapters', title: 'Framework Adapters' },
+	];
 
-  constructor() {
-  	this.tocService.sections.set(this.tocSections);
-  }
+	constructor() {
+		this.tocService.sections.set(this.tocSections);
+	}
 
-  protected selectedTabIndex = 0;
+	protected selectedTabIndex = 0;
 
-  protected readonly tabs = ['Docs', 'API', 'Starters'];
+	protected readonly tabs = ['Docs', 'API', 'Starters'];
 
-  protected readonly nullDetectionStarters: StarterCodes = {
-  	vanilla: `import { createClient, gql } from '@dumbql/client';
+	protected readonly nullDetectionStarters: StarterCodes = {
+		vanilla: `import { createClient, gql } from '@dumbql/client';
 import { nullDetectionMiddleware } from '@dumbql/client';
 
 const client = createClient({
@@ -43,7 +43,7 @@ const client = createClient({
 
 // The middleware logs null fields detected in responses
 `,
-  	angular: `import { provideDumbql, provideNullDetection } from '@dumbql/core';
+		angular: `import { provideDumbql, provideNullDetection } from '@dumbql/core';
 import { createHttpLink } from '@dumbql/core/link';
 
 export const appConfig: ApplicationConfig = {
@@ -56,7 +56,7 @@ export const appConfig: ApplicationConfig = {
 // The overlay appears when null fields are detected
 // Toggle with Ctrl+Shift+N
 `,
-  	react: `import { DumbqlProvider, useEpicFetus, NullOverlay } from '@dumbql/react';
+		react: `import { DumbqlProvider, useEpicFetus, NullOverlay } from '@dumbql/react';
 import { createClient } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
@@ -75,7 +75,7 @@ function App() {
 // NullOverlay shows a fixed-position indicator
 // when null fields are detected in GraphQL responses
 `,
-  	vue: `import { createDumbqlPlugin, useEpicFetus, NullOverlay } from '@dumbql/vue';
+		vue: `import { createDumbqlPlugin, useEpicFetus, NullOverlay } from '@dumbql/vue';
 import { createClient } from '@dumbql/client';
 import { createApp } from 'vue';
 
@@ -96,9 +96,9 @@ useEpicFetus();
 // NullOverlay shows a floating indicator
 // when null fields are detected
 `,
-  };
+	};
 
-  protected readonly nullOverlayCode = `import { provideNullDetection } from '@dumbql/core';
+	protected readonly nullOverlayCode = `import { provideNullDetection } from '@dumbql/core';
 import { NullOverlay } from '@dumbql/core';
 
 export const appConfig: ApplicationConfig = {
@@ -107,7 +107,7 @@ export const appConfig: ApplicationConfig = {
   ],
 };`;
 
-  protected readonly reactHookCode = `import { useEpicFetus } from '@dumbql/react';
+	protected readonly reactHookCode = `import { useEpicFetus } from '@dumbql/react';
 
 function App() {
   const detection = useEpicFetus();
@@ -121,18 +121,18 @@ function App() {
   );
 }`;
 
-  protected readonly vueComposableCode = `<script setup>
+	protected readonly vueComposableCode = `<script setup>
 import { useEpicFetus } from '@dumbql/vue';
 
 const detection = useEpicFetus();
 <\/script>`;
 
-  protected readonly extensionDisableCode = `// In the browser extension popup, toggle:
+	protected readonly extensionDisableCode = `// In the browser extension popup, toggle:
 // "Enable null detection animation" → OFF
 
 // Or remove the extension entirely.`;
 
-  protected readonly configDisableCode = `// Angular — simply omit the provider:
+	protected readonly configDisableCode = `// Angular — simply omit the provider:
 import { provideGraphql } from '@dumbql/core';
 
 export const appConfig: ApplicationConfig = {

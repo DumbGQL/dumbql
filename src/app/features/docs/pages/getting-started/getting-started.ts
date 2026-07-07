@@ -10,34 +10,34 @@ import { VersionService } from '../../../../shared/services/version.service';
 import { StackblitzStarterService } from '../../../../shared/stackblitz/stackblitz-starter.service';
 
 @Component({
-  selector: 'app-docs-getting-started',
-  standalone: true,
-  imports: [TuiNotification, TuiBadge, RouterLink, DocsToc, AnchorDirective],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './getting-started.html',
-  styleUrl: './getting-started.scss',
+	selector: 'app-docs-getting-started',
+	standalone: true,
+	imports: [TuiNotification, TuiBadge, RouterLink, DocsToc, AnchorDirective],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './getting-started.html',
+	styleUrl: './getting-started.scss',
 })
 export class DocsGettingStarted {
-  private readonly tocService = inject(TocService);
+	private readonly tocService = inject(TocService);
 
-  protected readonly versionService = inject(VersionService);
-  protected readonly sandbox = inject(StackblitzStarterService);
+	protected readonly versionService = inject(VersionService);
+	protected readonly sandbox = inject(StackblitzStarterService);
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'install', title: 'Install' },
-    { id: 'configure', title: 'Configure' },
-    { id: 'first-query', title: 'Your First Query' },
-    { id: 'starters', title: 'Starters' },
-    { id: 'next-steps', title: 'Next Steps' },
-  ];
+	protected readonly tocSections: TocSection[] = [
+		{ id: 'install', title: 'Install' },
+		{ id: 'configure', title: 'Configure' },
+		{ id: 'first-query', title: 'Your First Query' },
+		{ id: 'starters', title: 'Starters' },
+		{ id: 'next-steps', title: 'Next Steps' },
+	];
 
-  constructor() {
-    this.tocService.sections.set(this.tocSections);
-  }
+	constructor() {
+		this.tocService.sections.set(this.tocSections);
+	}
 
-  protected readonly installCode = 'npm install @dumbql/client';
+	protected readonly installCode = 'npm install @dumbql/client';
 
-  protected readonly configureCode = `import { createClient } from '@dumbql/client';
+	protected readonly configureCode = `import { createClient } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
 
@@ -46,7 +46,7 @@ const client = createClient({ endpoint: '/graphql' });
 // - Vue:   app.use(createDumbqlPlugin(client))
 // - Angular: import { provideGraphql } from '@dumbql/core'`;
 
-  protected readonly firstQueryCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
+	protected readonly firstQueryCode = `import { createClient, gql, isSuccess } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
 

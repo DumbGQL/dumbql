@@ -4,66 +4,57 @@ import { Observable, catchError, of } from 'rxjs';
 import { print, type DocumentNode, type DumbqlConfig, DUMBQL_CONFIG } from '@dumbql/core';
 
 export interface FileEntry {
-  path: string;
-  file: Blob;
+	path: string;
+	file: Blob;
 }
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
-  private readonly http = inject(HttpClient);
-  private readonly config: DumbqlConfig =
-    inject(DUMBQL_CONFIG, { optional: true }) ?? { endpoint: '/graphql' } as DumbqlConfig;
+	private readonly http = inject(HttpClient);
+	private readonly config: DumbqlConfig =
+		inject(DUMBQL_CONFIG, { optional: true }) ?? ({ endpoint: '/graphql' } as DumbqlConfig);
 
-  upload<T>(
-  	document: DocumentNode,
-  	variables: Record<string, unknown>,
-  ): Observable<{ data?: T; errors?: { message: string }[] }> {
-  	const query = print(document);
-  	const files: FileEntry[] = [];
-  	const cleanedVariables = replaceFiles(variables, files, []);
+	upload<T>(
+		document: DocumentNode,
+		variables: Record<string, unknown>,
+	): Observable<{ data?: T; errors?: { message: string }[] }> {
+		const query = print(document);
+		const files: FileEntry[] = [];
+		const cleanedVariables = replaceFiles(variables, files, []);
 
-  	const operations = JSON.stringify({ query, variables: cleanedVariables });
-  	const map_: Record<string, string[]> = {};
-  	for (const [index, entry] of files.entries()) {
-  		map_[String(index)] = [entry.path];
-  	}
+		const operations = JSON.stringify({ query, variables: cleanedVariables });
+		const map_: Record<string, string[]> = {};
+		for (const [index, entry] of files.entries()) {
+			map_[String(index)] = [entry.path];
+		}
 
-  	const formData = new FormData();
-  	formData.append('operations', operations);
-  	formData.append('map', JSON.stringify(map_));
+		const formData = new FormData();
+		formData.append('operations', operations);
+		formData.append('map', JSON.stringify(map_));
 
-  	for (const [index, entry] of files.entries()) {
-  		formData.append(String(index), entry.file);
-  	}
+		for (const [index, entry] of files.entries()) {
+			formData.append(String(index), entry.file);
+		}
 
-  	return this.http.post<{ data?: T; errors?: { message: string }[] }>(
-  		this.config.endpoint!,
-  		formData,
-  	).pipe(
-  		catchError((error: unknown) => {
-  			if (error instanceof HttpErrorResponse) {
-  				return of({ errors: [{ message: error.message }] });
-  			}
-  			return of({ errors: [{ message: 'Upload failed' }] });
-  		}),
-  	);
-  }
+		return this.http.post<{ data?: T; errors?: { message: string }[] }>(this.config.endpoint!, formData).pipe(
+			catchError((error: unknown) => {
+				if (error instanceof HttpErrorResponse) {
+					return of({ errors: [{ message: error.message }] });
+				}
+				return of({ errors: [{ message: 'Upload failed' }] });
+			}),
+		);
+	}
 }
 
-function replaceFiles(
-	value: unknown,
-	files: FileEntry[],
-	segments: string[],
-): unknown {
+function replaceFiles(value: unknown, files: FileEntry[], segments: string[]): unknown {
 	if (value instanceof File || value instanceof Blob) {
 		files.push({ path: `variables.${segments.join('.')}`, file: value });
 		return null;
 	}
 
 	if (Array.isArray(value)) {
-		return value.map((item, index) =>
-			replaceFiles(item, files, [...segments, String(index)]),
-		);
+		return value.map((item, index) => replaceFiles(item, files, [...segments, String(index)]));
 	}
 
 	if (value !== null && typeof value === 'object') {

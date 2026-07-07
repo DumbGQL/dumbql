@@ -74,14 +74,14 @@ describe('CacheGc', () => {
 
 	describe('sweep', () => {
 		it('evicts entities dangling longer than TTL', () => {
-	  cache.set(user1);
-	  const localGc = new CacheGc(cache, -1);
-	  localGc.track([user1]);
-	  localGc.release([user1]);
+			cache.set(user1);
+			const localGc = new CacheGc(cache, -1);
+			localGc.track([user1]);
+			localGc.release([user1]);
 
-	  const evicted = localGc.sweep();
-	  expect(evicted).toBe(1);
-	  expect(cache.get('User', '1')).toBeUndefined();
+			const evicted = localGc.sweep();
+			expect(evicted).toBe(1);
+			expect(cache.get('User', '1')).toBeUndefined();
 		});
 
 		it('does not evict entities still within TTL', () => {
@@ -106,14 +106,14 @@ describe('CacheGc', () => {
 		});
 
 		it('returns number of evicted entities', () => {
-	  cache.set(user1);
-	  cache.set(user2);
-	  const localGc = new CacheGc(cache, -1);
-	  localGc.track([user1, user2]);
-	  localGc.release([user1, user2]);
+			cache.set(user1);
+			cache.set(user2);
+			const localGc = new CacheGc(cache, -1);
+			localGc.track([user1, user2]);
+			localGc.release([user1, user2]);
 
-	  const evicted = localGc.sweep();
-	  expect(evicted).toBe(2);
+			const evicted = localGc.sweep();
+			expect(evicted).toBe(2);
 		});
 	});
 

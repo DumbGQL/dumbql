@@ -18,13 +18,14 @@ export function clientDirectiveMiddleware(): GraphqlMiddleware {
 		}
 
 		const cleanedQuery = request.query.replace(CLIENT_DIRECTIVE_RE, '').trim();
-		const hasOnlyClientFields = !cleanedQuery
-			|| cleanedQuery === ''
-			|| cleanedQuery === 'query'
-			|| cleanedQuery === 'mutation'
-			|| cleanedQuery === '{'
-			|| cleanedQuery === '}'
-			|| /^\s*\{\s*\}\s*$/.test(cleanedQuery);
+		const hasOnlyClientFields =
+			!cleanedQuery ||
+			cleanedQuery === '' ||
+			cleanedQuery === 'query' ||
+			cleanedQuery === 'mutation' ||
+			cleanedQuery === '{' ||
+			cleanedQuery === '}' ||
+			/^\s*\{\s*\}\s*$/.test(cleanedQuery);
 
 		if (hasOnlyClientFields) {
 			return of<GraphQLResult<Record<string, unknown>>>({

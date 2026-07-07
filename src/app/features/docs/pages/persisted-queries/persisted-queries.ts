@@ -9,58 +9,63 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-  selector: 'app-docs-persisted-queries',
-  standalone: true,
-  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './persisted-queries.html',
-  styleUrl: './persisted-queries.scss',
+	selector: 'app-docs-persisted-queries',
+	standalone: true,
+	// prettier-ignore
+	imports: [
+		TuiBadge, TuiChip, TuiTabs, TuiTab,
+		DocsToc, AnchorDirective, DocsApiTable,
+		DocsStackblitzStarterComponent,
+	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './persisted-queries.html',
+	styleUrl: './persisted-queries.scss',
 })
 export class DocsPersistedQueries {
-  private readonly tocService = inject(TocService);
+	private readonly tocService = inject(TocService);
 
-  protected readonly versionService = inject(VersionService);
+	protected readonly versionService = inject(VersionService);
 
-  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/persisted-queries');
+	protected readonly packageSince = this.versionService.getPackageSince('@dumbql/persisted-queries');
 
-  protected readonly githubUrl =
-    'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/persisted-queries/src/lib';
+	protected readonly githubUrl =
+		'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/persisted-queries/src/lib';
 
-  protected selectedTabIndex = 0;
+	protected selectedTabIndex = 0;
 
-  protected readonly tabs = ['Docs', 'API', 'Starters'];
+	protected readonly tabs = ['Docs', 'API', 'Starters'];
 
-  protected readonly apiEntries: ApiEntry[] = [
-    {
-      name: 'apqMiddleware(config?)',
-      description:
-        'Automatic Persisted Query middleware. First sends only the SHA-256 hash, retries with full query on PersistedQueryNotFound. Optionally uses GET for hashed queries.',
-      type: 'function',
-    },
-    {
-      name: 'PersistedQueryService',
-      description: 'Injectable Angular service for executing queries through the persisted query middleware chain.',
-      type: 'class',
-    },
-    {
-      name: 'PersistedQueryService.execute(document, variables?)',
-      description: 'Executes a GraphQL query through the persisted query pipeline.',
-      type: 'method',
-      default: 'document: DocumentNode, variables?: TVars',
-    },
-  ];
+	protected readonly apiEntries: ApiEntry[] = [
+		{
+			name: 'apqMiddleware(config?)',
+			description:
+				'Automatic Persisted Query middleware. First sends only the SHA-256 hash, retries with full query on PersistedQueryNotFound. Optionally uses GET for hashed queries.',
+			type: 'function',
+		},
+		{
+			name: 'PersistedQueryService',
+			description: 'Injectable Angular service for executing queries through the persisted query middleware chain.',
+			type: 'class',
+		},
+		{
+			name: 'PersistedQueryService.execute(document, variables?)',
+			description: 'Executes a GraphQL query through the persisted query pipeline.',
+			type: 'method',
+			default: 'document: DocumentNode, variables?: TVars',
+		},
+	];
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'apq-middleware', title: 'APQ Middleware' },
-    { id: 'wire-format', title: 'Wire Format' },
-  ];
+	protected readonly tocSections: TocSection[] = [
+		{ id: 'apq-middleware', title: 'APQ Middleware' },
+		{ id: 'wire-format', title: 'Wire Format' },
+	];
 
-  constructor() {
-    this.tocService.sections.set(this.tocSections);
-  }
+	constructor() {
+		this.tocService.sections.set(this.tocSections);
+	}
 
-  protected readonly apqStarters: StarterCodes = {
-    vanilla: `import { createClient, gql } from '@dumbql/client';
+	protected readonly apqStarters: StarterCodes = {
+		vanilla: `import { createClient, gql } from '@dumbql/client';
 import { apqMiddleware } from '@dumbql/persisted-queries';
 
 const client = createClient({
@@ -73,7 +78,7 @@ async function run() {
   console.log(result);
 }
 `,
-    angular: `import { provideDumbql } from '@dumbql/core';
+		angular: `import { provideDumbql } from '@dumbql/core';
 import { apqMiddleware } from '@dumbql/persisted-queries';
 import { createHttpLink } from '@dumbql/core/link';
 
@@ -86,7 +91,7 @@ export const appConfig: ApplicationConfig = {
   ],
 };
 `,
-    react: `import { DumbqlProvider, useQuery, gql } from '@dumbql/react';
+		react: `import { DumbqlProvider, useQuery, gql } from '@dumbql/react';
 import { createClient } from '@dumbql/client';
 import { apqMiddleware } from '@dumbql/persisted-queries';
 
@@ -104,7 +109,7 @@ function App() {
   return <DumbqlProvider client={client}><Todos /></DumbqlProvider>;
 }
 `,
-    vue: `import { createDumbqlPlugin, useQuery, gql } from '@dumbql/vue';
+		vue: `import { createDumbqlPlugin, useQuery, gql } from '@dumbql/vue';
 import { createClient } from '@dumbql/client';
 import { apqMiddleware } from '@dumbql/persisted-queries';
 import { createApp } from 'vue';
@@ -124,9 +129,9 @@ const { data } = useQuery(gql\`{ todos { id title } }\`);
   <pre>{{ data }}</pre>
 </template>
 `,
-  };
+	};
 
-  protected readonly apqMiddlewareCode = `import { apqMiddleware } from '@dumbql/persisted-queries';
+	protected readonly apqMiddlewareCode = `import { apqMiddleware } from '@dumbql/persisted-queries';
 import { composeMiddlewares, createHttpLink } from '@dumbql/core';
 
 const link = composeMiddlewares(
@@ -134,7 +139,7 @@ const link = composeMiddlewares(
   createHttpLink({ uri: '/graphql' }),
 );`;
 
-  protected readonly sha256HashCode = `// What gets sent on the wire:
+	protected readonly sha256HashCode = `// What gets sent on the wire:
 {
   "operationName": "Books",
   "extensions": {

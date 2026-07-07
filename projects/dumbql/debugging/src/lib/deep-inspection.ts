@@ -1,23 +1,23 @@
 import type { GraphqlDebugEntry } from './graphql-debug.service';
 
 export interface InspectedField {
-  name: string;
-  depth: number;
-  children?: InspectedField[];
+	name: string;
+	depth: number;
+	children?: InspectedField[];
 }
 
 export interface MutationChartPoint {
-  label: string;
-  start: number;
-  end: number;
-  duration: number;
-  ok: boolean;
+	label: string;
+	start: number;
+	end: number;
+	duration: number;
+	ok: boolean;
 }
 
 export interface NormalizedEntity {
-  type: string;
-  id: string;
-  path: string;
+	type: string;
+	id: string;
+	path: string;
 }
 
 export function parseFieldTree(query: string): InspectedField[] {
@@ -34,7 +34,11 @@ export function parseFieldTree(query: string): InspectedField[] {
 			if (c === '"' && query[i - 1] !== '\\') inString = false;
 			continue;
 		}
-		if (c === '"') { inString = true; buf += c; continue; }
+		if (c === '"') {
+			inString = true;
+			buf += c;
+			continue;
+		}
 		if (c === '#' && !inString) {
 			while (i < query.length && query[i] !== '\n') i++;
 			continue;

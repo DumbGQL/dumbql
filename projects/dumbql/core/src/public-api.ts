@@ -1,16 +1,16 @@
 export { provideGraphql, type DumbqlConfig, type GraphqlConfig } from './lib/graphql-config';
 export type {
-  GraphqlCoreConfig,
-  SubscriptionsConfig,
-  CacheConfig,
-  PersistedQueriesConfig,
-  UploadConfig,
-  DebugConfig,
-  PaginationConfig,
-  SsrConfig,
-  TestingConfig,
-  CodegenConfig,
-  TelemetryConfig,
+	GraphqlCoreConfig,
+	SubscriptionsConfig,
+	CacheConfig,
+	PersistedQueriesConfig,
+	UploadConfig,
+	DebugConfig,
+	PaginationConfig,
+	SsrConfig,
+	TestingConfig,
+	CodegenConfig,
+	TelemetryConfig,
 } from './lib/dumbql-config';
 export { DumbqlConfigService, provideDumbql } from './lib/config.service';
 export { DUMBQL_CONFIG, GRAPHQL_CONFIG, GRAPHQL_CACHE, type GraphqlCacheLike } from './lib/dumbql-config';
@@ -27,23 +27,23 @@ export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
 export { injectPrefetch } from './lib/prefetch';
 export {
-  isSuccess,
-  isError,
-  unwrap,
-  unwrapOrThrow,
-  mapResult,
-  hasPartialErrors,
-  getGraphQLErrors,
-  getNetworkError,
+	isSuccess,
+	isError,
+	unwrap,
+	unwrapOrThrow,
+	mapResult,
+	hasPartialErrors,
+	getGraphQLErrors,
+	getNetworkError,
 } from './lib/helpers';
 export {
-  GqlPipe,
-  GraphqlDataPipe,
-  GraphqlErrorPipe,
-  GraphqlStatusPipe,
-  GraphqlIsSuccessPipe,
-  GraphqlIsErrorPipe,
-  GraphqlUnwrapPipe,
+	GqlPipe,
+	GraphqlDataPipe,
+	GraphqlErrorPipe,
+	GraphqlStatusPipe,
+	GraphqlIsSuccessPipe,
+	GraphqlIsErrorPipe,
+	GraphqlUnwrapPipe,
 } from './lib/pipes';
 
 export { DumbqlQueryDirective, DumbqlAutoFetchDirective } from './lib/directives';
@@ -53,19 +53,19 @@ export { applyMiddleware, authMiddleware, devAuthMiddleware, loggingMiddleware, 
 export type { GraphqlRequestContext, GraphqlMiddlewareNext, GraphqlMiddleware } from './lib/middleware';
 
 export {
-  DevtoolsService,
-  provideDevtools,
-  devtoolsMiddleware,
-  type DevtoolsConfig,
-  type SchemaDownloadConfig,
+	DevtoolsService,
+	provideDevtools,
+	devtoolsMiddleware,
+	type DevtoolsConfig,
+	type SchemaDownloadConfig,
 } from './lib/devtools';
 
 export { SchemaService, provideSchemaFetch, type SchemaServiceConfig } from './lib/schema.service';
 export {
-  SchemaWatchService,
-  provideSchemaWatch,
-  type SchemaChangedEvent,
-  type SchemaErrorEvent,
+	SchemaWatchService,
+	provideSchemaWatch,
+	type SchemaChangedEvent,
+	type SchemaErrorEvent,
 } from './lib/schema-watch';
 export { SchemaStreamService, type SchemaProgressEvent, type SchemaStreamConfig } from './lib/schema-stream';
 
@@ -86,12 +86,12 @@ export { makeVar, ReactiveVar } from './lib/reactive-vars';
 export { clientDirectiveMiddleware } from './lib/client-directive';
 export { graphqlResource, type GraphqlResourceOptions } from './lib/resource';
 export {
-  streamingMiddleware,
-  applyPatch,
-  applyStreamItems,
-  parseMultipartResponse,
-  type IncrementalPayload,
-  type IncrementalResponse,
+	streamingMiddleware,
+	applyPatch,
+	applyStreamItems,
+	parseMultipartResponse,
+	type IncrementalPayload,
+	type IncrementalResponse,
 } from './lib/streaming';
 
 export { createVal, type AngularVal } from './lib/ref';

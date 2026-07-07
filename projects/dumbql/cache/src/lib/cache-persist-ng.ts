@@ -6,37 +6,37 @@ export type { CachePersistConfig };
 export const NG_CACHE_PERSIST_CONFIG = new InjectionToken<CachePersistConfig>('NG_CACHE_PERSIST_CONFIG');
 
 export class CachePersistenceService {
-  private inner: CachePersistence;
+	private inner: CachePersistence;
 
-  constructor(config?: CachePersistConfig) {
-    this.inner = new CachePersistence(config ?? {});
-  }
+	constructor(config?: CachePersistConfig) {
+		this.inner = new CachePersistence(config ?? {});
+	}
 
-  persist(data: [string, Record<string, unknown>][]): void {
-    this.inner.persist(data);
-  }
+	persist(data: [string, Record<string, unknown>][]): void {
+		this.inner.persist(data);
+	}
 
-  persistThrottled(data: [string, Record<string, unknown>][], delay?: number): void {
-    this.inner.persistThrottled(data, delay);
-  }
+	persistThrottled(data: [string, Record<string, unknown>][], delay?: number): void {
+		this.inner.persistThrottled(data, delay);
+	}
 
-  restore(): [string, Record<string, unknown>][] | null {
-    return this.inner.restore();
-  }
+	restore(): [string, Record<string, unknown>][] | null {
+		return this.inner.restore();
+	}
 
-  clear(): void {
-    this.inner.clear();
-  }
+	clear(): void {
+		this.inner.clear();
+	}
 }
 
 export function provideCachePersistence(config?: CachePersistConfig): Provider[] {
-  const service = new CachePersistenceService(config);
-  return [
-    { provide: CachePersistenceService, useValue: service },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => service,
-    },
-  ];
+	const service = new CachePersistenceService(config);
+	return [
+		{ provide: CachePersistenceService, useValue: service },
+		{
+			provide: ENVIRONMENT_INITIALIZER,
+			multi: true,
+			useValue: () => service,
+		},
+	];
 }

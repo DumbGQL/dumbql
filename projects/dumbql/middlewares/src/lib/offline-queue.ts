@@ -84,7 +84,7 @@ export class OfflineQueueService {
 			online$.subscribe(() => this.replay());
 		}
 
-		destroyRef.onDestroy(() => this._queue = []);
+		destroyRef.onDestroy(() => (this._queue = []));
 	}
 
 	get queue(): readonly QueuedMutation[] {
@@ -118,11 +118,8 @@ export class OfflineQueueService {
 		this._queue = [];
 		saveQueue(this.key, this._queue);
 
-		const results = queue.map((item) =>
-			this.svc.mutate(
-				parse(item.query),
-				item.variables as Record<string, unknown>,
-			),
+		const results = queue.map(
+			(item) => this.svc.mutate(parse(item.query), item.variables as Record<string, unknown>),
 		);
 
 		return new Observable<GraphQLResult<unknown>[]>((sub) => {

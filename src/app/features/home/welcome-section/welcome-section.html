@@ -1,20 +1,28 @@
 <section class="hero">
-  <app-hero-particles />
+	<app-hero-particles />
 
-  <div class="glow glow--1" aria-hidden="true"></div>
-  <div class="glow glow--2" aria-hidden="true"></div>
+	<div class="glow glow--1" aria-hidden="true"></div>
+	<div class="glow glow--2" aria-hidden="true"></div>
 
-  <div class="hero-content">
-    <div class="logo-wrapper">
-      <img src="logos/logo.png" alt="DumbQL logo">
-    </div>
+	<div class="hero-content">
+		<div class="logo-wrapper">
+			<img src="logos/logo.png" alt="DumbQL logo" />
+		</div>
 
-    <h1 class="hero-title">{{ title() }}</h1>
-    <p class="hero-desc">{{ description() }}</p>
+		<h1 class="hero-title">{{ title() }}</h1>
+		<p class="hero-desc">{{ description() }}</p>
 
-    <div class="hero-actions">
-      <a tuiButton appearance="primary" size="l" [routerLink]="ctaLink()">{{ ctaText() }}</a>
-      <a tuiButton appearance="secondary" size="l" href="https://github.com/DumbGQL/dumbql" target="_blank" rel="noopener">{{ secondaryText() }}</a>
-    </div>
-  </div>
+		<div class="hero-actions">
+			<a tuiButton appearance="primary" size="l" [routerLink]="ctaLink()">{{ ctaText() }}</a>
+			<a
+				tuiButton
+				appearance="secondary"
+				size="l"
+				href="https://github.com/DumbGQL/dumbql"
+				target="_blank"
+				rel="noopener"
+				>{{ secondaryText() }}</a
+			>
+		</div>
+	</div>
 </section>

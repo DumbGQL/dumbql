@@ -7,15 +7,17 @@ import type { DocumentNode, GraphQLResult } from '@dumbql/core';
 import { GET_CURRENT_USER, GET_NOTES } from './queries';
 
 const TEST_QUERY: DocumentNode = gql`
-  { status }
+	{
+		status
+	}
 `;
 
 const TEST_MUTATION: DocumentNode = gql`
-  mutation UploadFile($file: Upload!) {
-    uploadFile(file: $file) {
-      id
-    }
-  }
+	mutation UploadFile($file: Upload!) {
+		uploadFile(file: $file) {
+			id
+		}
+	}
 `;
 
 interface GetCurrentUserResponse {
@@ -33,11 +35,7 @@ describe('GraphqlService', () => {
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/graphql' })],
 		});
 
 		service = TestBed.inject(GraphqlService);
@@ -101,7 +99,11 @@ describe('GraphqlService', () => {
 		const req = httpMock.expectOne('/graphql');
 		req.error(new ProgressEvent('offline'), { status: 0, statusText: 'Unknown Error' });
 
-		expect(result).toEqual({ status: 'error', error: 'Unknown Error', networkError: { message: 'Unknown Error', status: 0, statusText: 'Unknown Error' } });
+		expect(result).toEqual({
+			status: 'error',
+			error: 'Unknown Error',
+			networkError: { message: 'Unknown Error', status: 0, statusText: 'Unknown Error' },
+		});
 	});
 
 	it('handles http 500 error', () => {
@@ -114,7 +116,11 @@ describe('GraphqlService', () => {
 		const req = httpMock.expectOne('/graphql');
 		req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-		expect(result).toEqual({ status: 'error', error: 'Internal Server Error', networkError: { message: 'Internal Server Error', status: 500, statusText: 'Internal Server Error' } });
+		expect(result).toEqual({
+			status: 'error',
+			error: 'Internal Server Error',
+			networkError: { message: 'Internal Server Error', status: 500, statusText: 'Internal Server Error' },
+		});
 	});
 
 	it('sends mutation via JSON when no files present', () => {
@@ -126,8 +132,9 @@ describe('GraphqlService', () => {
 
 		const req = httpMock.expectOne('/graphql');
 		expect(req.request.method).toBe('POST');
-		expect(req.request.body.query)
-			.toBe('mutation UploadFile($file: Upload!) {\n  uploadFile(file: $file) {\n    id\n  }\n}');
+		expect(req.request.body.query).toBe(
+			'mutation UploadFile($file: Upload!) {\n  uploadFile(file: $file) {\n    id\n  }\n}',
+		);
 		expect(req.request.body.variables).toEqual({ file: 'string-val' });
 		expect(req.request.headers.get('Content-Type')).toBe('application/json');
 
@@ -139,10 +146,7 @@ describe('GraphqlService', () => {
 		let result: unknown;
 		const file = new File(['content'], 'test.txt', { type: 'text/plain' });
 
-		service.mutate<{ uploadFile: { id: string } }>(
-			TEST_MUTATION,
-			{ file },
-		).subscribe((r) => {
+		service.mutate<{ uploadFile: { id: string } }>(TEST_MUTATION, { file }).subscribe((r) => {
 			result = r;
 		});
 
@@ -153,8 +157,7 @@ describe('GraphqlService', () => {
 		expect(body).toBeInstanceOf(FormData);
 
 		const operations = JSON.parse(body.get('operations') as string);
-		expect(operations.query)
-			.toBe('mutation UploadFile($file: Upload!) {\n  uploadFile(file: $file) {\n    id\n  }\n}');
+		expect(operations.query).toBe('mutation UploadFile($file: Upload!) {\n  uploadFile(file: $file) {\n    id\n  }\n}');
 		expect(operations.variables.file).toBeNull();
 
 		const map = JSON.parse(body.get('map') as string);
@@ -175,11 +178,7 @@ describe('GraphqlService with custom endpoint', () => {
 	beforeEach(() => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/api/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/api/graphql' })],
 		});
 
 		httpMock = TestBed.inject(HttpTestingController);
@@ -211,11 +210,7 @@ describe('GraphqlService with default config', () => {
 	beforeEach(() => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/graphql' })],
 		});
 
 		httpMock = TestBed.inject(HttpTestingController);
@@ -243,11 +238,7 @@ describe('standalone query() function', () => {
 	beforeEach(() => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/graphql' })],
 		});
 
 		httpMock = TestBed.inject(HttpTestingController);
@@ -282,11 +273,7 @@ describe('standalone mutate() function', () => {
 	beforeEach(() => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/graphql' })],
 		});
 
 		httpMock = TestBed.inject(HttpTestingController);
@@ -319,11 +306,7 @@ describe('Typed queries from barrel', () => {
 	beforeEach(() => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
-			providers: [
-				provideHttpClient(),
-				provideHttpClientTesting(),
-				provideGraphql({ endpoint: '/graphql' }),
-			],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideGraphql({ endpoint: '/graphql' })],
 		});
 
 		service = TestBed.inject(GraphqlService);
@@ -374,12 +357,11 @@ describe('Typed queries from barrel', () => {
 	it('sends GetNotes query with filter variable', () => {
 		let result: GraphQLResult<{ getNotes: unknown[] }> | undefined;
 
-		service.query<{ getNotes: unknown[] }, { filter?: string | null }>(
-			GET_NOTES,
-			{ filter: 'PASSWORD' },
-		).subscribe((r) => {
-			result = r;
-		});
+		service
+			.query<{ getNotes: unknown[] }, { filter?: string | null }>(GET_NOTES, { filter: 'PASSWORD' })
+			.subscribe((r) => {
+				result = r;
+			});
 
 		const req = httpMock.expectOne('/graphql');
 		expect(req.request.body.query).toContain('getNotes');
@@ -433,7 +415,10 @@ describe('Typed queries from barrel', () => {
 		req.flush({
 			data: {
 				getCurrentUser: {
-					id: '1', username: 'alice', createdAt: '', updatedAt: '',
+					id: '1',
+					username: 'alice',
+					createdAt: '',
+					updatedAt: '',
 				},
 			},
 		});
@@ -472,7 +457,7 @@ describe('Plugins system', () => {
 					middlewareCalled = true;
 					return next(request);
 				};
-			}
+			},
 		};
 
 		TestBed.configureTestingModule({
@@ -481,7 +466,7 @@ describe('Plugins system', () => {
 				provideHttpClientTesting(),
 				provideGraphql({
 					endpoint: '/graphql',
-					plugins: [testPlugin]
+					plugins: [testPlugin],
 				}),
 			],
 		});

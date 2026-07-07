@@ -71,16 +71,20 @@ export class DumbqlConfigService {
 	}
 
 	get devtools(): DevtoolsConfig {
-		return typeof this.config.devtools === 'boolean' ? {} : this.config.devtools ?? {};
+		return typeof this.config.devtools === 'boolean' ? {} : (this.config.devtools ?? {});
 	}
 
 	get isDevtoolsEnabled(): boolean {
-		return this.config.devtools === true
-			|| (typeof this.config.devtools === 'object' && this.config.devtools.autoConnect !== false);
+		return (
+			this.config.devtools === true ||
+			(typeof this.config.devtools === 'object' && this.config.devtools.autoConnect !== false)
+		);
 	}
 
 	get isDebugEnabled(): boolean {
-		return this.config.debug === true
-			|| (typeof this.config.debug === 'object' && Object.values(this.config.debug).some(Boolean));
+		return (
+			this.config.debug === true ||
+			(typeof this.config.debug === 'object' && Object.values(this.config.debug).some(Boolean))
+		);
 	}
 }

@@ -9,69 +9,74 @@ import { TocService } from '../../../../shared/services/toc.service';
 import { VersionService } from '../../../../shared/services/version.service';
 
 @Component({
-  selector: 'app-docs-file-upload',
-  standalone: true,
-  imports: [TuiBadge, TuiChip, TuiTabs, TuiTab, DocsToc, AnchorDirective, DocsApiTable, DocsStackblitzStarterComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './file-upload.html',
-  styleUrl: './file-upload.scss',
+	selector: 'app-docs-file-upload',
+	standalone: true,
+	// prettier-ignore
+	imports: [
+		TuiBadge, TuiChip, TuiTabs, TuiTab,
+		DocsToc, AnchorDirective, DocsApiTable,
+		DocsStackblitzStarterComponent,
+	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './file-upload.html',
+	styleUrl: './file-upload.scss',
 })
 export class DocsFileUpload {
-  private readonly tocService = inject(TocService);
+	private readonly tocService = inject(TocService);
 
-  protected readonly versionService = inject(VersionService);
+	protected readonly versionService = inject(VersionService);
 
-  protected readonly packageSince = this.versionService.getPackageSince('@dumbql/file-upload');
+	protected readonly packageSince = this.versionService.getPackageSince('@dumbql/file-upload');
 
-  protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/file-upload/src/lib';
+	protected readonly githubUrl = 'https://github.com/DumbGQL/dumbql/tree/main/projects/dumbql/file-upload/src/lib';
 
-  protected selectedTabIndex = 0;
+	protected selectedTabIndex = 0;
 
-  protected readonly tabs = ['Docs', 'API', 'Starters'];
+	protected readonly tabs = ['Docs', 'API', 'Starters'];
 
-  protected readonly apiEntries: ApiEntry[] = [
-    {
-      name: 'UploadService',
-      description:
-        'Injectable Angular service that wraps GraphQL mutations with automatic multipart encoding for File/Blob values.',
-      type: 'class',
-    },
-    {
-      name: 'UploadService.upload(document, variables)',
-      description:
-        'Uploads a file-backed mutation. Detects File/Blob values, builds multipart FormData, and POSTs to the GraphQL endpoint.',
-      type: 'method',
-      default: 'document: DocumentNode, variables: Record<string, unknown>',
-    },
-    {
-      name: 'FileEntry',
-      description: 'Interface representing a single file entry extracted from mutation variables.',
-      type: 'interface',
-    },
-    {
-      name: 'FileEntry.path',
-      description: 'Dot-notation path to the file within the variables object (e.g. variables.avatar).',
-      type: 'property',
-    },
-    { name: 'FileEntry.file', description: 'The File or Blob object.', type: 'property' },
-    {
-      name: 'hasFiles(value)',
-      description: 'Recursively checks if a value or any nested value is a File or Blob instance.',
-      type: 'function',
-    },
-  ];
+	protected readonly apiEntries: ApiEntry[] = [
+		{
+			name: 'UploadService',
+			description:
+				'Injectable Angular service that wraps GraphQL mutations with automatic multipart encoding for File/Blob values.',
+			type: 'class',
+		},
+		{
+			name: 'UploadService.upload(document, variables)',
+			description:
+				'Uploads a file-backed mutation. Detects File/Blob values, builds multipart FormData, and POSTs to the GraphQL endpoint.',
+			type: 'method',
+			default: 'document: DocumentNode, variables: Record<string, unknown>',
+		},
+		{
+			name: 'FileEntry',
+			description: 'Interface representing a single file entry extracted from mutation variables.',
+			type: 'interface',
+		},
+		{
+			name: 'FileEntry.path',
+			description: 'Dot-notation path to the file within the variables object (e.g. variables.avatar).',
+			type: 'property',
+		},
+		{ name: 'FileEntry.file', description: 'The File or Blob object.', type: 'property' },
+		{
+			name: 'hasFiles(value)',
+			description: 'Recursively checks if a value or any nested value is a File or Blob instance.',
+			type: 'function',
+		},
+	];
 
-  protected readonly tocSections: TocSection[] = [
-    { id: 'upload-service', title: 'UploadService' },
-    { id: 'multipart-spec', title: 'Multipart Spec' },
-    { id: 'auto-detection', title: 'Auto Detection' },
-  ];
+	protected readonly tocSections: TocSection[] = [
+		{ id: 'upload-service', title: 'UploadService' },
+		{ id: 'multipart-spec', title: 'Multipart Spec' },
+		{ id: 'auto-detection', title: 'Auto Detection' },
+	];
 
-  constructor() {
-    this.tocService.sections.set(this.tocSections);
-  }
+	constructor() {
+		this.tocService.sections.set(this.tocSections);
+	}
 
-  protected readonly uploadServiceCode = `import { UploadService, gql } from '@dumbql/file-upload';
+	protected readonly uploadServiceCode = `import { UploadService, gql } from '@dumbql/file-upload';
 
 const upload = inject(UploadService);
 
@@ -82,7 +87,7 @@ const result = await upload.mutate(
   { file: fileInputElement.files[0] },
 );`;
 
-  protected readonly autoFileDetectionCode = `const result = await upload.mutate(
+	protected readonly autoFileDetectionCode = `const result = await upload.mutate(
   gql\`mutation UploadAvatar($avatar: Upload!, $metadata: AvatarInput!) {
     uploadAvatar(avatar: $avatar, metadata: $metadata) { url }
   }\`,
@@ -92,8 +97,8 @@ const result = await upload.mutate(
   },
 );`;
 
-  protected readonly uploadStarters: StarterCodes = {
-    vanilla: `import { createClient, gql, isSuccess } from '@dumbql/client';
+	protected readonly uploadStarters: StarterCodes = {
+		vanilla: `import { createClient, gql, isSuccess } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
 
@@ -115,7 +120,7 @@ document.querySelector('input[type=file]')
     if (file) uploadFile(file);
   });
 `,
-    angular: `import { provideDumbql, UploadService } from '@dumbql/core';
+		angular: `import { provideDumbql, UploadService } from '@dumbql/core';
 import { createHttpLink } from '@dumbql/core/link';
 
 export const appConfig: ApplicationConfig = {
@@ -139,7 +144,7 @@ export class UploadComponent {
   }
 }
 `,
-    react: `import { DumbqlProvider, useMutation, gql } from '@dumbql/react';
+		react: `import { DumbqlProvider, useMutation, gql } from '@dumbql/react';
 import { createClient } from '@dumbql/client';
 
 const client = createClient({ endpoint: '/graphql' });
@@ -168,7 +173,7 @@ function App() {
   return <DumbqlProvider client={client}><FileUpload /></DumbqlProvider>;
 }
 `,
-    vue: `import { createDumbqlPlugin, useMutation, gql } from '@dumbql/vue';
+		vue: `import { createDumbqlPlugin, useMutation, gql } from '@dumbql/vue';
 import { createClient } from '@dumbql/client';
 import { createApp } from 'vue';
 
@@ -192,5 +197,5 @@ function onFileSelected(e: Event) {
   <p v-if="data?.uploadFile">URL: {{ data.uploadFile.url }}</p>
 </template>
 `,
-  };
+	};
 }

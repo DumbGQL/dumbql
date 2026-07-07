@@ -46,9 +46,8 @@ export function authMiddleware(token: string, headerName = 'Authorization'): Gra
 
 export function devAuthMiddleware(token?: string): GraphqlMiddleware {
 	return (request, next) => {
-		const resolved = token
-			?? (typeof localStorage !== 'undefined' ? localStorage.getItem('dev_token') : undefined)
-			?? 'dev-token';
+		const resolved =
+			token ?? (typeof localStorage !== 'undefined' ? localStorage.getItem('dev_token') : undefined) ?? 'dev-token';
 		request.headers['Authorization'] = `Bearer ${resolved}`;
 		return next(request);
 	};
@@ -62,10 +61,7 @@ export function loggingMiddleware(label?: string): GraphqlMiddleware {
 				const duration = (performance.now() - start).toFixed(1);
 				if (typeof console !== 'undefined') {
 					// eslint-disable-next-line no-console
-					console.log(
-						`[${label ?? 'GraphQL'}] ${request.type} ${request.query.slice(0, 60)}… ${duration}ms`,
-						result,
-					);
+					console.log(`[${label ?? 'GraphQL'}] ${request.type} ${request.query.slice(0, 60)}… ${duration}ms`, result);
 				}
 				return result;
 			}),

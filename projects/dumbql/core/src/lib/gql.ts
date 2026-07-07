@@ -8,7 +8,7 @@ export { type DocumentNode, print };
 
 export interface TypedDocumentNode<
 	TResult = unknown,
-	TVariables extends Record<string, unknown> = Record<string, unknown>
+	TVariables extends Record<string, unknown> = Record<string, unknown>,
 > extends DocumentNode {
 	__resultType?: TResult;
 	__variablesType?: TVariables;
@@ -30,7 +30,7 @@ export interface TypedDocumentNode<
  */
 export type TypedQueryString<
 	TResult = unknown,
-	TVariables extends Record<string, unknown> = Record<string, unknown>
+	TVariables extends Record<string, unknown> = Record<string, unknown>,
 > = string & {
 	__resultType?: TResult;
 	__variablesType?: TVariables;
@@ -41,10 +41,9 @@ export type TypedQueryString<
  * Zero-cost abstraction — just returns the input string with type annotations.
  * Compatible with `GraphqlService.query()` and `GraphqlService.mutate()`.
  */
-export function createTypedQuery<
-	TResult,
-	TVariables extends Record<string, unknown> = Record<string, unknown>
->(query: string): TypedQueryString<TResult, TVariables> {
+export function createTypedQuery<TResult, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+	query: string,
+): TypedQueryString<TResult, TVariables> {
 	return query as TypedQueryString<TResult, TVariables>;
 }
 

@@ -8,5 +8,5 @@ import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 	styleUrl: './logo.scss',
 })
 export class Logo {
-  readonly size = input<'icon' | 'full'>('full');
+	readonly size = input<'icon' | 'full'>('full');
 }

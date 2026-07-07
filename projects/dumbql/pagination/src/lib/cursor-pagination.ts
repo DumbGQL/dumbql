@@ -1,32 +1,32 @@
 import { query, type DocumentNode, type QueryHandle } from '@dumbql/core';
 
 export interface PageInfo {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
+	startCursor: string | null;
+	endCursor: string | null;
 }
 
 export interface CursorEdge<T> {
-  node: T;
-  cursor: string;
+	node: T;
+	cursor: string;
 }
 
 export interface CursorConnection<T> {
-  edges: CursorEdge<T>[];
-  pageInfo: PageInfo;
-  totalCount?: number;
+	edges: CursorEdge<T>[];
+	pageInfo: PageInfo;
+	totalCount?: number;
 }
 
 export interface CursorPaginationResult<T> {
-  items: T[];
-  cursor: string | null;
-  hasMore: boolean;
+	items: T[];
+	cursor: string | null;
+	hasMore: boolean;
 }
 
 export interface CursorPaginationConfig {
-  first?: number;
-  after?: string;
+	first?: number;
+	after?: string;
 }
 
 export function cursorPagination<T, TVars extends Record<string, unknown> = Record<string, unknown>>(
@@ -36,10 +36,7 @@ export function cursorPagination<T, TVars extends Record<string, unknown> = Reco
 	return query<CursorConnection<T>, TVars>(document, variables);
 }
 
-export function cursorMerge<T = unknown>(
-	existing: T[] | undefined,
-	incoming: T[],
-): T[] {
+export function cursorMerge<T = unknown>(existing: T[] | undefined, incoming: T[]): T[] {
 	if (!existing) return incoming;
 	return [...existing, ...incoming];
 }

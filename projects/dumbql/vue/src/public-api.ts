@@ -3,7 +3,13 @@ export { useQuery, type UseQueryOptions, type UseQueryResult, type NetworkStatus
 export { useMutation, type UseMutationOptions, type UseMutationResult, type UseMutationFn } from './lib/use-mutation';
 export { useSubscription, type UseSubscriptionOptions, type UseSubscriptionResult } from './lib/use-subscription';
 export { useLiveQuery, type UseLiveQueryOptions, type UseLiveQueryResult } from './lib/use-live-query';
-export { useSuspenseQuery, useBackgroundQuery, useReadQuery, type UseSuspenseQueryResult, type QueryRef } from './lib/use-suspense-query';
+export {
+	useSuspenseQuery,
+	useBackgroundQuery,
+	useReadQuery,
+	type UseSuspenseQueryResult,
+	type QueryRef,
+} from './lib/use-suspense-query';
 export { gql, isSuccess, isError, unwrap, unwrapOrThrow } from '@dumbql/client';
 export { useEpicFetus, type NullDetectionInfo } from './lib/use-epic-fetus';
 export { NullOverlay } from './lib/null-overlay';

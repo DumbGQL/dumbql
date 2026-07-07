@@ -10,8 +10,6 @@ export function poll<TResponse, TVariables extends Record<string, unknown> = Rec
 ): Observable<GraphQLResult<TResponse>> {
 	return defer(() => {
 		const svc = inject(GraphqlService);
-		return timer(0, intervalMs).pipe(
-			switchMap(() => svc.refetch<TResponse, TVariables>(document, variables)),
-		);
+		return timer(0, intervalMs).pipe(switchMap(() => svc.refetch<TResponse, TVariables>(document, variables)));
 	});
 }

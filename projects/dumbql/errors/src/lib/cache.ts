@@ -1,16 +1,16 @@
 import { DumbqlError } from './base';
 
 export enum CacheErrorCode {
-  MISS = 'CACHE_MISS',
-  SERIALIZATION = 'CACHE_SERIALIZATION',
-  GC = 'CACHE_GC',
-  PERSISTENCE = 'CACHE_PERSISTENCE',
-  INVALIDATION = 'CACHE_INVALIDATION',
+	MISS = 'CACHE_MISS',
+	SERIALIZATION = 'CACHE_SERIALIZATION',
+	GC = 'CACHE_GC',
+	PERSISTENCE = 'CACHE_PERSISTENCE',
+	INVALIDATION = 'CACHE_INVALIDATION',
 }
 
 export class CacheError extends DumbqlError {
-  constructor(code: CacheErrorCode, message: string, context?: Record<string, unknown>) {
-    super(message, code, context);
-    this.name = 'CacheError';
-  }
+	constructor(code: CacheErrorCode, message: string, context?: Record<string, unknown>) {
+		super(message, code, context);
+		this.name = 'CacheError';
+	}
 }

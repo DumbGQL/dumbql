@@ -2,32 +2,32 @@ import { BehaviorSubject, type Observable } from 'rxjs';
 import { query, type DocumentNode, type GraphQLResult } from '@dumbql/core';
 
 export interface OffsetPaginationState<T> {
-  items: T[];
-  offset: number;
-  limit: number;
-  hasMore: boolean;
-  loading: boolean;
-  error: string | null;
+	items: T[];
+	offset: number;
+	limit: number;
+	hasMore: boolean;
+	loading: boolean;
+	error: string | null;
 }
 
 export interface OffsetPaginationResult<T> {
-  items: T[];
-  totalCount: number;
-  hasMore: boolean;
+	items: T[];
+	totalCount: number;
+	hasMore: boolean;
 }
 
 export interface OffsetPaginationConfig {
-  limit?: number;
-  offset?: number;
+	limit?: number;
+	offset?: number;
 }
 
 export function offsetPagination<T, TVars extends Record<string, unknown> = Record<string, unknown>>(
 	document: DocumentNode,
 	options: { limit?: number; variables?: TVars },
 ): {
-  state: Observable<OffsetPaginationState<T>>;
-  loadMore: () => void;
-  refresh: () => void;
+	state: Observable<OffsetPaginationState<T>>;
+	loadMore: () => void;
+	refresh: () => void;
 } {
 	const state$ = new BehaviorSubject<OffsetPaginationState<T>>({
 		items: [],
@@ -42,24 +42,26 @@ export function offsetPagination<T, TVars extends Record<string, unknown> = Reco
 		const prev = state$.value;
 		state$.next({ ...prev, loading: true, error: null });
 
-		query<T, TVars>(document, { ...options.variables, offset, limit: prev.limit } as unknown as TVars)
-			.result$.subscribe((result: GraphQLResult<T>) => {
-				if (result.status === 'success') {
-					const data = result.data as unknown as { items?: T[] };
-					const items = data?.items ?? [];
-					state$.next({
-						items: offset === 0 ? items : [...prev.items, ...items],
-						offset,
-						limit: prev.limit,
-						hasMore: (data as Record<string, unknown>)?.['hasMore'] as boolean
-							?? items.length === prev.limit,
-						loading: false,
-						error: null,
-					});
-				} else {
-					state$.next({ ...prev, loading: false, error: result.error });
-				}
-			});
+		query<T, TVars>(document, {
+			...options.variables,
+			offset,
+			limit: prev.limit,
+		} as unknown as TVars).result$.subscribe((result: GraphQLResult<T>) => {
+			if (result.status === 'success') {
+				const data = result.data as unknown as { items?: T[] };
+				const items = data?.items ?? [];
+				state$.next({
+					items: offset === 0 ? items : [...prev.items, ...items],
+					offset,
+					limit: prev.limit,
+					hasMore: ((data as Record<string, unknown>)?.['hasMore'] as boolean) ?? items.length === prev.limit,
+					loading: false,
+					error: null,
+				});
+			} else {
+				state$.next({ ...prev, loading: false, error: result.error });
+			}
+		});
 	}
 
 	return {

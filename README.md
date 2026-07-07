@@ -71,7 +71,7 @@ import { provideDumbql } from '@dumbql/core';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig = {
-  providers: [provideHttpClient(), provideDumbql({ endpoint: '/graphql' })],
+	providers: [provideHttpClient(), provideDumbql({ endpoint: '/graphql' })],
 };
 ```
 
@@ -80,22 +80,22 @@ export const appConfig = {
 import { GraphqlService, gql, isSuccess } from '@dumbql/core';
 
 const GET_USER = gql`
-  {
-    getUser {
-      id
-      name
-      email
-    }
-  }
+	{
+		getUser {
+			id
+			name
+			email
+		}
+	}
 `;
 
 @Component({
-  selector: 'app-user',
-  template: `{{ (gql.query(GET_USER) | async)?.data?.getUser?.name }}`,
-  standalone: true,
+	selector: 'app-user',
+	template: `{{ (gql.query(GET_USER) | async)?.data?.getUser?.name }}`,
+	standalone: true,
 })
 export class UserComponent {
-  gql = inject(GraphqlService);
+	gql = inject(GraphqlService);
 }
 ```
 
@@ -393,89 +393,89 @@ The **GraphQL Playground** is available at `/playground` in the docs site — in
 import type { DumbqlConfig } from '@dumbql/core';
 
 const config: DumbqlConfig = {
-  // ── Core ──
-  endpoint: 'http://localhost:4000/graphql',
-  errorPolicy: 'none', // 'none' | 'all' | 'ignore'
-  retryCount: 3,
-  retryDelay: 1000, // ms (exponential: 1s, 2s, 4s...)
-  dedup: true, // Deduplicate in-flight queries
-  batchWindow: 50, // Batch window in ms (0 = disabled)
-  headers: { Authorization: 'Bearer ...' },
-  middleware: [], // Custom middleware array
-  plugins: [], // DumbqlPlugin array
-  devAuth: { enabled: false },
+	// ── Core ──
+	endpoint: 'http://localhost:4000/graphql',
+	errorPolicy: 'none', // 'none' | 'all' | 'ignore'
+	retryCount: 3,
+	retryDelay: 1000, // ms (exponential: 1s, 2s, 4s...)
+	dedup: true, // Deduplicate in-flight queries
+	batchWindow: 50, // Batch window in ms (0 = disabled)
+	headers: { Authorization: 'Bearer ...' },
+	middleware: [], // Custom middleware array
+	plugins: [], // DumbqlPlugin array
+	devAuth: { enabled: false },
 
-  // ── Subscriptions ──
-  subscriptions: {
-    wsEndpoint: 'ws://localhost:4000/graphql',
-    reconnect: true,
-    reconnectInterval: 2000,
-    lazy: true,
-  },
+	// ── Subscriptions ──
+	subscriptions: {
+		wsEndpoint: 'ws://localhost:4000/graphql',
+		reconnect: true,
+		reconnectInterval: 2000,
+		lazy: true,
+	},
 
-  // ── Cache ──
-  cache: {
-    enabled: true,
-    maxAge: 300_000,
-    serialize: true,
-    typePolicies: {
-      User: { keyFields: ['id'] },
-      PaginatedResult: { merge: 'append' },
-    },
-  },
+	// ── Cache ──
+	cache: {
+		enabled: true,
+		maxAge: 300_000,
+		serialize: true,
+		typePolicies: {
+			User: { keyFields: ['id'] },
+			PaginatedResult: { merge: 'append' },
+		},
+	},
 
-  // ── Persisted Queries ──
-  persistedQueries: {
-    enabled: false,
-    hash: 'simple', // 'sha256' | 'simple'
-    autoPersist: false,
-  },
+	// ── Persisted Queries ──
+	persistedQueries: {
+		enabled: false,
+		hash: 'simple', // 'sha256' | 'simple'
+		autoPersist: false,
+	},
 
-  // ── File Upload ──
-  upload: {
-    maxFiles: 10,
-    maxFileSize: 10_485_760, // 10MB
-  },
+	// ── File Upload ──
+	upload: {
+		maxFiles: 10,
+		maxFileSize: 10_485_760, // 10MB
+	},
 
-  // ── Debug ──
-  debug: {
-    logOperations: true,
-    logTiming: true,
-    logCache: false,
-  },
+	// ── Debug ──
+	debug: {
+		logOperations: true,
+		logTiming: true,
+		logCache: false,
+	},
 
-  // ── Pagination ──
-  pagination: {
-    defaultLimit: 20,
-    debounceMs: 300,
-  },
+	// ── Pagination ──
+	pagination: {
+		defaultLimit: 20,
+		debounceMs: 300,
+	},
 
-  // ── SSR ──
-  ssr: {
-    transferState: true,
-    cacheTtl: 60_000,
-  },
+	// ── SSR ──
+	ssr: {
+		transferState: true,
+		cacheTtl: 60_000,
+	},
 
-  // ── DevTools ──
-  devtools: {
-    autoConnect: true,
-    maxRequests: 500,
-    captureSchema: true,
-  },
+	// ── DevTools ──
+	devtools: {
+		autoConnect: true,
+		maxRequests: 500,
+		captureSchema: true,
+	},
 
-  // ── Codegen (CLI-only) ──
-  codegen: {
-    schema: {
-      endpoint: 'http://localhost:4000/graphql',
-      dir: './graphql',
-      autoDownload: true,
-    },
-    types: {
-      dir: './graphql/types',
-      scalars: { DateTime: 'string', UUID: 'string', Upload: 'File' },
-      enumsAsTypes: false,
-    },
-  },
+	// ── Codegen (CLI-only) ──
+	codegen: {
+		schema: {
+			endpoint: 'http://localhost:4000/graphql',
+			dir: './graphql',
+			autoDownload: true,
+		},
+		types: {
+			dir: './graphql/types',
+			scalars: { DateTime: 'string', UUID: 'string', Upload: 'File' },
+			enumsAsTypes: false,
+		},
+	},
 };
 
 export default config;
@@ -543,13 +543,13 @@ Build with `npm run ext:build` or individually. The extension connects to the De
 import { isSuccess, isError, unwrap, unwrapOrThrow } from '@dumbql/core';
 
 service.query<{ user: User }>(GET_USER).subscribe((result) => {
-  if (isSuccess(result)) {
-    // result.data is typed
-    console.log(unwrapOrThrow(result).user);
-  } else if (isError(result)) {
-    // result.error is string
-    console.error(result.error);
-  }
+	if (isSuccess(result)) {
+		// result.data is typed
+		console.log(unwrapOrThrow(result).user);
+	} else if (isError(result)) {
+		// result.error is string
+		console.error(result.error);
+	}
 });
 ```
 
@@ -572,7 +572,7 @@ import { MockGraphqlService, provideDumbqlTesting } from '@dumbql/testing';
 import { GET_USER } from './queries';
 
 TestBed.configureTestingModule({
-  providers: [provideHttpClientTesting(), provideDumbqlTesting(), MockGraphqlService],
+	providers: [provideHttpClientTesting(), provideDumbqlTesting(), MockGraphqlService],
 });
 
 const mock = TestBed.inject(MockGraphqlService);

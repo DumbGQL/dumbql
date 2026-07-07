@@ -7,7 +7,7 @@
     <img src="https://github.com/DumbGQL/dumbql/actions/workflows/release.yml/badge.svg" alt="Release"/>
   </a>
   <a href="https://codecov.io/gh/DumbGQL/dumbql">
-    <img src="https://codecov.io/gh/DumbGQL/dumbql/branch/main/graph/badge.svg" alt="codecov"/>
+    <img src="https://img.shields.io/codecov/c/github/DumbGQL/dumbql" alt="codecov"/>
   </a>
 </p>
 

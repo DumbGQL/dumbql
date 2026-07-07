@@ -30,7 +30,7 @@ const BUILD_ORDER = [
 ];
 
 // Packages compiled with tsc (not ng-packagr, not plain copy)
-const TSC_PACKAGES = ['cache', 'client', 'react', 'vue', 'dev-server'];
+const TSC_PACKAGES = ['cache', 'client', 'react', 'vue', 'dev-server', 'opentelemetry'];
 
 function linkPackage(pkg, distOut) {
   const nmLink = join(NM, pkg);

@@ -1,1 +1,0 @@
-export { otelPlugin } from './plugin';

@@ -1,0 +1,4 @@
+{
+	"main": "../angular.js",
+	"types": "../angular.d.ts"
+}

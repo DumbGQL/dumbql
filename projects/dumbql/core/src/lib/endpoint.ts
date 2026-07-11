@@ -6,6 +6,7 @@ import type { DocumentNode, TypedDocumentNode } from './gql';
 import type { GraphqlCacheLike } from './dumbql-config';
 import type { InferResponse, InferVariables } from './types';
 import type { EndpointRoute } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export interface MutateEndpointOptions {
 	optimistic?: (cache: GraphqlCacheLike) => string;
@@ -158,7 +159,7 @@ export function provideEndpoint(name: string, url: string): Provider[] {
 	];
 }
 
-export function injectEndpoint(name: string): GraphqlEndpoint {
+export function injectEndpoint(name: string, di?: DumbqlInjectOptions): GraphqlEndpoint {
 	const token = getEndpointToken(name);
-	return inject(token);
+	return inject(token, di);
 }

@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { GRAPHQL_CACHE } from './dumbql-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 /**
  * Glob-based cache invalidation. Invalidates all cache entries matching a glob pattern.
@@ -11,8 +12,8 @@ import { GRAPHQL_CACHE } from './dumbql-config';
  * invalidate('Post:*:comments');  // invalidate comments field on all Posts
  * ```
  */
-export function injectGlobInvalidation() {
-	const cache = inject(GRAPHQL_CACHE, { optional: true });
+export function injectGlobInvalidation(di?: DumbqlInjectOptions) {
+	const cache = inject(GRAPHQL_CACHE, { optional: true, ...di });
 
 	return (glob: string): number => {
 		if (!cache) {

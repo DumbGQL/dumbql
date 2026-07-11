@@ -39,15 +39,28 @@ export function resolveSubscriptionUrl(endpointName: string): string | undefined
  * ```
  */
 export function subscribeTo<T>(
-	endpointName: string,
+	endpointName: string | undefined,
 	document: { kind: 'Document'; definitions: unknown[] },
 	variables?: Record<string, unknown>,
 ): Observable<T> {
 	return defer(() => {
-		const wsUrl = resolveSubscriptionUrl(endpointName);
+		const endpoints = inject(EndpointsService, { optional: true });
+
+		let resolvedName: string | undefined = endpointName;
+		if (endpoints) {
+			resolvedName = endpoints.throwIfMultiEndpointMissing(endpointName);
+		}
+
+		if (!resolvedName) {
+			throw new Error(
+				'DumbQL: subscribeTo() requires an endpoint name when multiEndpoint is enabled.',
+			);
+		}
+
+		const wsUrl = resolveSubscriptionUrl(resolvedName);
 		if (!wsUrl) {
 			throw new Error(
-				`DumbQL: Cannot resolve subscription URL for endpoint "${endpointName}". ` +
+				`DumbQL: Cannot resolve subscription URL for endpoint "${resolvedName}". ` +
 					'Make sure provideMultiEndpoint() is configured with the endpoint.',
 			);
 		}

@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { GRAPHQL_CACHE } from './dumbql-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export interface WriteQueryOptions {
 	/** The typename of the entity. */
@@ -18,8 +19,8 @@ export interface WriteQueryOptions {
  * writeQuery({ __typename: 'User', id: '1' }, { name: 'John', email: 'john@example.com' });
  * ```
  */
-export function injectWriteQuery() {
-	const cache = inject(GRAPHQL_CACHE, { optional: true });
+export function injectWriteQuery(di?: DumbqlInjectOptions) {
+	const cache = inject(GRAPHQL_CACHE, { optional: true, ...di });
 
 	return (options: WriteQueryOptions, data: Record<string, unknown>): void => {
 		if (!cache) {
@@ -55,8 +56,8 @@ export interface WriteFragmentOptions {
  * writeFragment({ __typename: 'User', id: '1', field: 'name' }, 'Jane');
  * ```
  */
-export function injectWriteFragment() {
-	const cache = inject(GRAPHQL_CACHE, { optional: true });
+export function injectWriteFragment(di?: DumbqlInjectOptions) {
+	const cache = inject(GRAPHQL_CACHE, { optional: true, ...di });
 
 	return (options: WriteFragmentOptions, value: unknown): void => {
 		if (!cache) {

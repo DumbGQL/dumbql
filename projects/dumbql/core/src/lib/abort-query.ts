@@ -6,17 +6,16 @@ import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export type AbortQueryEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface AbortQueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. */
-	endpoint?: AbortQueryEndpointParam<Yaml>;
+export interface AbortQueryOptions extends DumbqlInjectOptions {
 	/** Whether to auto-abort on component destroy. Default: true */
-	autoAbort?: boolean;
+	readonly autoAbort?: boolean;
 }
 
 export interface AbortQueryHandle<T> {
@@ -50,22 +49,23 @@ export function abortQuery<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: AbortQueryEndpointParam,
 	variables?: TVariables,
 	options?: AbortQueryOptions,
 ): AbortQueryHandle<TResponse> {
-	const graphql = inject(GraphqlService);
-	const injector = inject(Injector);
-	const endpoints = inject(EndpointsService, { optional: true });
+	const graphql = inject(GraphqlService, options);
+	const injector = inject(Injector, options);
+	const endpoints = inject(EndpointsService, { optional: true, ...options });
 	const enabled = signal(true);
 	const refetch$ = new Subject<void>();
 	const destroy$ = new Subject<void>();
 
 	let currentController: AbortController | null = null;
 
+	let resolvedName: string | undefined;
 	if (endpoints) {
-		const ep = options?.endpoint;
-		const name = isSignal(ep) ? ep() : ep;
-		endpoints.throwIfMultiEndpointMissing(name);
+		const name = isSignal(endpoint) ? endpoint() : (typeof endpoint === 'string' ? endpoint : undefined);
+		resolvedName = endpoints.throwIfMultiEndpointMissing(name);
 	}
 
 	const resolveUrl = (epName?: string): string | undefined => {
@@ -89,26 +89,26 @@ export function abortQuery<
 		} : undefined;
 	};
 
-	const epOption = options?.endpoint;
-
 	let endpoint$: Observable<string | undefined>;
-	if (isSignal(epOption)) {
-		endpoint$ = toObservable(epOption, { injector }).pipe(
+	if (isSignal(endpoint)) {
+		endpoint$ = toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => resolveUrl(name)),
 		);
-	} else if (typeof epOption === 'string') {
-		endpoint$ = of(resolveUrl(epOption));
+	} else if (typeof endpoint === 'string') {
+		endpoint$ = of(resolveUrl(endpoint));
+	} else if (resolvedName) {
+		endpoint$ = of(resolveUrl(resolvedName));
 	} else {
 		endpoint$ = of(undefined);
 	}
 
-	const override$ = isSignal(epOption)
-		? toObservable(epOption, { injector }).pipe(
+	const override$ = isSignal(endpoint)
+		? toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => resolveOverride(name)),
 		)
-		: of(resolveOverride(typeof epOption === 'string' ? epOption : undefined));
+		: of(resolveOverride(typeof endpoint === 'string' ? endpoint : resolvedName));
 
 	const result$ = toObservable(enabled, { injector }).pipe(
 		distinctUntilChanged(),

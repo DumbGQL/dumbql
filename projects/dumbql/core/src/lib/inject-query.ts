@@ -6,21 +6,20 @@ import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export type InjectQueryEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface InjectQueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. */
-	endpoint?: InjectQueryEndpointParam<Yaml>;
+export interface InjectQueryOptions extends DumbqlInjectOptions {
 	/** Transform the data before storing in signals. */
-	select?: (data: InferResponse<DocumentNode>) => unknown;
+	readonly select?: (data: InferResponse<DocumentNode>) => unknown;
 	/** Placeholder data shown before first successful fetch. */
-	placeholderData?: InferResponse<DocumentNode>;
+	readonly placeholderData?: InferResponse<DocumentNode>;
 	/** Skip the initial fetch. */
-	skip?: boolean;
+	readonly skip?: boolean;
 }
 
 export interface InjectQueryHandle<T> {
@@ -50,29 +49,37 @@ export function injectQuery<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: InjectQueryEndpointParam,
 	variables?: TVariables,
 	options?: InjectQueryOptions,
 ): InjectQueryHandle<TResponse> {
-	const graphql = inject(GraphqlService);
-	const injector = inject(Injector);
-	const endpoints = inject(EndpointsService, { optional: true });
+	const graphql = inject(GraphqlService, options);
+	const injector = inject(Injector, options);
+	const endpoints = inject(EndpointsService, { optional: true, ...options });
 	const enabled = signal(!options?.skip);
 	const refetch$ = new Subject<void>();
 	const destroy$ = new Subject<void>();
 
-	const epOption = options?.endpoint;
+	let resolvedName: string | undefined;
+	if (endpoints) {
+		const name = isSignal(endpoint) ? endpoint() : (typeof endpoint === 'string' ? endpoint : undefined);
+		resolvedName = endpoints.throwIfMultiEndpointMissing(name);
+	}
 
 	let endpoint$: Observable<string | undefined>;
-	if (isSignal(epOption)) {
-		endpoint$ = toObservable(epOption, { injector }).pipe(
+	if (isSignal(endpoint)) {
+		endpoint$ = toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => {
 				if (name && endpoints) return endpoints.getRoute(name)?.url;
 				return undefined;
 			}),
 		);
-	} else if (typeof epOption === 'string') {
-		const url = endpoints?.getRoute(epOption)?.url;
+	} else if (typeof endpoint === 'string') {
+		const url = endpoints?.getRoute(endpoint)?.url;
+		endpoint$ = of(url);
+	} else if (resolvedName) {
+		const url = endpoints?.getRoute(resolvedName)?.url;
 		endpoint$ = of(url);
 	} else {
 		endpoint$ = of(undefined);

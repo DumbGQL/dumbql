@@ -20,7 +20,7 @@ export function buildMultiEndpointConfig(yamlContent: string | EndpointsYaml): M
 		throw new Error(`DumbQL: Invalid endpoints.yml configuration:\n  - ${errors.join('\n  - ')}`);
 	}
 
-	const endpoints: EndpointProviderDescriptor[] = Object.entries(yaml.routes).map(([name, route]) => ({
+	const endpoints: EndpointProviderDescriptor[] = Object.entries(yaml.endpoints).map(([name, route]) => ({
 		name,
 		route,
 	}));
@@ -35,7 +35,7 @@ export function buildMultiEndpointConfig(yamlContent: string | EndpointsYaml): M
 export function buildSingleEndpointConfig(): MultiEndpointProviderResult {
 	return {
 		multiEndpoint: false,
-		yaml: { default_endpoint: '', routes: {} },
+		yaml: { default_endpoint: '', endpoints: {} },
 		endpoints: [],
 	};
 }

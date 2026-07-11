@@ -23,13 +23,13 @@ export interface EndpointRoute {
 }
 
 export interface EndpointGroup {
-	/** Route names belonging to this group. */
-	routes: string[];
+	/** Endpoint names belonging to this group. */
+	endpoints: string[];
 }
 
 export interface EndpointsYaml {
 	default_endpoint: string;
-	routes: Record<string, EndpointRoute>;
+	endpoints: Record<string, EndpointRoute>;
 	/** Named groups for bulk operations. */
 	groups?: Record<string, EndpointGroup>;
 }
@@ -51,7 +51,7 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 	const lines = raw.split('\n');
 	const result: EndpointsYaml = {
 		default_endpoint: '',
-		routes: {},
+		endpoints: {},
 		groups: {},
 	};
 
@@ -64,10 +64,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 
 	const flushHeaders = (): void => {
 		if (currentRoute && currentHeaders && Object.keys(currentHeaders).length > 0) {
-			if (!result.routes[currentRoute]) {
-				result.routes[currentRoute] = { url: '', headers: currentHeaders };
+			if (!result.endpoints[currentRoute]) {
+				result.endpoints[currentRoute] = { url: '', headers: currentHeaders };
 			} else {
-				result.routes[currentRoute].headers = currentHeaders;
+				result.endpoints[currentRoute].headers = currentHeaders;
 			}
 		}
 	};
@@ -102,7 +102,7 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 				continue;
 			}
 
-			if (/^routes:\s*$/.test(trimmed)) {
+			if (/^endpoints:\s*$/.test(trimmed)) {
 				continue;
 			}
 
@@ -124,8 +124,8 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 				inGroups = false;
 				currentRoute = routeMatch[1];
 				currentGroup = null;
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '' };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '' };
 				}
 				continue;
 			}
@@ -137,7 +137,7 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			if (groupMatch) {
 				currentGroup = groupMatch[1];
 				if (!result.groups) result.groups = {};
-				result.groups[currentGroup] = { routes: [] };
+				result.groups[currentGroup] = { endpoints: [] };
 				continue;
 			}
 		}
@@ -156,10 +156,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			if (middlewareMatch) {
 				inHeaders = false;
 				inMiddleware = true;
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', middleware: [] };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', middleware: [] };
 				} else {
-					result.routes[currentRoute].middleware = [];
+					result.endpoints[currentRoute].middleware = [];
 				}
 				continue;
 			}
@@ -170,10 +170,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const urlMatch = trimmed.match(/^url:\s*(.+)$/);
 			if (urlMatch) {
 				const url = urlMatch[1].trim().replace(/['"]/g, '');
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url };
 				} else {
-					result.routes[currentRoute].url = url;
+					result.endpoints[currentRoute].url = url;
 				}
 				continue;
 			}
@@ -181,10 +181,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const errorPolicyMatch = trimmed.match(/^errorPolicy:\s*(.+)$/);
 			if (errorPolicyMatch) {
 				const policy = errorPolicyMatch[1].trim().replace(/['"]/g, '') as ErrorPolicy;
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', errorPolicy: policy };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', errorPolicy: policy };
 				} else {
-					result.routes[currentRoute].errorPolicy = policy;
+					result.endpoints[currentRoute].errorPolicy = policy;
 				}
 				continue;
 			}
@@ -193,10 +193,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			if (retryCountMatch) {
 				const count = parseInt(retryCountMatch[1].trim(), 10);
 				if (!isNaN(count)) {
-					if (!result.routes[currentRoute]) {
-						result.routes[currentRoute] = { url: '', retryCount: count };
+					if (!result.endpoints[currentRoute]) {
+						result.endpoints[currentRoute] = { url: '', retryCount: count };
 					} else {
-						result.routes[currentRoute].retryCount = count;
+						result.endpoints[currentRoute].retryCount = count;
 					}
 				}
 				continue;
@@ -206,10 +206,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			if (retryDelayMatch) {
 				const delay = parseInt(retryDelayMatch[1].trim(), 10);
 				if (!isNaN(delay)) {
-					if (!result.routes[currentRoute]) {
-						result.routes[currentRoute] = { url: '', retryDelay: delay };
+					if (!result.endpoints[currentRoute]) {
+						result.endpoints[currentRoute] = { url: '', retryDelay: delay };
 					} else {
-						result.routes[currentRoute].retryDelay = delay;
+						result.endpoints[currentRoute].retryDelay = delay;
 					}
 				}
 				continue;
@@ -218,10 +218,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const fallbackMatch = trimmed.match(/^fallbackTo:\s*(.+)$/);
 			if (fallbackMatch) {
 				const target = fallbackMatch[1].trim().replace(/['"]/g, '');
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', fallbackTo: target };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', fallbackTo: target };
 				} else {
-					result.routes[currentRoute].fallbackTo = target;
+					result.endpoints[currentRoute].fallbackTo = target;
 				}
 				continue;
 			}
@@ -229,10 +229,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const healthCheckMatch = trimmed.match(/^healthCheck:\s*(.+)$/);
 			if (healthCheckMatch) {
 				const path = healthCheckMatch[1].trim().replace(/['"]/g, '');
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', healthCheck: path };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', healthCheck: path };
 				} else {
-					result.routes[currentRoute].healthCheck = path;
+					result.endpoints[currentRoute].healthCheck = path;
 				}
 				continue;
 			}
@@ -241,10 +241,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			if (transformErrorMatch) {
 				const name = transformErrorMatch[1].trim().replace(/['"]/g, '');
 				const fn = resolveTransformError(name);
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', transformError: fn };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', transformError: fn };
 				} else {
-					result.routes[currentRoute].transformError = fn;
+					result.endpoints[currentRoute].transformError = fn;
 				}
 				continue;
 			}
@@ -252,10 +252,10 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const mockMatch = trimmed.match(/^mock:\s*(true|false)$/);
 			if (mockMatch) {
 				const val = mockMatch[1] === 'true';
-				if (!result.routes[currentRoute]) {
-					result.routes[currentRoute] = { url: '', mock: val };
+				if (!result.endpoints[currentRoute]) {
+					result.endpoints[currentRoute] = { url: '', mock: val };
 				} else {
-					result.routes[currentRoute].mock = val;
+					result.endpoints[currentRoute].mock = val;
 				}
 				continue;
 			}
@@ -266,7 +266,7 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 			const itemMatch = trimmed.match(/^-\s+(.+)$/);
 			if (itemMatch) {
 				const routeName = itemMatch[1].trim().replace(/['"]/g, '');
-				result.groups[currentGroup].routes.push(routeName);
+				result.groups[currentGroup].endpoints.push(routeName);
 				continue;
 			}
 		}
@@ -287,13 +287,13 @@ export function parseEndpointsYaml(raw: string): EndpointsYaml {
 				const itemMatch = trimmed.match(/^-\s+(.+)$/);
 				if (itemMatch) {
 					const value = itemMatch[1].trim().replace(/['"]/g, '');
-					if (!result.routes[currentRoute]) {
-						result.routes[currentRoute] = { url: '', middleware: [value] };
+					if (!result.endpoints[currentRoute]) {
+						result.endpoints[currentRoute] = { url: '', middleware: [value] };
 					} else {
-						if (!result.routes[currentRoute].middleware) {
-							result.routes[currentRoute].middleware = [];
+						if (!result.endpoints[currentRoute].middleware) {
+							result.endpoints[currentRoute].middleware = [];
 						}
-						result.routes[currentRoute].middleware!.push(value);
+						result.endpoints[currentRoute].middleware!.push(value);
 					}
 					continue;
 				}
@@ -313,17 +313,17 @@ export function validateEndpointsYaml(config: EndpointsYaml): string[] {
 		errors.push('Missing required field: default_endpoint');
 	}
 
-	if (!config.routes || Object.keys(config.routes).length === 0) {
-		errors.push('Missing required field: routes (must have at least one route)');
+	if (!config.endpoints || Object.keys(config.endpoints).length === 0) {
+		errors.push('Missing required field: endpoints (must have at least one endpoint)');
 	}
 
-	if (config.default_endpoint && config.routes && !config.routes[config.default_endpoint]) {
+	if (config.default_endpoint && config.endpoints && !config.endpoints[config.default_endpoint]) {
 		errors.push(
-			`default_endpoint "${config.default_endpoint}" references a route that does not exist in routes`,
+			`default_endpoint "${config.default_endpoint}" references an endpoint that does not exist in endpoints`,
 		);
 	}
 
-	for (const [name, route] of Object.entries(config.routes ?? {})) {
+	for (const [name, route] of Object.entries(config.endpoints ?? {})) {
 		if (!route.url) {
 			errors.push(`Route "${name}" is missing required field: url`);
 		}
@@ -342,17 +342,17 @@ export function validateEndpointsYaml(config: EndpointsYaml): string[] {
 				`Route "${name}" has invalid retryDelay: ${route.retryDelay} (expected non-negative integer)`,
 			);
 		}
-		if (route.fallbackTo && !config.routes?.[route.fallbackTo]) {
+		if (route.fallbackTo && !config.endpoints?.[route.fallbackTo]) {
 			errors.push(
-				`Route "${name}" fallbackTo "${route.fallbackTo}" references a route that does not exist`,
+				`Route "${name}" fallbackTo "${route.fallbackTo}" references an endpoint that does not exist`,
 			);
 		}
 	}
 
-	// Validate groups reference existing routes
+	// Validate groups reference existing endpoints
 	for (const [groupName, group] of Object.entries(config.groups ?? {})) {
-		for (const routeName of group.routes) {
-			if (!config.routes?.[routeName]) {
+		for (const routeName of group.endpoints) {
+			if (!config.endpoints?.[routeName]) {
 				errors.push(
 					`Group "${groupName}" references route "${routeName}" that does not exist`,
 				);
@@ -399,7 +399,7 @@ export function generateEndpointsYamlTemplate(): string {
 
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:

@@ -10,7 +10,7 @@ describe('Multi-Endpoint Integration', () => {
 	const validYaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:
@@ -25,10 +25,10 @@ routes:
 		const config = parseEndpointsYaml(validYaml);
 
 		expect(config.default_endpoint).toBe('main');
-		expect(Object.keys(config.routes)).toHaveLength(3);
-		expect(config.routes['main'].url).toBe('http://localhost:4000/graphql');
-		expect(config.routes['users'].url).toBe('http://localhost:4001/graphql');
-		expect(config.routes['posts'].url).toBe('http://localhost:4002/graphql');
+		expect(Object.keys(config.endpoints)).toHaveLength(3);
+		expect(config.endpoints['main'].url).toBe('http://localhost:4000/graphql');
+		expect(config.endpoints['users'].url).toBe('http://localhost:4001/graphql');
+		expect(config.endpoints['posts'].url).toBe('http://localhost:4002/graphql');
 
 		const errors = validateEndpointsYaml(config);
 		expect(errors).toHaveLength(0);
@@ -47,7 +47,7 @@ routes:
 		const yaml = `
 default_endpoint: nonexistent
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
@@ -55,7 +55,7 @@ routes:
 		const errors = validateEndpointsYaml(config);
 
 		expect(errors).toContainEqual(
-			'default_endpoint "nonexistent" references a route that does not exist in routes',
+			'default_endpoint "nonexistent" references an endpoint that does not exist in endpoints',
 		);
 	});
 
@@ -69,7 +69,7 @@ routes:
 	it('buildMultiEndpointConfig sets multi-endpoint to true', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
@@ -83,7 +83,7 @@ routes:
 		const yaml = `
 default_endpoint: primary
 
-routes:
+endpoints:
   primary:
     url: http://primary.example.com/graphql
   secondary:
@@ -94,30 +94,30 @@ routes:
 		const config = parseEndpointsYaml(yaml);
 
 		expect(config.default_endpoint).toBe('primary');
-		expect(config.routes['primary'].url).toBe('http://primary.example.com/graphql');
-		expect(config.routes['secondary'].url).toBe('http://secondary.example.com/graphql');
-		expect(config.routes['staging'].url).toBe('http://staging.example.com/graphql');
+		expect(config.endpoints['primary'].url).toBe('http://primary.example.com/graphql');
+		expect(config.endpoints['secondary'].url).toBe('http://secondary.example.com/graphql');
+		expect(config.endpoints['staging'].url).toBe('http://staging.example.com/graphql');
 	});
 
 	it('handles YAML with only default route', () => {
 		const yaml = `
 default_endpoint: default
 
-routes:
+endpoints:
   default:
     url: http://localhost:4000/graphql
 `;
 		const config = parseEndpointsYaml(yaml);
 
 		expect(config.default_endpoint).toBe('default');
-		expect(Object.keys(config.routes)).toHaveLength(1);
+		expect(Object.keys(config.endpoints)).toHaveLength(1);
 	});
 
 	it('handles routes with different header formats', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:
@@ -127,7 +127,7 @@ routes:
 `;
 		const config = parseEndpointsYaml(yaml);
 
-		expect(config.routes['main'].headers).toEqual({
+		expect(config.endpoints['main'].headers).toEqual({
 			Authorization: 'Bearer token123',
 			'X-API-Key': 'key-456',
 			'X-Tenant-ID': 'tenant-789',
@@ -137,7 +137,7 @@ routes:
 	it('validates multiple routes with missing URLs', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: '' },
 				users: { url: 'http://localhost:4001/graphql' },
 			},
@@ -153,7 +153,7 @@ describe('End-to-end config generation', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
   users:
@@ -174,7 +174,7 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
   users:
@@ -196,7 +196,7 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     errorPolicy: all
@@ -209,16 +209,16 @@ routes:
 `;
 		const config = parseEndpointsYaml(yaml);
 
-		expect(config.routes['main'].errorPolicy).toBe('all');
-		expect(config.routes['strict'].errorPolicy).toBe('none');
-		expect(config.routes['lenient'].errorPolicy).toBe('ignore');
+		expect(config.endpoints['main'].errorPolicy).toBe('all');
+		expect(config.endpoints['strict'].errorPolicy).toBe('none');
+		expect(config.endpoints['lenient'].errorPolicy).toBe('ignore');
 	});
 
 	it('parses per-endpoint retryCount and retryDelay', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     retryCount: 3
@@ -230,17 +230,17 @@ routes:
 `;
 		const config = parseEndpointsYaml(yaml);
 
-		expect(config.routes['main'].retryCount).toBe(3);
-		expect(config.routes['main'].retryDelay).toBe(1000);
-		expect(config.routes['noRetry'].retryCount).toBe(0);
-		expect(config.routes['noRetry'].retryDelay).toBe(0);
+		expect(config.endpoints['main'].retryCount).toBe(3);
+		expect(config.endpoints['main'].retryDelay).toBe(1000);
+		expect(config.endpoints['noRetry'].retryCount).toBe(0);
+		expect(config.endpoints['noRetry'].retryDelay).toBe(0);
 	});
 
 	it('passes per-endpoint middleware to buildMultiEndpointConfig', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     middleware:
@@ -260,7 +260,7 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:
@@ -272,7 +272,7 @@ routes:
     retryDelay: 2000
 `;
 		const config = parseEndpointsYaml(yaml);
-		const route = config.routes['main'];
+		const route = config.endpoints['main'];
 
 		expect(route.url).toBe('http://localhost:4000/graphql');
 		expect(route.headers).toEqual({ Authorization: 'Bearer token' });
@@ -286,12 +286,12 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
 		const config = parseEndpointsYaml(yaml);
-		const route = config.routes['main'];
+		const route = config.endpoints['main'];
 
 		expect(route.middleware).toBeUndefined();
 		expect(route.errorPolicy).toBeUndefined();

@@ -6,17 +6,16 @@ import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export type RefetchIntervalEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface RefetchIntervalOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. */
-	endpoint?: RefetchIntervalEndpointParam<Yaml>;
+export interface RefetchIntervalOptions extends DumbqlInjectOptions {
 	/** Polling interval in ms. Set 0 or undefined to disable. */
-	intervalMs?: number | Signal<number>;
+	readonly intervalMs?: number | Signal<number>;
 }
 
 export interface RefetchIntervalHandle<T> {
@@ -48,22 +47,21 @@ export function refetchInterval<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: RefetchIntervalEndpointParam,
 	variables?: TVariables,
 	options?: RefetchIntervalOptions,
 ): RefetchIntervalHandle<TResponse> {
-	const graphql = inject(GraphqlService);
-	const injector = inject(Injector);
-	const endpoints = inject(EndpointsService, { optional: true });
+	const graphql = inject(GraphqlService, options);
+	const injector = inject(Injector, options);
+	const endpoints = inject(EndpointsService, { optional: true, ...options });
 	const enabled = signal(true);
 	const refetch$ = new Subject<void>();
 	const destroy$ = new Subject<void>();
 	const intervalMsSignal = signal(options?.intervalMs ?? 0);
 
-	const epOption = options?.endpoint;
-
 	let endpoint$: Observable<string | undefined>;
-	if (isSignal(epOption)) {
-		endpoint$ = toObservable(epOption, { injector }).pipe(
+	if (isSignal(endpoint)) {
+		endpoint$ = toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => {
 				if (name && endpoints) {
@@ -72,8 +70,8 @@ export function refetchInterval<
 				return undefined;
 			}),
 		);
-	} else if (typeof epOption === 'string') {
-		const url = endpoints?.getRoute(epOption)?.url;
+	} else if (typeof endpoint === 'string') {
+		const url = endpoints?.getRoute(endpoint)?.url;
 		endpoint$ = of(url);
 	} else {
 		endpoint$ = of(undefined);

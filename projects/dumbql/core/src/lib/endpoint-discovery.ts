@@ -31,7 +31,7 @@ export class EndpointDiscoveryService {
 			query: '{ __schema { queryType { name } mutationType { name } types { name kind } } }',
 		};
 
-		for (const [name, route] of Object.entries(yaml.routes)) {
+		for (const [name, route] of Object.entries(yaml.endpoints)) {
 			const result: DiscoveryResult = {
 				routeName: name,
 				url: route.url,

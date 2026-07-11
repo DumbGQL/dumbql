@@ -5,17 +5,17 @@ import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
+import type { GraphqlCacheLike } from './dumbql-config';
 
 export type InjectMutationEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface InjectMutationOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. */
-	endpoint?: InjectMutationEndpointParam<Yaml>;
+export interface InjectMutationOptions extends DumbqlInjectOptions {
 	/** Apply optimistic cache update. Return a unique ID for the update. */
-	optimistic?: (cache: GraphqlCacheLike) => string;
+	readonly optimistic?: (cache: GraphqlCacheLike) => string;
 }
 
 export interface InjectMutationHandle<TResponse> {
@@ -43,10 +43,11 @@ export function injectMutation<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: InjectMutationEndpointParam,
 	options?: InjectMutationOptions,
 ): InjectMutationHandle<TResponse> {
-	const graphql = inject(GraphqlService);
-	const endpoints = inject(EndpointsService, { optional: true });
+	const graphql = inject(GraphqlService, options);
+	const endpoints = inject(EndpointsService, { optional: true, ...options });
 
 	const dataSignal = signal<TResponse | undefined>(undefined);
 	const errorSignal = signal<string | undefined>(undefined);
@@ -55,11 +56,10 @@ export function injectMutation<
 
 	let result$!: Observable<GraphQLResult<TResponse>>;
 
-	const epOption = options?.endpoint;
-	const epName = typeof epOption === 'string' ? epOption : undefined;
+	let epName = typeof endpoint === 'string' ? endpoint : undefined;
 
 	if (endpoints) {
-		endpoints.throwIfMultiEndpointMissing(epName);
+		epName = endpoints.throwIfMultiEndpointMissing(epName);
 	}
 
 	const resolveUrlAndOverride = (): { url?: string; overrideCfg?: RequestOverrideConfig } => {

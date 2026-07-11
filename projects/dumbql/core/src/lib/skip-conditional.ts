@@ -6,17 +6,16 @@ import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
+import type { DumbqlInjectOptions } from './inject-options';
 
 export type SkipEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface SkipQueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. */
-	endpoint?: SkipEndpointParam<Yaml>;
+export interface SkipQueryOptions extends DumbqlInjectOptions {
 	/** Signal or boolean to skip the query. */
-	skip?: Signal<boolean> | boolean;
+	readonly skip?: Signal<boolean> | boolean;
 }
 
 export interface SkipQueryHandle<T> {
@@ -46,31 +45,39 @@ export function skipQuery<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: SkipEndpointParam,
 	variables?: TVariables,
 	options?: SkipQueryOptions,
 ): SkipQueryHandle<TResponse> {
-	const graphql = inject(GraphqlService);
-	const injector = inject(Injector);
-	const endpoints = inject(EndpointsService, { optional: true });
+	const graphql = inject(GraphqlService, options);
+	const injector = inject(Injector, options);
+	const endpoints = inject(EndpointsService, { optional: true, ...options });
 
 	const skip = options?.skip ?? false;
 	const skipSignal = isSignal(skip) ? skip : signal(skip);
 
 	const enabled = signal(false);
 
-	const epOption = options?.endpoint;
+	let resolvedName: string | undefined;
+	if (endpoints) {
+		const name = isSignal(endpoint) ? endpoint() : (typeof endpoint === 'string' ? endpoint : undefined);
+		resolvedName = endpoints.throwIfMultiEndpointMissing(name);
+	}
 
 	let endpoint$: Observable<string | undefined>;
-	if (isSignal(epOption)) {
-		endpoint$ = toObservable(epOption, { injector }).pipe(
+	if (isSignal(endpoint)) {
+		endpoint$ = toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => {
 				if (name && endpoints) return endpoints.getRoute(name)?.url;
 				return undefined;
 			}),
 		);
-	} else if (typeof epOption === 'string') {
-		const url = endpoints?.getRoute(epOption)?.url;
+	} else if (typeof endpoint === 'string') {
+		const url = endpoints?.getRoute(endpoint)?.url;
+		endpoint$ = of(url);
+	} else if (resolvedName) {
+		const url = endpoints?.getRoute(resolvedName)?.url;
 		endpoint$ = of(url);
 	} else {
 		endpoint$ = of(undefined);

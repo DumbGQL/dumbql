@@ -1,123 +1,78 @@
-import { InjectionToken, type Provider, type AbstractType } from '@angular/core';
+import { InjectionToken, type AbstractType } from '@angular/core';
 import type { Observable } from 'rxjs';
 import type { GraphqlMiddleware } from './middleware';
-import type { EndpointsYaml } from './endpoints-config';
-export interface RetryExchangeConfig {
-	maxRetries?: number;
-	initialDelay?: number;
-	maxDelay?: number;
-	exponent?: number;
-	jitter?: boolean;
-	shouldRetry?: (result: unknown, attempt: number) => boolean;
-}
-
 import type { DevtoolsConfig } from './devtools';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Feature = Record<string, any>;
+
+export interface RetryExchangeConfig {
+	readonly maxRetries?: number;
+	readonly initialDelay?: number;
+	readonly maxDelay?: number;
+	readonly exponent?: number;
+	readonly jitter?: boolean;
+	readonly shouldRetry?: (result: unknown, attempt: number) => boolean;
+}
 
 // ─── Core ───────────────────────────────────────────────────────────────────
 
 export interface OnErrorServiceConfig {
-	/** The Angular service token to inject (e.g. TuiAlertService) */
-	provide: AbstractType<unknown> | InjectionToken<unknown>;
-	/**
-	 * Called with the injected service and error message.
-	 * Return an Observable — the library subscribes and auto-manages the subscription.
-	 */
+	readonly provide: AbstractType<unknown> | InjectionToken<unknown>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	use: (service: any, error: string) => Observable<unknown>;
+	readonly use: (service: any, error: string) => Observable<unknown>;
 }
 
 export interface GraphqlCoreConfig {
-	endpoint?: string;
-	url?: string;
-	headers?: Record<string, string | (() => string)>;
-	errorPolicy?: 'none' | 'all' | 'ignore';
-	/**
-	 * When true, includes `graphQLErrors` on successful results even when the
-	 * errorPolicy would normally strip them. Useful for detecting partial errors
-	 * (e.g. server returns data + errors) without having to switch to `'all'`.
-	 */
-	showErrorsOnSuccess?: boolean;
-	retryCount?: number;
-	retryDelay?: number;
-	dedup?: boolean;
-	batchWindow?: number;
-	middleware?: GraphqlMiddleware[];
-	retryExchange?: RetryExchangeConfig;
-	devAuth?: {
-		token?: string;
-		enabled?: boolean;
+	readonly endpoint?: string;
+	readonly url?: string;
+	readonly headers?: Record<string, string | (() => string)>;
+	readonly errorPolicy?: 'none' | 'all' | 'ignore';
+	readonly showErrorsOnSuccess?: boolean;
+	readonly retryCount?: number;
+	readonly retryDelay?: number;
+	readonly dedup?: boolean;
+	readonly batchWindow?: number;
+	readonly middleware?: GraphqlMiddleware[];
+	readonly retryExchange?: RetryExchangeConfig;
+	readonly devAuth?: {
+		readonly token?: string;
+		readonly enabled?: boolean;
 	};
-	/**
-	 * Enable multi-endpoint mode. When true, requires an `endpoints.yml` file
-	 * to be provided via `provideMultiEndpoint()`. Queries and mutations must
-	 * then specify an endpoint name.
-	 */
-	multiEndpoint?: boolean;
-	/**
-	 * Path to the endpoints YAML configuration file. Only used when
-	 * `multiEndpoint: true`. Defaults to `./endpoints.yml`.
-	 */
-	endpoints?: string;
-	/**
-	 * Error notification config.
-	 * - Simple callback: `(error: string) => void`
-	 * - Service-based: `{ provide: TuiAlertService, use: (svc, err) => svc.open(err) }`
-	 *   The library injects the service, calls `use()`, and manages the subscription.
-	 *
-	 * @example
-	 * ```typescript
-	 * onError: {
-	 *   provide: TuiAlertService,
-	 *   use: (alerts, err) => alerts.open(err, { label: 'GraphQL Error' }),
-	 * }
-	 * ```
-	 */
-	onError?: ((error: string) => void) | OnErrorServiceConfig;
-	/**
-	 * Custom error handler. Receives every error during query execution.
-	 * Called before `onError` — useful for logging, metrics, or custom toast.
-	 *
-	 * @example
-	 * ```typescript
-	 * errorHandler: {
-	 *   handle(error) { console.error('[GraphQL]', error); return true; }
-	 * }
-	 * ```
-	 */
-	errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
+	readonly multiEndpoint?: boolean;
+	readonly endpoints?: string;
+	readonly onError?: ((error: string) => void) | OnErrorServiceConfig;
+	readonly errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
 }
 
 // ─── Subscriptions ──────────────────────────────────────────────────────────
 
 export interface SubscriptionsConfig {
-	wsEndpoint?: string;
-	reconnect?: boolean;
-	reconnectInterval?: number;
-	lazy?: boolean;
+	readonly wsEndpoint?: string;
+	readonly reconnect?: boolean;
+	readonly reconnectInterval?: number;
+	readonly lazy?: boolean;
 }
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
 export interface SchemaConfig {
-	/** Inline schema data (e.g. from downloaded introspection JSON) */
-	data?: Record<string, unknown>;
-	/** Fetch schema from this URL at startup */
-	url?: string;
-	/** Custom headers for schema fetch */
-	headers?: Record<string, string>;
+	readonly data?: Record<string, unknown>;
+	readonly url?: string;
+	readonly headers?: Record<string, string>;
 }
 
 // ─── Cache ──────────────────────────────────────────────────────────────────
 
 export interface CacheConfig {
-	enabled?: boolean;
-	maxAge?: number;
-	serialize?: boolean;
-	typePolicies?: Record<
+	readonly enabled?: boolean;
+	readonly maxAge?: number;
+	readonly serialize?: boolean;
+	readonly typePolicies?: Record<
 		string,
 		{
-			keyFields?: string[];
-			merge?:
+			readonly keyFields?: string[];
+			readonly merge?:
 				| 'append'
 				| 'prepend'
 				| ((
@@ -127,189 +82,156 @@ export interface CacheConfig {
 				  ) => unknown[]);
 		}
 	>;
-	/** Schema used for type policy validation */
-	schema?: SchemaConfig;
+	readonly schema?: SchemaConfig;
 }
 
 // ─── Persisted Queries ──────────────────────────────────────────────────────
 
 export interface PersistedQueriesConfig {
-	enabled?: boolean;
-	hash?: 'sha256' | 'simple';
-	autoPersist?: boolean;
-	/** Send hash-only requests via GET instead of POST to enable CDN caching.
-	 *  Only applies when `hash` is set and the query body is empty (hash-only). */
-	useGetForHashedQueries?: boolean;
+	readonly enabled?: boolean;
+	readonly hash?: 'sha256' | 'simple';
+	readonly autoPersist?: boolean;
+	readonly useGetForHashedQueries?: boolean;
 }
 
 // ─── File Upload ────────────────────────────────────────────────────────────
 
 export interface UploadConfig {
-	maxFiles?: number;
-	maxFileSize?: number;
+	readonly maxFiles?: number;
+	readonly maxFileSize?: number;
 }
 
 // ─── Debug ──────────────────────────────────────────────────────────────────
 
 export interface DebugConfig {
-	logOperations?: boolean;
-	logTiming?: boolean;
-	logCache?: boolean;
+	readonly logOperations?: boolean;
+	readonly logTiming?: boolean;
+	readonly logCache?: boolean;
 }
 
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 export interface PaginationConfig {
-	defaultLimit?: number;
-	debounceMs?: number;
+	readonly defaultLimit?: number;
+	readonly debounceMs?: number;
 }
 
 // ─── Testing ─────────────────────────────────────────────────────────────────
 
 export interface TestingConfig {
-	enabled?: boolean;
+	readonly enabled?: boolean;
 }
 
 // ─── SSR ────────────────────────────────────────────────────────────────────
 
 export interface SsrConfig {
-	transferState?: boolean;
-	cacheTtl?: number;
+	readonly transferState?: boolean;
+	readonly cacheTtl?: number;
 }
 
 // ─── Telemetry / OpenTelemetry ───────────────────────────────────────────────
 
 export interface TelemetryConfig {
-	enabled?: boolean;
-	/** OpenTelemetry tracing configuration */
-	tracing?: {
-		enabled?: boolean;
-		exporter?: 'console' | 'otlp';
-		endpoint?: string;
-		serviceName?: string;
+	readonly enabled?: boolean;
+	readonly tracing?: {
+		readonly enabled?: boolean;
+		readonly exporter?: 'console' | 'otlp';
+		readonly endpoint?: string;
+		readonly serviceName?: string;
 	};
-	/** Middleware-level tracing tags */
-	tags?: Record<string, string>;
+	readonly tags?: Record<string, string>;
 }
 
 // ─── Codegen (CLI-only, ignored at runtime) ─────────────────────────────────
 
 export interface CodegenConfig {
-	schema: {
-		endpoint: string;
-		dir?: string;
-		filename?: string;
-		autoDownload?: boolean;
-		autoDownloadSchema?: boolean;
-		headers?: Record<string, string>;
+	readonly schema: {
+		readonly endpoint: string;
+		readonly dir?: string;
+		readonly filename?: string;
+		readonly autoDownload?: boolean;
+		readonly autoDownloadSchema?: boolean;
+		readonly headers?: Record<string, string>;
 	};
-	types: {
-		dir: string;
-		scalars?: Record<string, string>;
-		enumsAsTypes?: boolean;
-		maybeValue?: string;
-		strictNullability?: boolean;
-		operationResultPrefix?: string;
-		operationResultSuffix?: string;
-		/** When true, only appends new type definitions instead of rewriting the entire file. */
-		merge?: boolean;
+	readonly types: {
+		readonly dir: string;
+		readonly scalars?: Record<string, string>;
+		readonly enumsAsTypes?: boolean;
+		readonly maybeValue?: string;
+		readonly strictNullability?: boolean;
+		readonly operationResultPrefix?: string;
+		readonly operationResultSuffix?: string;
+		readonly merge?: boolean;
 	};
 }
 
-// ─── Unified Config ─────────────────────────────────────────────────────────
+// ─── Plugins ────────────────────────────────────────────────────────────────
 
 export interface DumbqlPlugin {
-	name: string;
+	readonly name: string;
 	onInit?(client: unknown): void;
 	getMiddleware?(): unknown;
 }
 
-export interface DumbqlConfig extends GraphqlCoreConfig {
-	autoDownload?: boolean;
-	autoDownloadSchema?: boolean;
-	subscriptions?: SubscriptionsConfig;
-	cache?: CacheConfig;
-	persistedQueries?: PersistedQueriesConfig;
-	upload?: UploadConfig;
-	debug?: boolean | DebugConfig;
-	pagination?: PaginationConfig;
-	testing?: TestingConfig;
-	ssr?: SsrConfig;
-	codegen?: CodegenConfig;
-	devtools?: boolean | DevtoolsConfig;
-	telemetry?: TelemetryConfig;
-	plugins?: DumbqlPlugin[];
+// ─── Feature-level configs (stored in DumbqlConfig.features[]) ───────────────
+
+export interface FeatureConfig {
+	readonly name: string;
+	readonly middleware?: GraphqlMiddleware[];
+	readonly errorPolicy?: 'none' | 'all' | 'ignore';
+	readonly retryCount?: number;
+	readonly retryDelay?: number;
 }
 
-// ─── Legacy alias ───────────────────────────────────────────────────────────
+// ─── Unified Config ─────────────────────────────────────────────────────────
+
+export interface DumbqlConfig extends GraphqlCoreConfig {
+	readonly autoDownload?: boolean;
+	readonly autoDownloadSchema?: boolean;
+	readonly subscriptions?: SubscriptionsConfig;
+	readonly cache?: CacheConfig;
+	readonly persistedQueries?: PersistedQueriesConfig;
+	readonly upload?: UploadConfig;
+	readonly debug?: boolean | DebugConfig;
+	readonly pagination?: PaginationConfig;
+	readonly testing?: TestingConfig;
+	readonly ssr?: SsrConfig;
+	readonly codegen?: CodegenConfig;
+	readonly devtools?: boolean | DevtoolsConfig;
+	readonly telemetry?: TelemetryConfig;
+	readonly plugins?: DumbqlPlugin[];
+	readonly features?: FeatureConfig[];
+}
 
 /** @deprecated Use DumbqlConfig instead */
 export type GraphqlConfig = DumbqlConfig;
 
-// ─── Injection token ────────────────────────────────────────────────────────
+// ─── Injection tokens ───────────────────────────────────────────────────────
 
 export const DUMBQL_CONFIG = new InjectionToken<DumbqlConfig>('DUMBQL_CONFIG');
 
 /** @deprecated Use DUMBQL_CONFIG instead */
 export const GRAPHQL_CONFIG = DUMBQL_CONFIG;
 
+// ─── Reactive config token ──────────────────────────────────────────────────
+
+export interface ReactiveDumbqlConfig {
+	readonly endpoint: import('@angular/core').Signal<string>;
+	readonly errorPolicy: import('@angular/core').Signal<'none' | 'all' | 'ignore'>;
+	readonly retryCount: import('@angular/core').Signal<number>;
+	readonly retryDelay: import('@angular/core').Signal<number>;
+	readonly dedup: import('@angular/core').Signal<boolean>;
+	readonly batchWindow: import('@angular/core').Signal<number>;
+	readonly middleware: import('@angular/core').Signal<GraphqlMiddleware[]>;
+	readonly features: import('@angular/core').Signal<FeatureConfig[]>;
+	readonly isDebugEnabled: import('@angular/core').Signal<boolean>;
+	readonly isDevtoolsEnabled: import('@angular/core').Signal<boolean>;
+	readonly raw: import('@angular/core').Signal<DumbqlConfig>;
+	update(partial: Partial<DumbqlConfig>): void;
+}
+
+export const REACTIVE_DUMBQL_CONFIG = new InjectionToken<ReactiveDumbqlConfig>('REACTIVE_DUMBQL_CONFIG');
+
+export const FEATURE_CONFIGS = new InjectionToken<FeatureConfig[]>('FEATURE_CONFIGS');
+
 export { GRAPHQL_CACHE, type GraphqlCacheLike } from '@dumbql/cache';
-
-// ─── Provider ───────────────────────────────────────────────────────────────
-
-export function provideGraphql(config: Partial<DumbqlConfig>): Provider[] {
-	const defaults: Partial<DumbqlConfig> = {
-		endpoint: '/graphql',
-		errorPolicy: 'none',
-		retryCount: 0,
-		retryDelay: 1000,
-		dedup: false,
-		batchWindow: 0,
-		devAuth: { enabled: true },
-	};
-
-	return [{ provide: DUMBQL_CONFIG, useValue: { ...defaults, ...config } }];
-}
-
-/**
- * Type-safe config helper with full inference (like Vite's `defineConfig`).
- *
- * @example
- * ```typescript
- * // dumbql.config.ts
- * import { defineConfig } from '@dumbql/core';
- *
- * export default defineConfig({
- *   endpoint: '/graphql',
- *   errorPolicy: 'all',
- *   retryCount: 3,
- *   cache: { enabled: true, maxAge: 60_000 },
- * });
- * ```
- */
-export function defineConfig(config: DumbqlConfig): DumbqlConfig {
-	return config;
-}
-
-/**
- * Type-safe multi-endpoint config helper.
- *
- * @example
- * ```typescript
- * import { defineEndpointsConfig } from '@dumbql/core';
- *
- * export default defineEndpointsConfig({
- *   default_endpoint: 'main',
- *   routes: {
- *     main: { url: 'http://localhost:4000/graphql', errorPolicy: 'none' },
- *     users: { url: 'http://localhost:4001/graphql', errorPolicy: 'all' },
- *   },
- *   groups: {
- *     core: ['main', 'users'],
- *   },
- * });
- * ```
- */
-export function defineEndpointsConfig(config: EndpointsYaml): EndpointsYaml {
-	return config;
-}

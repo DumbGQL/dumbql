@@ -7,7 +7,7 @@ describe('buildMultiEndpointConfig', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
@@ -23,7 +23,7 @@ routes:
 	it('returns config from EndpointsYaml object', () => {
 		const yamlObj: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 				users: { url: 'http://localhost:4001/graphql' },
 			},
@@ -40,7 +40,7 @@ routes:
 		const yaml = `
 default_endpoint: nonexistent
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
@@ -52,7 +52,7 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:
@@ -69,7 +69,7 @@ routes:
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
   users:
@@ -92,7 +92,7 @@ describe('buildSingleEndpointConfig', () => {
 
 		expect(config.multiEndpoint).toBe(false);
 		expect(config.yaml.default_endpoint).toBe('');
-		expect(config.yaml.routes).toEqual({});
+		expect(config.yaml.endpoints).toEqual({});
 		expect(config.endpoints).toHaveLength(0);
 	});
 });
@@ -101,7 +101,7 @@ describe('validateEndpointsYaml integration', () => {
 	it('validates valid config', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
@@ -113,7 +113,7 @@ describe('validateEndpointsYaml integration', () => {
 	it('catches missing default_endpoint', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: '',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
@@ -122,10 +122,10 @@ describe('validateEndpointsYaml integration', () => {
 		expect(errors.length).toBeGreaterThan(0);
 	});
 
-	it('catches empty routes', () => {
+	it('catches empty endpoints', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {},
+			endpoints: {},
 		};
 
 		const errors = validateEndpointsYaml(config);
@@ -135,7 +135,7 @@ describe('validateEndpointsYaml integration', () => {
 	it('catches missing url in route', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: '' },
 			},
 		};
@@ -147,7 +147,7 @@ describe('validateEndpointsYaml integration', () => {
 	it('catches non-existent default_endpoint', () => {
 		const config: EndpointsYaml = {
 			default_endpoint: 'nonexistent',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};

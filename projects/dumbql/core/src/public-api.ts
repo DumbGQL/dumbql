@@ -11,12 +11,17 @@ export type {
 	TestingConfig,
 	CodegenConfig,
 	TelemetryConfig,
+	ReactiveDumbqlConfig,
+	FeatureConfig,
 } from './lib/dumbql-config';
-export { DumbqlConfigService, provideDumbql } from './lib/config.service';
+export { DumbqlConfigService, provideDumbql, validateDumbqlConfig, type ConfigValidationError } from './lib/config.service';
+export { dumbqlConfig, provideDumbqlFeature } from './lib/provider';
 export {
 	DUMBQL_CONFIG,
 	GRAPHQL_CONFIG,
 	GRAPHQL_CACHE,
+	REACTIVE_DUMBQL_CONFIG,
+	FEATURE_CONFIGS,
 	defineConfig,
 	defineEndpointsConfig,
 	type GraphqlCacheLike,
@@ -32,8 +37,7 @@ export {
 } from './lib/graphql.service';
 export { gql, print, createTypedQuery } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';
-export { query, type QueryHandle, type QueryOptions, type EndpointParam } from './lib/query';
-export { query as injectQuery } from './lib/query';
+export { query, type QueryHandle, type EndpointParam } from './lib/query';
 export {
 	GraphqlEndpoint,
 	provideEndpoint,
@@ -41,7 +45,6 @@ export {
 	type MutateEndpointOptions,
 } from './lib/endpoint';
 export { mutate, type MutateOptions, type MutateEndpointParam } from './lib/mutate';
-export { mutate as injectMutation } from './lib/mutate';
 export {
 	provideMultiEndpoint,
 	provideMultiEndpointWithLifecycle,
@@ -162,6 +165,7 @@ export { abortQuery, type AbortQueryHandle, type AbortQueryOptions } from './lib
 export { refetchInterval, type RefetchIntervalHandle, type RefetchIntervalOptions } from './lib/refetch-interval';
 
 // ─── Inject Composables ─────────────────────────────────────────────────────
+export { type DumbqlInjectOptions } from './lib/inject-options';
 export { injectQuery, type InjectQueryHandle, type InjectQueryOptions } from './lib/inject-query';
 export { injectMutation, type InjectMutationHandle, type InjectMutationOptions } from './lib/inject-mutation';
 

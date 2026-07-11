@@ -48,20 +48,20 @@ export class EndpointsService {
 	}
 
 	get routeNames(): string[] {
-		return this.yaml ? Object.keys(this.yaml.routes) : [];
+		return this.yaml ? Object.keys(this.yaml.endpoints) : [];
 	}
 
 	getRoute(name: string): EndpointRoute | undefined {
-		return this.yaml?.routes[name];
+		return this.yaml?.endpoints[name];
 	}
 
 	hasRoute(name: string): boolean {
-		return name in (this.yaml?.routes ?? {});
+		return name in (this.yaml?.endpoints ?? {});
 	}
 
 	/** Get all routes in a named group. */
 	getGroupRoutes(groupName: string): string[] {
-		return this.yaml?.groups?.[groupName]?.routes ?? [];
+		return this.yaml?.groups?.[groupName]?.endpoints ?? [];
 	}
 
 	/** Get all group names. */
@@ -127,7 +127,7 @@ export class EndpointsService {
 
 		const results: HealthCheckResult[] = [];
 
-		for (const [name, route] of Object.entries(this.yaml?.routes ?? {})) {
+		for (const [name, route] of Object.entries(this.yaml?.endpoints ?? {})) {
 			if (!route.healthCheck) continue;
 
 			const url = `${route.url.replace(/\/graphql\/?$/, '')}${route.healthCheck}`;
@@ -170,21 +170,24 @@ export class EndpointsService {
 		return results;
 	}
 
-	throwIfMultiEndpointMissing(endpointName: string | undefined): void {
-		if (this.isMultiEndpoint && endpointName === undefined) {
+	throwIfMultiEndpointMissing(endpointName: string | undefined): string | undefined {
+		if (!endpointName && this.isMultiEndpoint) {
+			const defaultEp = this.defaultEndpoint;
+			if (defaultEp) return defaultEp;
 			throw new Error(
-				'DumbQL: multiEndpoint is enabled but no endpoint name was provided. ' +
-					'Pass an endpoint name to injectQuery(), query(), mutate(), or injectMutation(). ' +
+				'DumbQL: multiEndpoint is enabled but no endpoint name was provided ' +
+					'and no default_endpoint is set in endpoints.yml. ' +
 					`Available endpoints: ${this.routeNames.join(', ')}`,
 			);
 		}
+		return endpointName;
 	}
 }
 
 function createEndpointProviders(yaml: EndpointsYaml): Provider[] {
 	const providers: Provider[] = [];
 
-	for (const [name, route] of Object.entries(yaml.routes)) {
+	for (const [name, route] of Object.entries(yaml.endpoints)) {
 		const token = getEndpointToken(name);
 		const resolvedHeaders = route.headers ? resolveHeaderEnvVars(route.headers) : undefined;
 		const hasOverride = route.middleware || route.errorPolicy ||

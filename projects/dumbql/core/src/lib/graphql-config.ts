@@ -10,7 +10,11 @@ export {
 	type CodegenConfig,
 	type DumbqlConfig,
 	type GraphqlConfig,
+	type ReactiveDumbqlConfig,
+	type FeatureConfig,
+	type Feature,
 	DUMBQL_CONFIG,
 	GRAPHQL_CONFIG,
-	provideGraphql,
+	REACTIVE_DUMBQL_CONFIG,
+	FEATURE_CONFIGS,
 } from './dumbql-config';

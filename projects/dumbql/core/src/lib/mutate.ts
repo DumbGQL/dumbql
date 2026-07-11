@@ -1,4 +1,4 @@
-import { inject, isSignal, type Signal } from '@angular/core';
+import { inject, type Signal } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { GraphqlService, type GraphQLResult, type RequestOverrideConfig } from './graphql.service';
 import { EndpointsService } from './endpoints.service';
@@ -12,11 +12,9 @@ export type MutateEndpointParam<Yaml extends EndpointsYaml | undefined = undefin
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface MutateOptions<Yaml extends EndpointsYaml | undefined = undefined> {
+export interface MutateOptions {
 	/** Apply optimistic cache update. Return a unique ID for the update. */
-	optimistic?: (cache: GraphqlCacheLike) => string;
-	/** Endpoint name or signal that resolves to an endpoint name. Required when multiEndpoint is enabled. */
-	endpoint?: MutateEndpointParam<Yaml>;
+	readonly optimistic?: (cache: GraphqlCacheLike) => string;
 }
 
 export function mutate<
@@ -29,6 +27,7 @@ export function mutate<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: MutateEndpointParam,
 	variables?: TVariables,
 	options?: MutateOptions,
 ): Observable<GraphQLResult<TResponse>> {
@@ -36,11 +35,10 @@ export function mutate<
 		const svc = inject(GraphqlService);
 		const endpoints = inject(EndpointsService, { optional: true });
 
-		const epOption = options?.endpoint;
-		const epName = isSignal(epOption) ? epOption() : epOption;
+		let epName = typeof endpoint === 'string' ? endpoint : undefined;
 
 		if (endpoints) {
-			endpoints.throwIfMultiEndpointMissing(epName);
+			epName = endpoints.throwIfMultiEndpointMissing(epName);
 		}
 
 		let url: string | undefined;

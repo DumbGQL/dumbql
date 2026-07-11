@@ -63,20 +63,20 @@ export type InferQuerySignals<T> = T extends QueryHandle<infer D>
 
 /** Infer endpoint route names from EndpointsYaml */
 export type InferEndpointNames<T> = T extends EndpointsYaml
-	? keyof T['routes'] & string
+	? keyof T['endpoints'] & string
 	: string;
 
 /** Infer a specific endpoint route config */
 export type InferEndpointRoute<T, N extends string> = T extends EndpointsYaml
-	? N extends keyof T['routes']
-		? T['routes'][N]
+	? N extends keyof T['endpoints']
+		? T['endpoints'][N]
 		: never
 	: never;
 
 /** Infer endpoint URL from EndpointsYaml by route name */
 export type InferEndpointUrl<T, N extends string> = T extends EndpointsYaml
-	? N extends keyof T['routes']
-		? T['routes'][N] extends { url: infer U }
+	? N extends keyof T['endpoints']
+		? T['endpoints'][N] extends { url: infer U }
 			? U
 			: string
 		: string
@@ -84,8 +84,8 @@ export type InferEndpointUrl<T, N extends string> = T extends EndpointsYaml
 
 /** Infer endpoint headers from EndpointsYaml by route name */
 export type InferEndpointHeaders<T, N extends string> = T extends EndpointsYaml
-	? N extends keyof T['routes']
-		? T['routes'][N] extends { headers?: infer H }
+	? N extends keyof T['endpoints']
+		? T['endpoints'][N] extends { headers?: infer H }
 			? H
 			: undefined
 		: undefined

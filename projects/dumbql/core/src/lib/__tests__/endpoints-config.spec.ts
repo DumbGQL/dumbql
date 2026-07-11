@@ -6,21 +6,21 @@ describe('parseEndpointsYaml', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('main');
-		expect(result.routes['main']).toEqual({ url: 'http://localhost:4000/graphql' });
+		expect(result.endpoints['main']).toEqual({ url: 'http://localhost:4000/graphql' });
 	});
 
 	it('parses multiple routes', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
   users:
@@ -31,17 +31,17 @@ routes:
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('main');
-		expect(Object.keys(result.routes)).toHaveLength(3);
-		expect(result.routes['main'].url).toBe('http://localhost:4000/graphql');
-		expect(result.routes['users'].url).toBe('http://localhost:4001/graphql');
-		expect(result.routes['posts'].url).toBe('http://localhost:4002/graphql');
+		expect(Object.keys(result.endpoints)).toHaveLength(3);
+		expect(result.endpoints['main'].url).toBe('http://localhost:4000/graphql');
+		expect(result.endpoints['users'].url).toBe('http://localhost:4001/graphql');
+		expect(result.endpoints['posts'].url).toBe('http://localhost:4002/graphql');
 	});
 
 	it('parses routes with headers', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
     headers:
@@ -50,7 +50,7 @@ routes:
 `;
 		const result = parseEndpointsYaml(yaml);
 
-		expect(result.routes['main'].headers).toEqual({
+		expect(result.endpoints['main'].headers).toEqual({
 			Authorization: 'Bearer token123',
 			'X-Custom': 'value',
 		});
@@ -60,14 +60,14 @@ routes:
 		const yaml = `
 default_endpoint: "main"
 
-routes:
+endpoints:
   main:
     url: "http://localhost:4000/graphql"
 `;
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('main');
-		expect(result.routes['main'].url).toBe('http://localhost:4000/graphql');
+		expect(result.endpoints['main'].url).toBe('http://localhost:4000/graphql');
 	});
 
 	it('skips comment lines', () => {
@@ -76,21 +76,21 @@ routes:
 default_endpoint: main
 
 # Another comment
-routes:
+endpoints:
   main:
     url: http://localhost:4000/graphql
 `;
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('main');
-		expect(result.routes['main'].url).toBe('http://localhost:4000/graphql');
+		expect(result.endpoints['main'].url).toBe('http://localhost:4000/graphql');
 	});
 
 	it('handles empty lines', () => {
 		const yaml = `
 default_endpoint: main
 
-routes:
+endpoints:
 
   main:
     url: http://localhost:4000/graphql
@@ -98,14 +98,14 @@ routes:
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('main');
-		expect(result.routes['main'].url).toBe('http://localhost:4000/graphql');
+		expect(result.endpoints['main'].url).toBe('http://localhost:4000/graphql');
 	});
 
 	it('parses route with headers but no other properties first', () => {
 		const yaml = `
 default_endpoint: api
 
-routes:
+endpoints:
   api:
     headers:
       Authorization: "Bearer token"
@@ -114,8 +114,8 @@ routes:
 		const result = parseEndpointsYaml(yaml);
 
 		expect(result.default_endpoint).toBe('api');
-		expect(result.routes['api'].url).toBe('http://localhost:4000/graphql');
-		expect(result.routes['api'].headers).toEqual({
+		expect(result.endpoints['api'].url).toBe('http://localhost:4000/graphql');
+		expect(result.endpoints['api'].headers).toEqual({
 			Authorization: 'Bearer token',
 		});
 	});
@@ -125,7 +125,7 @@ describe('validateEndpointsYaml', () => {
 	it('returns no errors for valid config', () => {
 		const config = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
@@ -137,7 +137,7 @@ describe('validateEndpointsYaml', () => {
 	it('returns error when default_endpoint is missing', () => {
 		const config = {
 			default_endpoint: '',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
@@ -146,44 +146,44 @@ describe('validateEndpointsYaml', () => {
 		expect(errors).toContainEqual('Missing required field: default_endpoint');
 	});
 
-	it('returns error when routes is empty', () => {
+	it('returns error when endpoints is empty', () => {
 		const config = {
 			default_endpoint: 'main',
-			routes: {},
+			endpoints: {},
 		};
 
 		const errors = validateEndpointsYaml(config);
-		expect(errors).toContainEqual('Missing required field: routes (must have at least one route)');
+		expect(errors).toContainEqual('Missing required field: endpoints (must have at least one endpoint)');
 	});
 
-	it('returns error when routes is undefined', () => {
+	it('returns error when endpoints is undefined', () => {
 		const config = {
 			default_endpoint: 'main',
-			routes: undefined as unknown as Record<string, { url: string }>,
+			endpoints: undefined as unknown as Record<string, { url: string }>,
 		};
 
 		const errors = validateEndpointsYaml(config);
-		expect(errors).toContainEqual('Missing required field: routes (must have at least one route)');
+		expect(errors).toContainEqual('Missing required field: endpoints (must have at least one endpoint)');
 	});
 
-	it('returns error when default_endpoint references non-existent route', () => {
+	it('returns error when default_endpoint references non-existent endpoint', () => {
 		const config = {
 			default_endpoint: 'nonexistent',
-			routes: {
+			endpoints: {
 				main: { url: 'http://localhost:4000/graphql' },
 			},
 		};
 
 		const errors = validateEndpointsYaml(config);
 		expect(errors).toContainEqual(
-			'default_endpoint "nonexistent" references a route that does not exist in routes',
+			'default_endpoint "nonexistent" references an endpoint that does not exist in endpoints',
 		);
 	});
 
 	it('returns error when a route is missing url', () => {
 		const config = {
 			default_endpoint: 'main',
-			routes: {
+			endpoints: {
 				main: { url: '' },
 			},
 		};
@@ -195,7 +195,7 @@ describe('validateEndpointsYaml', () => {
 	it('returns multiple errors at once', () => {
 		const config = {
 			default_endpoint: '',
-			routes: {} as Record<string, { url: string }>,
+			endpoints: {} as Record<string, { url: string }>,
 		};
 
 		const errors = validateEndpointsYaml(config);
@@ -214,9 +214,9 @@ describe('generateEndpointsYamlTemplate', () => {
 		expect(template).toContain('default_endpoint:');
 	});
 
-	it('contains routes section', () => {
+	it('contains endpoints section', () => {
 		const template = generateEndpointsYamlTemplate();
-		expect(template).toContain('routes:');
+		expect(template).toContain('endpoints:');
 	});
 
 	it('contains example routes', () => {

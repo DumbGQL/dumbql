@@ -12,11 +12,6 @@ export type EndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface QueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. Required when multiEndpoint is enabled. */
-	endpoint?: EndpointParam<Yaml>;
-}
-
 export interface QueryHandle<T> {
 	/** Stream of query results */
 	readonly result$: Observable<GraphQLResult<T>>;
@@ -44,8 +39,8 @@ export function query<
 		: Record<string, unknown>,
 >(
 	document: TDocument,
+	endpoint?: EndpointParam,
 	variables?: TVariables,
-	options?: QueryOptions,
 ): QueryHandle<TResponse> {
 	const graphql = inject(GraphqlService);
 	const injector = inject(Injector);
@@ -53,10 +48,10 @@ export function query<
 	const enabled = signal(true);
 	const refetch$ = new Subject<void>();
 
+	let resolvedName: string | undefined;
 	if (endpoints) {
-		const ep = options?.endpoint;
-		const name = isSignal(ep) ? ep() : ep;
-		endpoints.throwIfMultiEndpointMissing(name);
+		const name = isSignal(endpoint) ? endpoint() : (typeof endpoint === 'string' ? endpoint : undefined);
+		resolvedName = endpoints.throwIfMultiEndpointMissing(name);
 	}
 
 	const resolveUrl = (epName?: string): string | undefined => {
@@ -80,26 +75,26 @@ export function query<
 		} : undefined;
 	};
 
-	const epOption = options?.endpoint;
-
 	let endpoint$: Observable<string | undefined>;
-	if (isSignal(epOption)) {
-		endpoint$ = toObservable(epOption, { injector }).pipe(
+	if (isSignal(endpoint)) {
+		endpoint$ = toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => resolveUrl(name)),
 		);
-	} else if (typeof epOption === 'string') {
-		endpoint$ = of(resolveUrl(epOption));
+	} else if (typeof endpoint === 'string') {
+		endpoint$ = of(resolveUrl(endpoint));
+	} else if (resolvedName) {
+		endpoint$ = of(resolveUrl(resolvedName));
 	} else {
 		endpoint$ = of(undefined);
 	}
 
-	const override$ = isSignal(epOption)
-		? toObservable(epOption, { injector }).pipe(
+	const override$ = isSignal(endpoint)
+		? toObservable(endpoint, { injector }).pipe(
 			distinctUntilChanged(),
 			rxMap((name) => resolveOverride(name)),
 		)
-		: of(resolveOverride(typeof epOption === 'string' ? epOption : undefined));
+		: of(resolveOverride(typeof endpoint === 'string' ? endpoint : resolvedName));
 
 	const result$ = toObservable(enabled, { injector }).pipe(
 		distinctUntilChanged(),

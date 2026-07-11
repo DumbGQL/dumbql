@@ -51,13 +51,13 @@ export function UseEndpoint(name: string) {
  * Useful for dynamic endpoint resolution without Angular DI.
  */
 export function createEndpointResolver(
-	routes: Record<string, { url: string }>,
+	endpoints: Record<string, { url: string }>,
 ): (name: string) => string | undefined {
-	return (name: string) => routes[name]?.url;
+	return (name: string) => endpoints[name]?.url;
 }
 
 /**
- * Validate that all endpoint names in a group exist in the routes map.
+ * Validate that all endpoint names in a group exist in the endpoints map.
  */
 export function validateGroupRoutes(
 	groupName: string,

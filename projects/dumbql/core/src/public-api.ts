@@ -13,16 +13,63 @@ export type {
 	TelemetryConfig,
 } from './lib/dumbql-config';
 export { DumbqlConfigService, provideDumbql } from './lib/config.service';
-export { DUMBQL_CONFIG, GRAPHQL_CONFIG, GRAPHQL_CACHE, type GraphqlCacheLike } from './lib/dumbql-config';
+export {
+	DUMBQL_CONFIG,
+	GRAPHQL_CONFIG,
+	GRAPHQL_CACHE,
+	defineConfig,
+	defineEndpointsConfig,
+	type GraphqlCacheLike,
+} from './lib/dumbql-config';
 export type { OnErrorServiceConfig, SchemaConfig, DumbqlPlugin } from './lib/dumbql-config';
-export { GraphqlService, type GraphQLResult, type GraphQLResponse, type ErrorCode } from './lib/graphql.service';
+export {
+	GraphqlService,
+	type GraphQLResult,
+	type GraphQLResponse,
+	type ErrorCode,
+	type ErrorPolicy,
+	type RequestOverrideConfig,
+} from './lib/graphql.service';
 export { gql, print, createTypedQuery } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';
-export { query, type QueryHandle } from './lib/query';
-export { query as injectQuery, type QueryHandle as InjectQueryHandle } from './lib/query';
-export { GraphqlEndpoint, provideEndpoint, injectEndpoint, type MutateEndpointOptions } from './lib/endpoint';
-export { mutate, type MutateOptions } from './lib/mutate';
-export { mutate as injectMutation, type MutateOptions as InjectMutationOptions } from './lib/mutate';
+export { query, type QueryHandle, type QueryOptions, type EndpointParam } from './lib/query';
+export { query as injectQuery } from './lib/query';
+export {
+	GraphqlEndpoint,
+	provideEndpoint,
+	injectEndpoint,
+	type MutateEndpointOptions,
+} from './lib/endpoint';
+export { mutate, type MutateOptions, type MutateEndpointParam } from './lib/mutate';
+export { mutate as injectMutation } from './lib/mutate';
+export {
+	provideMultiEndpoint,
+	provideMultiEndpointWithLifecycle,
+	provideSingleEndpoint,
+	EndpointsService,
+	IS_MULTI_ENDPOINT,
+	ENDPOINTS_YAML,
+	ENDPOINT_LIFECYCLE,
+	type EndpointLifecycleHook,
+	type HealthCheckResult,
+} from './lib/endpoints.service';
+export {
+	type EndpointRoute,
+	type EndpointGroup,
+	type EndpointsYaml,
+	parseEndpointsYaml,
+	validateEndpointsYaml,
+	generateEndpointsYamlTemplate,
+	resolveHeaderEnvVars,
+	registerTransformError,
+	resolveTransformError,
+} from './lib/endpoints-config';
+export {
+	buildMultiEndpointConfig,
+	buildSingleEndpointConfig,
+	type EndpointProviderDescriptor,
+	type MultiEndpointProviderResult,
+} from './lib/endpoints-providers';
 export { refetch } from './lib/refetch';
 export { poll } from './lib/poll';
 export { injectPrefetch } from './lib/prefetch';
@@ -48,7 +95,13 @@ export {
 
 export { DumbqlQueryDirective, DumbqlAutoFetchDirective } from './lib/directives';
 export type { DumbqlQueryContext } from './lib/directives';
-export { applyMiddleware, authMiddleware, devAuthMiddleware, loggingMiddleware, hasFiles } from './lib/middleware';
+export {
+	applyMiddleware,
+	authMiddleware,
+	devAuthMiddleware,
+	loggingMiddleware,
+	hasFiles,
+} from './lib/middleware';
 
 export type { GraphqlRequestContext, GraphqlMiddlewareNext, GraphqlMiddleware } from './lib/middleware';
 
@@ -72,7 +125,7 @@ export { SchemaStreamService, type SchemaProgressEvent, type SchemaStreamConfig 
 export { provideDumbqlRouter, guardedRoute, canActivateWithGuards, type DumbqlRouteGuard } from './lib/dumbql-router';
 
 export { mutationCachePolicy, provideAutoRefetch, AutoRefetchService } from './lib/auto-refetch';
-export { cacheMiddleware } from './lib/cache-middleware';
+export { cacheMiddleware, cacheSnapshot, clearCacheByEndpoint } from './lib/cache-middleware';
 
 export { SCHEMA_SERVICE_CONFIG } from './lib/schema.service';
 
@@ -95,3 +148,62 @@ export {
 } from './lib/streaming';
 
 export { createVal, type AngularVal } from './lib/ref';
+
+// ─── Loading Components ─────────────────────────────────────────────────────
+export { DumbqlSpinnerComponent, type SpinnerSize, type SpinnerColor } from './lib/spinner.component';
+export { DumbqlSkeletonComponent, type SkeletonVariant, type SkeletonAnimation } from './lib/skeleton.component';
+export { DumbqlProgressComponent, type ProgressColor, type ProgressSize } from './lib/progress.component';
+export { DumbqlDotsComponent, type DotsSize, type DotsColor } from './lib/dots.component';
+
+// ─── Abort Controller ───────────────────────────────────────────────────────
+export { abortQuery, type AbortQueryHandle, type AbortQueryOptions } from './lib/abort-query';
+
+// ─── Refetch Interval ───────────────────────────────────────────────────────
+export { refetchInterval, type RefetchIntervalHandle, type RefetchIntervalOptions } from './lib/refetch-interval';
+
+// ─── Inject Composables ─────────────────────────────────────────────────────
+export { injectQuery, type InjectQueryHandle, type InjectQueryOptions } from './lib/inject-query';
+export { injectMutation, type InjectMutationHandle, type InjectMutationOptions } from './lib/inject-mutation';
+
+// ─── Skip / Conditional Queries ─────────────────────────────────────────────
+export { skipQuery, type SkipQueryHandle, type SkipQueryOptions } from './lib/skip-conditional';
+
+// ─── Cache Write Operations ─────────────────────────────────────────────────
+export { injectWriteQuery, injectWriteFragment } from './lib/write-cache';
+
+// ─── Glob Invalidation ──────────────────────────────────────────────────────
+export { injectGlobInvalidation } from './lib/glob-invalidation';
+
+// ─── Response Diff Logging ──────────────────────────────────────────────────
+export { responseDiffLogging, type DiffEntry } from './lib/response-diff';
+
+// ─── Mutation Batching ──────────────────────────────────────────────────────
+export { MutationBatchService, type MutationBatchConfig } from './lib/mutation-batching';
+
+// ─── Multi-endpoint features ────────────────────────────────────────────────
+export { UseEndpoint, createEndpointResolver, validateGroupRoutes } from './lib/use-endpoint';
+export { EndpointDiscoveryService, type DiscoveryResult } from './lib/endpoint-discovery';
+export { endpointMockMiddleware, type EndpointMockConfig, type MockFieldResolver } from './lib/endpoint-mock';
+export { resolveSubscriptionUrl, subscribeTo } from './lib/subscribe-multi';
+
+export type {
+	InferResultData,
+	InferResultError,
+	IsSuccess,
+	InferSuccessData,
+	InferResponse,
+	InferVariables,
+	InferDocument,
+	InferQueryData,
+	InferQuerySignals,
+	InferEndpointNames,
+	InferEndpointRoute,
+	InferEndpointUrl,
+	InferEndpointHeaders,
+	InferMiddleware,
+	InferMiddlewareRequest,
+	InferObservableData,
+	DeepPartial,
+	RequiredKeys,
+	PartialExcept,
+} from './lib/types';

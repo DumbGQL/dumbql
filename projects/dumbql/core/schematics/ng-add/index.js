@@ -148,6 +148,9 @@ const config: DumbqlConfig = {
 		endpoint: 'http://localhost:9099/gql',
 	}` : 'false'},
 
+	// ── Multi-Endpoint ──
+	${options.multiEndpoint ? 'multiEndpoint: true,' : ''}
+
 	// ── Codegen (CLI-only) ──
 	codegen: {
 		schema: {
@@ -178,6 +181,11 @@ export default config;
     // ── Auto-wire NullOverlay ──
     if (options.nullOverlay !== false) {
       addNullOverlay(tree, context);
+    }
+
+    // ── Multi-Endpoint: generate endpoints.yml ──
+    if (options.multiEndpoint) {
+      generateEndpointsYaml(tree, context);
     }
 
     return tree;
@@ -220,6 +228,38 @@ function addNullOverlay(tree, context) {
   } else {
     context.logger.warn('⚠ Could not find app.component.ts. Manually add <app-null-overlay /> to your root component.');
   }
+}
+
+function generateEndpointsYaml(tree, context) {
+  const endpointsPath = '/endpoints.yml';
+  if (tree.exists(endpointsPath)) {
+    context.logger.info('✔ endpoints.yml already exists, skipping generation');
+    return;
+  }
+
+  const endpointsTemplate = `# DumbQL Endpoints Configuration
+# Define multiple GraphQL endpoints and reference them by name.
+# Each route must have a 'url' and can optionally have 'headers'.
+
+default_endpoint: main
+
+routes:
+  main:
+    url: http://localhost:4000/graphql
+    headers:
+      Authorization: "Bearer \${TOKEN}"
+
+  users:
+    url: http://localhost:4001/graphql
+
+  posts:
+    url: http://localhost:4002/graphql
+    headers:
+      X-Custom-Header: "value"
+`;
+
+  tree.create(endpointsPath, endpointsTemplate);
+  context.logger.info('✔ Generated endpoints.yml with example routes');
 }
 
 module.exports = ngAdd;

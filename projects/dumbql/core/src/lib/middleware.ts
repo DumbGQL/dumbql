@@ -14,6 +14,14 @@ export interface GraphqlRequestContext {
 	onTypenamesExtracted?: (typenames: Set<string>) => void;
 	/** HTTP method override. Defaults to POST. Use GET for CDN-cacheable hash-only persisted queries. */
 	method?: 'GET' | 'POST';
+	/** Per-request middleware override. Applied after global middleware. */
+	overrideMiddleware?: GraphqlMiddleware[];
+	/** Per-request error policy override. */
+	overrideErrorPolicy?: 'none' | 'all' | 'ignore';
+	/** Per-request retry count override. */
+	overrideRetryCount?: number;
+	/** Per-request retry delay override (ms). */
+	overrideRetryDelay?: number;
 }
 
 export type GraphqlMiddlewareNext = (request: GraphqlRequestContext) => Observable<GraphQLResult<unknown>>;

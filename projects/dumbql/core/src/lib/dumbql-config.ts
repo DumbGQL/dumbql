@@ -1,6 +1,7 @@
 import { InjectionToken, type Provider, type AbstractType } from '@angular/core';
 import type { Observable } from 'rxjs';
 import type { GraphqlMiddleware } from './middleware';
+import type { EndpointsYaml } from './endpoints-config';
 export interface RetryExchangeConfig {
 	maxRetries?: number;
 	initialDelay?: number;
@@ -46,6 +47,17 @@ export interface GraphqlCoreConfig {
 		token?: string;
 		enabled?: boolean;
 	};
+	/**
+	 * Enable multi-endpoint mode. When true, requires an `endpoints.yml` file
+	 * to be provided via `provideMultiEndpoint()`. Queries and mutations must
+	 * then specify an endpoint name.
+	 */
+	multiEndpoint?: boolean;
+	/**
+	 * Path to the endpoints YAML configuration file. Only used when
+	 * `multiEndpoint: true`. Defaults to `./endpoints.yml`.
+	 */
+	endpoints?: string;
 	/**
 	 * Error notification config.
 	 * - Simple callback: `(error: string) => void`
@@ -257,4 +269,47 @@ export function provideGraphql(config: Partial<DumbqlConfig>): Provider[] {
 	};
 
 	return [{ provide: DUMBQL_CONFIG, useValue: { ...defaults, ...config } }];
+}
+
+/**
+ * Type-safe config helper with full inference (like Vite's `defineConfig`).
+ *
+ * @example
+ * ```typescript
+ * // dumbql.config.ts
+ * import { defineConfig } from '@dumbql/core';
+ *
+ * export default defineConfig({
+ *   endpoint: '/graphql',
+ *   errorPolicy: 'all',
+ *   retryCount: 3,
+ *   cache: { enabled: true, maxAge: 60_000 },
+ * });
+ * ```
+ */
+export function defineConfig(config: DumbqlConfig): DumbqlConfig {
+	return config;
+}
+
+/**
+ * Type-safe multi-endpoint config helper.
+ *
+ * @example
+ * ```typescript
+ * import { defineEndpointsConfig } from '@dumbql/core';
+ *
+ * export default defineEndpointsConfig({
+ *   default_endpoint: 'main',
+ *   routes: {
+ *     main: { url: 'http://localhost:4000/graphql', errorPolicy: 'none' },
+ *     users: { url: 'http://localhost:4001/graphql', errorPolicy: 'all' },
+ *   },
+ *   groups: {
+ *     core: ['main', 'users'],
+ *   },
+ * });
+ * ```
+ */
+export function defineEndpointsConfig(config: EndpointsYaml): EndpointsYaml {
+	return config;
 }

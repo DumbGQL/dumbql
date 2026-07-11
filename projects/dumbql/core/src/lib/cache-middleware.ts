@@ -54,8 +54,53 @@ function extractTypeNames(data: unknown, types: Set<string>): void {
 
 const initialized = new WeakSet<Injector>();
 
+/** Module-level timestamp store shared across cache middleware instances. */
+const globalFetchTimestamps = new Map<string, number>();
+
+/**
+ * Export a snapshot of all cached query data as a plain JSON object.
+ * Useful for SSR, debugging, and persistence.
+ */
+export function cacheSnapshot(injector: Injector): Record<string, unknown> {
+	const cache = injector.get(GRAPHQL_CACHE, null);
+	if (!cache) return {};
+
+	const snapshot: Record<string, unknown> = {};
+	try {
+		const allData = (cache as unknown as { _store?: Map<string, unknown> })._store;
+		if (allData instanceof Map) {
+			for (const [key, value] of allData) {
+				snapshot[key] = value;
+			}
+		}
+	} catch {
+		// best-effort
+	}
+	return snapshot;
+}
+
+/**
+ * Clear all cached queries that match a specific endpoint namespace.
+ */
+export function clearCacheByEndpoint(injector: Injector, endpoint: string): void {
+	const cache = injector.get(GRAPHQL_CACHE, null);
+	if (!cache) return;
+
+	const prefix = `${endpoint}:`;
+	for (const key of globalFetchTimestamps.keys()) {
+		if (key.startsWith(prefix)) {
+			globalFetchTimestamps.delete(key);
+			try {
+				cache.clearLocal?.(key);
+			} catch {
+				// best-effort
+			}
+		}
+	}
+}
+
 export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
-	const fetchTimestamps = new Map<string, number>();
+	const fetchTimestamps = globalFetchTimestamps;
 
 	return (request, next) => {
 		const inj =
@@ -107,7 +152,8 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 		};
 
 		if (request.type === 'query') {
-			const queryHash = `query:${request.query}|${JSON.stringify(request.variables)}`;
+			const ns = request.endpoint ?? 'default';
+			const queryHash = `${ns}:query:${request.query}|${JSON.stringify(request.variables)}`;
 			let cachedRaw: GraphQLResult<unknown> | undefined;
 			try {
 				cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
@@ -131,10 +177,6 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 						),
 					);
 				}
-			}
-
-			if (cachedRaw && maxAge === 0) {
-				return of(cachedRaw);
 			}
 
 			return next(request).pipe(tap((result) => storeResult(result, queryHash)));

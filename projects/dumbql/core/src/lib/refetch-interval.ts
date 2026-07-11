@@ -1,32 +1,36 @@
 import { inject, Injector, signal, isSignal, type Signal, type WritableSignal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, switchMap, NEVER, share, ReplaySubject, startWith, distinctUntilChanged, of, map as rxMap } from 'rxjs';
+import { Observable, Subject, switchMap, NEVER, share, ReplaySubject, startWith, distinctUntilChanged, of, map as rxMap, timer, takeUntil } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
 import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
 
-export type EndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
+export type RefetchIntervalEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface QueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. Required when multiEndpoint is enabled. */
-	endpoint?: EndpointParam<Yaml>;
+export interface RefetchIntervalOptions<Yaml extends EndpointsYaml | undefined = undefined> {
+	/** Endpoint name or signal that resolves to an endpoint name. */
+	endpoint?: RefetchIntervalEndpointParam<Yaml>;
+	/** Polling interval in ms. Set 0 or undefined to disable. */
+	intervalMs?: number | Signal<number>;
 }
 
-export interface QueryHandle<T> {
+export interface RefetchIntervalHandle<T> {
 	/** Stream of query results */
 	readonly result$: Observable<GraphQLResult<T>>;
-	/** Toggle query execution. Set `false` to cancel in-flight requests. */
+	/** Toggle query execution */
 	readonly enabled: WritableSignal<boolean>;
 	/** Force re-execution of the query */
 	readonly refetch: () => void;
-	/** Signal: current data value (undefined when loading or on error) */
+	/** Change polling interval at runtime */
+	readonly setIntervalMs: (ms: number) => void;
+	/** Signal: current data value */
 	readonly data: Signal<T | undefined>;
-	/** Signal: current error message (undefined when no error) */
+	/** Signal: current error message */
 	readonly error: Signal<string | undefined>;
 	/** Signal: whether a query is in flight */
 	readonly loading: Signal<boolean>;
@@ -34,7 +38,7 @@ export interface QueryHandle<T> {
 	readonly status: Signal<'idle' | 'loading' | 'success' | 'error'>;
 }
 
-export function query<
+export function refetchInterval<
 	TDocument extends TypedQueryString<unknown, Record<string, unknown>>
 		| DocumentNode
 		| TypedDocumentNode<unknown, Record<string, unknown>>,
@@ -45,40 +49,15 @@ export function query<
 >(
 	document: TDocument,
 	variables?: TVariables,
-	options?: QueryOptions,
-): QueryHandle<TResponse> {
+	options?: RefetchIntervalOptions,
+): RefetchIntervalHandle<TResponse> {
 	const graphql = inject(GraphqlService);
 	const injector = inject(Injector);
 	const endpoints = inject(EndpointsService, { optional: true });
 	const enabled = signal(true);
 	const refetch$ = new Subject<void>();
-
-	if (endpoints) {
-		const ep = options?.endpoint;
-		const name = isSignal(ep) ? ep() : ep;
-		endpoints.throwIfMultiEndpointMissing(name);
-	}
-
-	const resolveUrl = (epName?: string): string | undefined => {
-		if (epName && endpoints) {
-			return endpoints.getRoute(epName)?.url;
-		}
-		return undefined;
-	};
-
-	const resolveOverride = (epName?: string) => {
-		if (!epName || !endpoints) return undefined;
-		const route = endpoints.getRoute(epName);
-		if (!route) return undefined;
-		const hasOverride = route.middleware || route.errorPolicy ||
-			route.retryCount !== undefined || route.retryDelay !== undefined;
-		return hasOverride ? {
-			middleware: route.middleware,
-			errorPolicy: route.errorPolicy,
-			retryCount: route.retryCount,
-			retryDelay: route.retryDelay,
-		} : undefined;
-	};
+	const destroy$ = new Subject<void>();
+	const intervalMsSignal = signal(options?.intervalMs ?? 0);
 
 	const epOption = options?.endpoint;
 
@@ -86,34 +65,48 @@ export function query<
 	if (isSignal(epOption)) {
 		endpoint$ = toObservable(epOption, { injector }).pipe(
 			distinctUntilChanged(),
-			rxMap((name) => resolveUrl(name)),
+			rxMap((name) => {
+				if (name && endpoints) {
+					return endpoints.getRoute(name)?.url;
+				}
+				return undefined;
+			}),
 		);
 	} else if (typeof epOption === 'string') {
-		endpoint$ = of(resolveUrl(epOption));
+		const url = endpoints?.getRoute(epOption)?.url;
+		endpoint$ = of(url);
 	} else {
 		endpoint$ = of(undefined);
 	}
-
-	const override$ = isSignal(epOption)
-		? toObservable(epOption, { injector }).pipe(
-			distinctUntilChanged(),
-			rxMap((name) => resolveOverride(name)),
-		)
-		: of(resolveOverride(typeof epOption === 'string' ? epOption : undefined));
 
 	const result$ = toObservable(enabled, { injector }).pipe(
 		distinctUntilChanged(),
 		switchMap((isEnabled) => {
 			if (!isEnabled) return NEVER;
-			return refetch$.pipe(
-				startWith(undefined),
-				switchMap(() => endpoint$.pipe(
-					switchMap((url) => override$.pipe(
-						switchMap((overrideCfg) =>
-							graphql.query<TResponse>(document, variables, url, overrideCfg),
-						),
-					)),
-				)),
+			return toObservable(intervalMsSignal, { injector }).pipe(
+				distinctUntilChanged(),
+				switchMap((intervalMs) => {
+					if (intervalMs <= 0) {
+						return refetch$.pipe(
+							startWith(undefined),
+							switchMap(() => endpoint$.pipe(
+								switchMap((url) =>
+									graphql.query<TResponse>(document, variables, url).pipe(takeUntil(destroy$)),
+								),
+							)),
+						);
+					}
+					return timer(0, intervalMs).pipe(
+						switchMap(() => refetch$.pipe(
+							startWith(undefined),
+							switchMap(() => endpoint$.pipe(
+								switchMap((url) =>
+									graphql.query<TResponse>(document, variables, url).pipe(takeUntil(destroy$)),
+								),
+							)),
+						)),
+					);
+				}),
 			);
 		}),
 		share({ connector: () => new ReplaySubject(1) }),
@@ -148,6 +141,7 @@ export function query<
 		result$,
 		enabled,
 		refetch: () => refetch$.next(),
+		setIntervalMs: (ms: number) => intervalMsSignal.set(ms),
 		data: dataSignal.asReadonly(),
 		error: errorSignal.asReadonly(),
 		loading: loadingSignal.asReadonly(),

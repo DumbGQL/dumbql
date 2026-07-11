@@ -51,7 +51,14 @@ export interface GraphQLResponse<T> {
 	errors?: { message: string; extensions?: Record<string, unknown> }[];
 }
 
-type ErrorPolicy = 'none' | 'all' | 'ignore';
+export type ErrorPolicy = 'none' | 'all' | 'ignore';
+
+export interface RequestOverrideConfig {
+	middleware?: GraphqlMiddleware[];
+	errorPolicy?: ErrorPolicy;
+	retryCount?: number;
+	retryDelay?: number;
+}
 
 interface FileEntry {
 	path: string;
@@ -114,9 +121,12 @@ export class GraphqlService {
 		document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
 		variables?: TVariables,
 		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<TResponse>> {
 		const queryStr = typeof document === 'string' ? document : print(document);
-		return this.withDedup(queryStr, variables, () => this.executeQuery<TResponse>(queryStr, variables, endpoint));
+		return this.withDedup(queryStr, variables, () =>
+			this.executeQuery<TResponse>(queryStr, variables, endpoint, overrideConfig)
+		, endpoint);
 	}
 
 	/**
@@ -137,6 +147,7 @@ export class GraphqlService {
 		variables?: TVariables,
 		endpoint?: string,
 		optimistic?: (cache: GraphqlCacheLike) => string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<TResponse>> {
 		const query = typeof document === 'string' ? document : print(document);
 
@@ -152,7 +163,13 @@ export class GraphqlService {
 		if (variables !== undefined && hasFiles(variables)) {
 			result$ = this.upload<TResponse>(query, variables, endpoint);
 		} else {
-			result$ = this.withRetry(() => this.request<TResponse>(query, variables, 'mutation', endpoint));
+			const retryCount = overrideConfig?.retryCount ?? this.retryCount;
+			const retryDelay = overrideConfig?.retryDelay ?? this.retryDelay;
+			result$ = this.withRetry(
+				() => this.request<TResponse>(query, variables, 'mutation', endpoint, overrideConfig),
+				retryCount,
+				retryDelay,
+			);
 		}
 
 		return result$.pipe(
@@ -178,11 +195,14 @@ export class GraphqlService {
 		document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
 		variables?: TVariables,
 		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<TResponse>> {
 		const queryStr = typeof document === 'string' ? document : print(document);
-		const key = this.dedupKey(queryStr, variables);
+		const key = this.dedupKey(queryStr, variables, endpoint);
 		dedupCache.delete(key);
-		return this.withDedup(queryStr, variables, () => this.executeQuery<TResponse>(queryStr, variables, endpoint));
+		return this.withDedup(queryStr, variables, () =>
+			this.executeQuery<TResponse>(queryStr, variables, endpoint, overrideConfig)
+		, endpoint);
 	}
 
 	poll<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
@@ -190,19 +210,28 @@ export class GraphqlService {
 		intervalMs: number,
 		variables?: TVariables,
 		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<TResponse>> {
-		return timer(0, intervalMs).pipe(switchMap(() => this.refetch(document, variables, endpoint)));
+		return timer(0, intervalMs).pipe(switchMap(() => this.refetch(document, variables, endpoint, overrideConfig)));
 	}
 
 	private executeQuery<T>(
 		query: string,
 		variables?: Record<string, unknown>,
 		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<T>> {
-		if (this.batchWindow > 0) {
+		const retryCount = overrideConfig?.retryCount ?? this.retryCount;
+		const retryDelay = overrideConfig?.retryDelay ?? this.retryDelay;
+
+		if (this.batchWindow > 0 && !overrideConfig?.middleware) {
 			return this.batchedRequest<T>(query, variables, endpoint);
 		}
-		return this.withRetry(() => this.request<T>(query, variables, 'query', endpoint));
+		return this.withRetry(
+			() => this.request<T>(query, variables, 'query', endpoint, overrideConfig),
+			retryCount,
+			retryDelay,
+		);
 	}
 
 	private request<T>(
@@ -210,6 +239,7 @@ export class GraphqlService {
 		variables?: Record<string, unknown>,
 		type: 'query' | 'mutation' = 'query',
 		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
 	): Observable<GraphQLResult<T>> {
 		const context: GraphqlRequestContext = {
 			query,
@@ -217,7 +247,24 @@ export class GraphqlService {
 			headers: this.getHeaderMap(),
 			type,
 			endpoint,
+			overrideMiddleware: overrideConfig?.middleware,
+			overrideErrorPolicy: overrideConfig?.errorPolicy,
+			overrideRetryCount: overrideConfig?.retryCount,
+			overrideRetryDelay: overrideConfig?.retryDelay,
 		};
+
+		if (overrideConfig?.middleware && overrideConfig.middleware.length > 0) {
+			const overridePipeline = applyMiddleware(
+				[...this.config.middleware ?? [], ...overrideConfig.middleware],
+				(req) => this.executeHttp(req),
+			);
+			return this.applyRetry(
+				overridePipeline(context) as Observable<GraphQLResult<T>>,
+				overrideConfig.retryCount ?? this.retryCount,
+				overrideConfig.retryDelay ?? this.retryDelay,
+			);
+		}
+
 		return this.pipeline!(context) as Observable<GraphQLResult<T>>;
 	}
 
@@ -269,6 +316,7 @@ export class GraphqlService {
 	private executeHttp(request: GraphqlRequestContext): Observable<GraphQLResult<unknown>> {
 		const headers = new HttpHeaders(request.headers);
 		const url = request.endpoint || this._endpoint;
+		const errorPolicy = request.overrideErrorPolicy ?? this.errorPolicy;
 
 		if (request.method === 'GET') {
 			let params = new HttpParams().set('query', request.query);
@@ -279,7 +327,7 @@ export class GraphqlService {
 				params = params.set('extensions', JSON.stringify(request.extensions));
 			}
 			return this.http.get<GraphQLResponse<unknown>>(url, { headers, params }).pipe(
-				map((response) => this.toResult(response)),
+				map((response) => this.toResult(response, errorPolicy)),
 				catchError((error: unknown) => of(this.toHttpError(error))),
 			);
 		}
@@ -289,7 +337,7 @@ export class GraphqlService {
 			body['extensions'] = request.extensions;
 		}
 		return this.http.post<GraphQLResponse<unknown>>(url, body, { headers }).pipe(
-			map((response) => this.toResult(response)),
+			map((response) => this.toResult(response, errorPolicy)),
 			catchError((error: unknown) => of(this.toHttpError(error))),
 		);
 	}
@@ -425,8 +473,14 @@ export class GraphqlService {
 		return result;
 	}
 
-	private withRetry<T>(fn: () => Observable<GraphQLResult<T>>): Observable<GraphQLResult<T>> {
-		if (this.retryCount <= 0) return fn();
+	private withRetry<T>(
+		fn: () => Observable<GraphQLResult<T>>,
+		retryCount?: number,
+		retryDelay?: number,
+	): Observable<GraphQLResult<T>> {
+		const count = retryCount ?? this.retryCount;
+		const delay = retryDelay ?? this.retryDelay;
+		if (count <= 0) return fn();
 
 		let attempts = 0;
 
@@ -434,8 +488,8 @@ export class GraphqlService {
 			fn().pipe(
 				catchError((error: unknown) => {
 					attempts++;
-					if (attempts <= this.retryCount) {
-						return timer(this.retryDelay * Math.pow(2, attempts - 1)).pipe(map(() => null as never));
+					if (attempts <= count) {
+						return timer(delay * Math.pow(2, attempts - 1)).pipe(map(() => null as never));
 					}
 					throw error;
 				}),
@@ -444,14 +498,39 @@ export class GraphqlService {
 		return attempt();
 	}
 
+	private applyRetry<T>(
+		obs: Observable<GraphQLResult<T>>,
+		retryCount: number,
+		retryDelay: number,
+	): Observable<GraphQLResult<T>> {
+		if (retryCount <= 0) return obs;
+
+		let attempts = 0;
+
+		return obs.pipe(
+			catchError((error: unknown) => {
+				attempts++;
+				if (attempts <= retryCount) {
+					return timer(retryDelay * Math.pow(2, attempts - 1)).pipe(
+						switchMap(() => {
+							throw error;
+						}),
+					);
+				}
+				throw error;
+			}),
+		);
+	}
+
 	private withDedup<T>(
 		query: string,
 		variables: Record<string, unknown> | undefined,
 		fn: () => Observable<GraphQLResult<T>>,
+		endpoint?: string,
 	): Observable<GraphQLResult<T>> {
 		if (!this.config.dedup) return fn();
 
-		const key = this.dedupKey(query, variables);
+		const key = this.dedupKey(query, variables, endpoint);
 
 		if (dedupCache.has(key)) {
 			return dedupCache.get(key) as Observable<GraphQLResult<T>>;
@@ -468,8 +547,9 @@ export class GraphqlService {
 		return obs;
 	}
 
-	private dedupKey(query: string, variables?: Record<string, unknown>): string {
-		return `${query}|${JSON.stringify(variables ?? {})}`;
+	private dedupKey(query: string, variables?: Record<string, unknown>, endpoint?: string): string {
+		const ns = endpoint ?? 'default';
+		return `${ns}:${query}|${JSON.stringify(variables ?? {})}`;
 	}
 
 	private batchedRequest<T>(
@@ -588,11 +668,12 @@ export class GraphqlService {
 		return headers;
 	}
 
-	private toResult<T>(response: GraphQLResponse<T>): GraphQLResult<T> {
+	private toResult<T>(response: GraphQLResponse<T>, errorPolicyOverride?: ErrorPolicy): GraphQLResult<T> {
+		const policy = errorPolicyOverride ?? this.errorPolicy;
 		const hasErrors = response.errors && response.errors.length > 0;
 		const errorsPayload = hasErrors ? response.errors : undefined;
 
-		if (hasErrors && this.errorPolicy === 'none') {
+		if (hasErrors && policy === 'none') {
 			return this.withErrorNotification({
 				status: 'error',
 				errorCode: 'GRAPHQL_ERROR',
@@ -601,7 +682,7 @@ export class GraphqlService {
 			});
 		}
 
-		if (hasErrors && this.errorPolicy === 'ignore') {
+		if (hasErrors && policy === 'ignore') {
 			if (response.data != null) {
 				const result: { status: 'success'; data: T; graphQLErrors?: GraphQLError[] } = {
 					status: 'success',
@@ -618,7 +699,7 @@ export class GraphqlService {
 			});
 		}
 
-		if (hasErrors && this.errorPolicy === 'all') {
+		if (hasErrors && policy === 'all') {
 			const msgs = response.errors!.map((e) => e.message);
 			if (response.data != null) {
 				return { status: 'success', data: response.data as T, graphQLErrors: response.errors };

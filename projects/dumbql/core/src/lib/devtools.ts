@@ -58,6 +58,7 @@ export function devtoolsMiddleware(config?: DevtoolsConfig): GraphqlMiddleware {
 	return (request, next) => {
 		const startTime = performance.now();
 		const body = JSON.stringify({ query: request.query, variables: request.variables });
+		const endpointName = request.endpoint ?? 'default';
 
 		return next(request).pipe(
 			tap((result: GraphQLResult<unknown>) => {
@@ -65,6 +66,7 @@ export function devtoolsMiddleware(config?: DevtoolsConfig): GraphqlMiddleware {
 				const entry: Record<string, unknown> = {
 					method: 'POST',
 					url: endpoint,
+					endpointName,
 					body,
 					startTime,
 					endTime: performance.now(),

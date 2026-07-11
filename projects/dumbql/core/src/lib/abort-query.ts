@@ -1,40 +1,46 @@
 import { inject, Injector, signal, isSignal, type Signal, type WritableSignal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, switchMap, NEVER, share, ReplaySubject, startWith, distinctUntilChanged, of, map as rxMap } from 'rxjs';
+import { Observable, Subject, switchMap, NEVER, share, ReplaySubject, startWith, distinctUntilChanged, of, map as rxMap, takeUntil } from 'rxjs';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
 import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
 import type { EndpointsYaml } from './endpoints-config';
 
-export type EndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
+export type AbortQueryEndpointParam<Yaml extends EndpointsYaml | undefined = undefined> =
 	[Yaml] extends [EndpointsYaml]
 		? InferEndpointNames<Yaml>
 		: string | Signal<string>;
 
-export interface QueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
-	/** Endpoint name or signal that resolves to an endpoint name. Required when multiEndpoint is enabled. */
-	endpoint?: EndpointParam<Yaml>;
+export interface AbortQueryOptions<Yaml extends EndpointsYaml | undefined = undefined> {
+	/** Endpoint name or signal that resolves to an endpoint name. */
+	endpoint?: AbortQueryEndpointParam<Yaml>;
+	/** Whether to auto-abort on component destroy. Default: true */
+	autoAbort?: boolean;
 }
 
-export interface QueryHandle<T> {
+export interface AbortQueryHandle<T> {
 	/** Stream of query results */
 	readonly result$: Observable<GraphQLResult<T>>;
 	/** Toggle query execution. Set `false` to cancel in-flight requests. */
 	readonly enabled: WritableSignal<boolean>;
 	/** Force re-execution of the query */
 	readonly refetch: () => void;
-	/** Signal: current data value (undefined when loading or on error) */
+	/** Abort the current in-flight request */
+	readonly abort: () => void;
+	/** Signal: current data value */
 	readonly data: Signal<T | undefined>;
-	/** Signal: current error message (undefined when no error) */
+	/** Signal: current error message */
 	readonly error: Signal<string | undefined>;
 	/** Signal: whether a query is in flight */
 	readonly loading: Signal<boolean>;
 	/** Signal: current status of the query */
 	readonly status: Signal<'idle' | 'loading' | 'success' | 'error'>;
+	/** Signal: whether the request was aborted */
+	readonly aborted: Signal<boolean>;
 }
 
-export function query<
+export function abortQuery<
 	TDocument extends TypedQueryString<unknown, Record<string, unknown>>
 		| DocumentNode
 		| TypedDocumentNode<unknown, Record<string, unknown>>,
@@ -45,13 +51,16 @@ export function query<
 >(
 	document: TDocument,
 	variables?: TVariables,
-	options?: QueryOptions,
-): QueryHandle<TResponse> {
+	options?: AbortQueryOptions,
+): AbortQueryHandle<TResponse> {
 	const graphql = inject(GraphqlService);
 	const injector = inject(Injector);
 	const endpoints = inject(EndpointsService, { optional: true });
 	const enabled = signal(true);
 	const refetch$ = new Subject<void>();
+	const destroy$ = new Subject<void>();
+
+	let currentController: AbortController | null = null;
 
 	if (endpoints) {
 		const ep = options?.endpoint;
@@ -109,9 +118,13 @@ export function query<
 				startWith(undefined),
 				switchMap(() => endpoint$.pipe(
 					switchMap((url) => override$.pipe(
-						switchMap((overrideCfg) =>
-							graphql.query<TResponse>(document, variables, url, overrideCfg),
-						),
+						switchMap((overrideCfg) => {
+							currentController?.abort();
+							currentController = new AbortController();
+							return graphql.query<TResponse>(document, variables, url, overrideCfg).pipe(
+								takeUntil(destroy$),
+							);
+						}),
 					)),
 				)),
 			);
@@ -123,10 +136,12 @@ export function query<
 	const dataSignal = signal<TResponse | undefined>(undefined);
 	const errorSignal = signal<string | undefined>(undefined);
 	const loadingSignal = signal(false);
+	const abortedSignal = signal(false);
 
 	result$.subscribe({
 		next: (result) => {
 			loadingSignal.set(false);
+			abortedSignal.set(false);
 			if (result.status === 'success') {
 				statusSignal.set('success');
 				dataSignal.set(result.data);
@@ -148,9 +163,15 @@ export function query<
 		result$,
 		enabled,
 		refetch: () => refetch$.next(),
+		abort: () => {
+			currentController?.abort();
+			abortedSignal.set(true);
+			loadingSignal.set(false);
+		},
 		data: dataSignal.asReadonly(),
 		error: errorSignal.asReadonly(),
 		loading: loadingSignal.asReadonly(),
 		status: statusSignal.asReadonly(),
+		aborted: abortedSignal.asReadonly(),
 	};
 }

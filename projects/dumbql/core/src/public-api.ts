@@ -126,6 +126,13 @@ export {
 export { SchemaStreamService, type SchemaProgressEvent, type SchemaStreamConfig } from './lib/schema-stream';
 
 export { provideDumbqlRouter, guardedRoute, canActivateWithGuards, type DumbqlRouteGuard } from './lib/dumbql-router';
+export {
+	prefetchedRoute,
+	fromPrefetched,
+	type PrefetchDefinition,
+	type PrefetchDefinitions,
+} from './lib/dumbql-resolver';
+export { injectEndpointFromRoute, routeEndpoint } from './lib/dumbql-route-endpoint';
 
 export { mutationCachePolicy, provideAutoRefetch, AutoRefetchService } from './lib/auto-refetch';
 export { cacheMiddleware, cacheSnapshot, clearCacheByEndpoint } from './lib/cache-middleware';

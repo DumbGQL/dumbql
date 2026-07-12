@@ -3,11 +3,14 @@ import { type ActivatedRoute, type ActivatedRouteSnapshot, type ResolveFn, type 
 import { type Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GraphqlService, type GraphQLResult } from './graphql.service';
+import { EndpointsService } from './endpoints.service';
 import { type DocumentNode, type TypedDocumentNode } from './gql';
 
 export interface PrefetchDefinition<TVariables extends Record<string, unknown> = Record<string, unknown>> {
-	document: DocumentNode | TypedDocumentNode<unknown, TVariables>;
-	variables?: TVariables | ((route: ActivatedRouteSnapshot) => TVariables);
+	readonly document: DocumentNode | TypedDocumentNode<unknown, TVariables>;
+	readonly variables?: TVariables | ((route: ActivatedRouteSnapshot) => TVariables);
+	/** Endpoint name from endpoints.yml. When provided, the prefetch targets that endpoint's URL and config. */
+	readonly endpoint?: string;
 }
 
 export type PrefetchDefinitions = PrefetchDefinition | PrefetchDefinition[];
@@ -23,17 +26,31 @@ function resolveVariables<TVars extends Record<string, unknown>>(
 
 function prefetchResolverFn(def: PrefetchDefinition): ResolveFn<GraphQLResult<unknown>> {
 	return (route) => {
+		const variables = resolveVariables(def, route);
+		if (def.endpoint) {
+			const endpoints = inject(EndpointsService);
+			const endpointObj = endpoints.resolveEndpoint(def.endpoint);
+			return endpointObj.query(def.document, variables);
+		}
 		const graphql = inject(GraphqlService);
-		return graphql.query(def.document, resolveVariables(def, route));
+		return graphql.query(def.document, variables);
 	};
 }
 
-export function prefetchedRoute(route: Route, prefetch: PrefetchDefinitions): Route {
+export function prefetchedRoute(
+	route: Route,
+	prefetch: PrefetchDefinitions,
+	/** When provided, all prefetches on this route target this endpoint. Per-prefetch `endpoint` takes precedence. */
+	defaultEndpoint?: string,
+): Route {
 	const defs = Array.isArray(prefetch) ? prefetch : [prefetch];
 	const resolve: Record<string, ResolveFn<GraphQLResult<unknown>>> = {};
 	for (const def of defs) {
-		const name = extractQueryName(def.document) ?? `graphql_${Object.keys(resolve).length}`;
-		resolve[name] = prefetchResolverFn(def);
+		const mergedDef = defaultEndpoint && !def.endpoint
+			? { ...def, endpoint: defaultEndpoint }
+			: def;
+		const name = extractQueryName(mergedDef.document) ?? `graphql_${Object.keys(resolve).length}`;
+		resolve[name] = prefetchResolverFn(mergedDef);
 	}
 	return { ...route, resolve: { ...route.resolve, ...resolve } };
 }

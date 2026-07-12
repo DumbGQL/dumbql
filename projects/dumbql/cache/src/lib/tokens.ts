@@ -23,6 +23,8 @@ export interface GraphqlCacheLike {
 	onEvent?(): Observable<CacheEvent>;
 	/** Watch a local state key for changes. Returns unsubscribe function. */
 	watchLocal?(key: string, listener: () => void): () => void;
+	/** Walk a result object, extract entities, and merge into the normalized cache. */
+	normalizeResult?(data: unknown): { entityKeys: Set<string>; typeNames: Set<string> };
 }
 
 export const GRAPHQL_CACHE = new InjectionToken<GraphqlCacheLike>('GRAPHQL_CACHE');

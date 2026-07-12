@@ -126,6 +126,14 @@ export class CacheService {
 		this.store.setTypePolicies(policies);
 	}
 
+	/**
+	 * Walk a query/mutation result object, extract all entities with
+	 * `__typename` + `id`, and merge them into the normalized cache.
+	 */
+	normalizeResult(data: unknown): { entityKeys: Set<string>; typeNames: Set<string> } {
+		return this.store.normalizeResult(data);
+	}
+
 	collectGarbage(): number {
 		return this.store.collectGarbage();
 	}

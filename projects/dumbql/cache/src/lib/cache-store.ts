@@ -209,6 +209,45 @@ export class CacheStore {
 		this.cache.setTypePolicies(policies);
 	}
 
+	/**
+	 * Walk a query/mutation result object, extract all entities with
+	 * `__typename` + `id`, and merge them into the normalized cache.
+	 * Returns the extracted entity keys and type names for use in
+	 * dependency tracking and selective invalidation.
+	 */
+	normalizeResult(data: unknown): { entityKeys: Set<string>; typeNames: Set<string> } {
+		const entityKeys = new Set<string>();
+		const typeNames = new Set<string>();
+		this.extractAndMerge(data, entityKeys, typeNames);
+		return { entityKeys, typeNames };
+	}
+
+	private extractAndMerge(data: unknown, entityKeys: Set<string>, typeNames: Set<string>): void {
+		if (!data || typeof data !== 'object') return;
+		if (Array.isArray(data)) {
+			for (const item of data) this.extractAndMerge(item, entityKeys, typeNames);
+			return;
+		}
+		const obj = data as Record<string, unknown>;
+		if (typeof obj['__typename'] === 'string') {
+			const typename = obj['__typename'] as string;
+			typeNames.add(typename);
+			const id = obj['id'];
+			if (typeof id === 'string' || typeof id === 'number') {
+				const entityKey = `${typename}:${id}`;
+				entityKeys.add(entityKey);
+				this.merge({
+					__typename: typename,
+					id: String(id),
+					...obj,
+				} as Partial<CacheEntity> & { __typename: string; id: string });
+			}
+		}
+		for (const v of Object.values(obj)) {
+			if (v && typeof v === 'object') this.extractAndMerge(v, entityKeys, typeNames);
+		}
+	}
+
 	collectGarbage(): number {
 		const evicted = this.gc.sweep();
 		if (evicted > 0) {

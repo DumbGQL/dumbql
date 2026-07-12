@@ -19,6 +19,11 @@ export class CacheStore {
 	private localStateTypes = new Map<string, Set<string>>();
 	private persistSvc: CachePersistence | null = null;
 
+	/** queryHash -> Set<entityKey> — which entities a query result depends on */
+	private queryEntities = new Map<string, Set<string>>();
+	/** entityKey -> Set<queryHash> — reverse index: which queries depend on an entity */
+	private entityToQueries = new Map<string, Set<string>>();
+
 	constructor(config?: CacheStoreConfig) {
 		this.cache = new NormalizedCache(config?.typePolicies);
 		this.gc = new CacheGc(this.cache);
@@ -138,6 +143,49 @@ export class CacheStore {
 			this.localState.delete(key);
 			this.localStateTypes.delete(key);
 		}
+	}
+
+	/** Record which entity keys a query result depends on. */
+	recordQueryDependencies(queryHash: string, entityKeys: Set<string>): void {
+		// Remove old reverse references
+		const oldEntities = this.queryEntities.get(queryHash);
+		if (oldEntities) {
+			for (const ek of oldEntities) {
+				this.entityToQueries.get(ek)?.delete(queryHash);
+			}
+		}
+		// Store new dependencies
+		this.queryEntities.set(queryHash, entityKeys);
+		for (const ek of entityKeys) {
+			let set = this.entityToQueries.get(ek);
+			if (!set) {
+				set = new Set();
+				this.entityToQueries.set(ek, set);
+			}
+			set.add(queryHash);
+		}
+	}
+
+	/** Notify watchers that a query's cached result may have changed. */
+	notifyQueryChanged(queryHash: string): void {
+		const value = this.localState.get(queryHash);
+		if (value === undefined) return;
+		const listeners = this.localStateListeners.get(queryHash);
+		if (listeners) {
+			for (const listener of listeners) {
+				listener();
+			}
+		}
+	}
+
+	/** Get all query hashes that depend on a given entity key. */
+	getQueriesForEntity(entityKey: string): string[] {
+		return Array.from(this.entityToQueries.get(entityKey) ?? []);
+	}
+
+	/** Get all entity keys that a query depends on. */
+	getEntitiesForQuery(queryHash: string): string[] {
+		return Array.from(this.queryEntities.get(queryHash) ?? []);
 	}
 
 	serialize(): string {

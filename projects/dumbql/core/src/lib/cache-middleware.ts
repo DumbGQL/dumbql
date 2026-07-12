@@ -143,6 +143,9 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 					for (const entity of entities) {
 						cache.merge(entity);
 					}
+					// Record entity-key dependencies for watchQuery
+					const entityKeys = new Set(entities.map((e) => `${e.__typename}:${e.id}`));
+					cache.recordQueryDependencies?.(queryHash, entityKeys);
 					cache.writeLocalWithTypes(queryHash, result, typeNames);
 					fetchTimestamps.set(queryHash, Date.now());
 				} catch {
@@ -200,6 +203,14 @@ export function cacheMiddleware(injector?: Injector): GraphqlMiddleware {
 							// typename dependencies and only clear the affected ones.
 							if (typeNames.size > 0) {
 								cache.clearLocalStateByTypes(Array.from(typeNames));
+							}
+							// Notify watchers of queries that depend on mutated entities
+							for (const entity of entities) {
+								const entityKey = `${entity.__typename}:${entity.id}`;
+								const affectedHashes = cache.getQueriesForEntity?.(entityKey) ?? [];
+								for (const hash of affectedHashes) {
+									cache.notifyQueryChanged?.(hash);
+								}
 							}
 						} catch {
 							// cache update after mutation is best-effort

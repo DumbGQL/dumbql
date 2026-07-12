@@ -98,6 +98,22 @@ export class CacheService {
 		this.store.clearLocalStateByTypes(types);
 	}
 
+	recordQueryDependencies(queryHash: string, entityKeys: Set<string>): void {
+		this.store.recordQueryDependencies(queryHash, entityKeys);
+	}
+
+	notifyQueryChanged(queryHash: string): void {
+		this.store.notifyQueryChanged(queryHash);
+	}
+
+	getQueriesForEntity(entityKey: string): string[] {
+		return this.store.getQueriesForEntity(entityKey);
+	}
+
+	getEntitiesForQuery(queryHash: string): string[] {
+		return this.store.getEntitiesForQuery(queryHash);
+	}
+
 	serialize(): string {
 		return this.store.serialize();
 	}

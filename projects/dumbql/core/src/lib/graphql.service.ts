@@ -215,6 +215,68 @@ export class GraphqlService {
 		return timer(0, intervalMs).pipe(switchMap(() => this.refetch(document, variables, endpoint, overrideConfig)));
 	}
 
+	/**
+	 * Watch a query: execute it once, then re-emit whenever the cached result
+	 * changes due to a mutation updating the same entities.
+	 *
+	 * Returns an Observable that:
+	 * 1. Emits the initial query result (from cache or network).
+	 * 2. Re-emits the cached result whenever a mutation updates entities
+	 *    that this query depends on.
+	 */
+	watchQuery<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+		document: TypedQueryString<TResponse, TVariables> | DocumentNode | TypedDocumentNode<TResponse, TVariables>,
+		variables?: TVariables,
+		endpoint?: string,
+		overrideConfig?: RequestOverrideConfig,
+	): Observable<GraphQLResult<TResponse>> {
+		const queryStr = typeof document === 'string' ? document : print(document);
+		const ns = endpoint ?? 'default';
+		const queryHash = `${ns}:query:${queryStr}|${JSON.stringify(variables)}`;
+		const cache = this.injector.get(GRAPHQL_CACHE, null);
+
+		return new Observable<GraphQLResult<TResponse>>((subscriber) => {
+			// Initial execution
+			const exec$ = this.query<TResponse, TVariables>(document, variables, endpoint, overrideConfig);
+			const sub = exec$.subscribe({
+				next: (result) => subscriber.next(result),
+				error: (err) => subscriber.error(err),
+			});
+
+			// Subscribe to cache events to detect entity changes affecting this query
+			let eventSub: { unsubscribe(): void } | null = null;
+			if (cache?.onEvent) {
+				const event$ = cache.onEvent();
+				const evtSub = event$.subscribe({
+					next: (event) => {
+						// Only care about write/merge/evict events
+						if (event.type !== 'write' && event.type !== 'merge' && event.type !== 'evict') return;
+
+						// Check if this event's entity key is one this query depends on
+						const entityKey = event.data['key'] as string | undefined;
+						if (!entityKey) return;
+
+						const dependsOn = cache.getEntitiesForQuery?.(queryHash);
+						if (dependsOn && dependsOn.includes(entityKey)) {
+							// Re-read from cache
+							const cached = cache.readLocal(queryHash);
+							if (cached !== undefined) {
+								subscriber.next(cached as GraphQLResult<TResponse>);
+							}
+						}
+					},
+					error: (err) => subscriber.error(err),
+				});
+				eventSub = evtSub;
+			}
+
+			return () => {
+				sub.unsubscribe();
+				eventSub?.unsubscribe();
+			};
+		});
+	}
+
 	private executeQuery<T>(
 		query: string,
 		variables?: Record<string, unknown>,

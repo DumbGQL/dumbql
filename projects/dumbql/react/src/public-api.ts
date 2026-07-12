@@ -32,3 +32,12 @@ export { Spinner, type SpinnerProps, type SpinnerSize, type SpinnerColor } from 
 export { Skeleton, type SkeletonProps, type SkeletonVariant, type SkeletonAnimation } from './lib/skeleton';
 export { Progress, type ProgressProps, type ProgressColor, type ProgressSize } from './lib/progress';
 export { Dots, type DotsProps, type DotsSize, type DotsColor } from './lib/dots';
+
+// SSR
+export {
+	getDataFromTree,
+	renderToStringWithData,
+	extractSSRData,
+	type SSRContext,
+} from './lib/ssr/get-data-from-tree';
+export { hydrateSSRData, readSSRData, clearSSRData } from './lib/ssr/hydrate';

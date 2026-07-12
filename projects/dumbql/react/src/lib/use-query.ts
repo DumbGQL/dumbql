@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '@dumbql/client';
+import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode, FetchPolicy } from '@dumbql/client';
 import { useClient } from './provider';
+
+export type { FetchPolicy };
 
 export interface UseQueryOptions<TData, TVariables> {
 	variables?: TVariables;
 	pollInterval?: number;
 	skip?: boolean;
+	fetchPolicy?: FetchPolicy;
 	onCompleted?: (data: TData) => void;
 	onError?: (error: string, errorCode?: ErrorCode) => void;
-	fetchPolicy?: 'cache-first' | 'network-only' | 'no-cache';
 }
 
 export type NetworkStatus = 'loading' | 'ready' | 'error' | 'refetching' | 'poll';
@@ -32,6 +34,7 @@ export function useQuery<TData, TVariables extends Record<string, unknown> = Rec
 	const variables = options?.variables;
 	const pollInterval = options?.pollInterval;
 	const skip = options?.skip ?? false;
+	const fetchPolicy = options?.fetchPolicy;
 
 	const onCompletedRef = useRef(options?.onCompleted);
 	const onErrorRef = useRef(options?.onError);
@@ -51,18 +54,20 @@ export function useQuery<TData, TVariables extends Record<string, unknown> = Rec
 		setNetworkStatus('loading');
 		setCalled(true);
 
-		client.query<TData, TVariables>(document, variables).then((res: GraphQLResult<TData>) => {
-			if (cancelled) return;
-			setResult(res);
-			setLoading(false);
-			if (res.status === 'success') {
-				setNetworkStatus('ready');
-				onCompletedRef.current?.(res.data);
-			} else {
-				setNetworkStatus('error');
-				onErrorRef.current?.(res.error, res.errorCode);
-			}
-		});
+		client
+			.query<TData, TVariables>(document, variables, undefined, { fetchPolicy })
+			.then((res: GraphQLResult<TData>) => {
+				if (cancelled) return;
+				setResult(res);
+				setLoading(false);
+				if (res.status === 'success') {
+					setNetworkStatus('ready');
+					onCompletedRef.current?.(res.data);
+				} else {
+					setNetworkStatus('error');
+					onErrorRef.current?.(res.error, res.errorCode);
+				}
+			});
 
 		return () => {
 			cancelled = true;

@@ -10,10 +10,15 @@ import { cacheMiddleware } from './cache-middleware';
 import type { GraphQLResult, GraphQLResponse } from './result';
 import type { ClientConfig } from './config';
 import type { CacheStore } from '@dumbql/cache';
+import type { FetchPolicy } from './middleware';
 
 export type { ClientConfig };
 
 const dedupCache = new Map<string, Promise<GraphQLResult<unknown>>>();
+
+export interface QueryOptions {
+	fetchPolicy?: FetchPolicy;
+}
 
 interface BatchEntry {
 	request: GraphqlRequestContext;
@@ -70,13 +75,14 @@ export class DumbqlClient {
 		document: DocumentNode | TypedDocumentNode<TResponse, TVariables>,
 		variables?: TVariables,
 		endpoint?: string,
+		options?: QueryOptions,
 	): Promise<GraphQLResult<TResponse>> {
 		const queryStr = print(document);
 		if (this.dedupEnabled) {
 			return this.withDedup(queryStr, variables,
-				() => this.executeQuery<TResponse>(queryStr, variables, endpoint));
+				() => this.executeQuery<TResponse>(queryStr, variables, endpoint, options?.fetchPolicy));
 		}
-		return this.executeQuery<TResponse>(queryStr, variables, endpoint);
+		return this.executeQuery<TResponse>(queryStr, variables, endpoint, options?.fetchPolicy);
 	}
 
 	queryStream<TResponse, TVariables extends Record<string, unknown> = Record<string, unknown>>(
@@ -134,11 +140,12 @@ export class DumbqlClient {
 		query: string,
 		variables?: Record<string, unknown>,
 		endpoint?: string,
+		fetchPolicy?: FetchPolicy,
 	): Promise<GraphQLResult<T>> {
 		if (this.batchWindow > 0) {
 			return this.batchedRequest<T>(query, variables, endpoint);
 		}
-		return this.withRetry(() => this.request<T>(query, variables, 'query', endpoint));
+		return this.withRetry(() => this.request<T>(query, variables, 'query', endpoint, fetchPolicy));
 	}
 
 	private async request<T>(
@@ -146,6 +153,7 @@ export class DumbqlClient {
 		variables?: Record<string, unknown>,
 		type: 'query' | 'mutation' = 'query',
 		endpoint?: string,
+		fetchPolicy?: FetchPolicy,
 	): Promise<GraphQLResult<T>> {
 		const context: GraphqlRequestContext = {
 			query,
@@ -153,6 +161,7 @@ export class DumbqlClient {
 			headers: this.getHeaderMap(),
 			type,
 			endpoint,
+			fetchPolicy,
 		};
 		return this.pipeline(context) as Promise<GraphQLResult<T>>;
 	}

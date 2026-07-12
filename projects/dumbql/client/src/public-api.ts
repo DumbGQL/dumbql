@@ -1,4 +1,4 @@
-export { DumbqlClient, createClient, type ClientConfig as DumbqlClientConfig } from './lib/client';
+export { DumbqlClient, createClient, type ClientConfig as DumbqlClientConfig, type QueryOptions } from './lib/client';
 export type { GraphQLResult, GraphQLResponse, GraphQLError, NetworkErrorInfo, ErrorCode } from './lib/result';
 export { gql, type DocumentNode, type TypedDocumentNode, print } from './lib/gql';
 export {
@@ -18,6 +18,7 @@ export {
 	type GraphqlRequestContext,
 	type GraphqlMiddleware,
 	type GraphqlMiddlewareNext,
+	type FetchPolicy,
 } from './lib/middleware';
 export type {
 	ClientConfig,

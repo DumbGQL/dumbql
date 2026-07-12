@@ -74,6 +74,13 @@ export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): Graphq
 
 		if (request.type === 'query') {
 			const queryHash = `query:${request.query}|${JSON.stringify(request.variables)}`;
+			const fetchPolicy = request.fetchPolicy ?? 'cache-first';
+
+			if (fetchPolicy === 'no-cache') {
+				const result = await next(request);
+				return result;
+			}
+
 			let cachedRaw: GraphQLResult<unknown> | undefined;
 			try {
 				cachedRaw = cache.readLocal(queryHash) as GraphQLResult<unknown> | undefined;
@@ -82,6 +89,18 @@ export function cacheMiddleware(cache: CacheStore, config?: CacheConfig): Graphq
 			}
 			const lastFetch = fetchTimestamps.get(queryHash) ?? 0;
 			const age = Date.now() - lastFetch;
+
+			if (fetchPolicy === 'network-only') {
+				const result = await next(request);
+				storeResult(result, queryHash);
+				return result;
+			}
+
+			if (fetchPolicy === 'cache-and-network') {
+				const result = await next(request);
+				storeResult(result, queryHash);
+				return result;
+			}
 
 			if (cachedRaw && maxAge > 0) {
 				if (age < staleTime) {

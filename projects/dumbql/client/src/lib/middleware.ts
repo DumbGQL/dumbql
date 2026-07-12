@@ -1,5 +1,7 @@
 import type { GraphQLResult } from './result';
 
+export type FetchPolicy = 'cache-first' | 'network-only' | 'cache-and-network' | 'no-cache';
+
 export interface GraphqlRequestContext {
 	query: string;
 	variables: Record<string, unknown>;
@@ -10,6 +12,8 @@ export interface GraphqlRequestContext {
 	onTypenamesExtracted?: (typenames: Set<string>) => void;
 	/** HTTP method override. Defaults to POST. Use GET for CDN-cacheable hash-only persisted queries. */
 	method?: 'GET' | 'POST';
+	/** Controls how the cache middleware handles cached data. */
+	fetchPolicy?: FetchPolicy;
 }
 
 export type GraphqlMiddlewareNext = (request: GraphqlRequestContext) => Promise<GraphQLResult<unknown>>;

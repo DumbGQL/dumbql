@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 interface SubscriptionCallbacks<T> {
-	next: (data: T) => void;
-	error: (err: Error) => void;
-	complete: () => void;
+	readonly next: (data: T) => void;
+	readonly error: (err: Error) => void;
+	readonly complete: () => void;
 }
 
 interface WsMessage {
-	type: string;
-	id?: string;
-	payload?: unknown;
+	readonly type: string;
+	readonly id?: string;
+	readonly payload?: unknown;
 }
 
 interface GraphQLResponse<T> {
-	data?: T;
-	errors?: { message: string }[];
+	readonly data?: T;
+	readonly errors?: readonly { readonly message: string }[];
 }
 
 const WS_PROTOCOL = 'graphql-transport-ws';

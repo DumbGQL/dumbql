@@ -3,96 +3,98 @@ import type { GraphqlMiddleware } from './middleware';
 // ─── Cache ──────────────────────────────────────────────────────────────────
 
 export interface CacheConfig {
-	enabled?: boolean;
-	maxAge?: number;
-	serialize?: boolean;
-	typePolicies?: Record<
-		string,
-		{
-			keyFields?: string[];
-			merge?:
-				| 'append'
-				| 'prepend'
-				| ((
-						existing: unknown[] | undefined,
-						incoming: unknown[],
-						options?: { args?: Record<string, unknown> },
-				  ) => unknown[]);
-		}
+	readonly enabled?: boolean;
+	readonly maxAge?: number;
+	readonly serialize?: boolean;
+	readonly typePolicies?: Readonly<
+		Record<
+			string,
+			{
+				readonly keyFields?: readonly string[];
+				readonly merge?:
+					| 'append'
+					| 'prepend'
+					| ((
+							existing: unknown[] | undefined,
+							incoming: unknown[],
+							options?: { readonly args?: Record<string, unknown> },
+					  ) => unknown[]);
+			}
+		>
 	>;
-	schema?: SchemaConfig;
+	readonly schema?: SchemaConfig;
 }
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
 export interface SchemaConfig {
-	data?: Record<string, unknown>;
-	url?: string;
-	headers?: Record<string, string>;
+	readonly data?: Record<string, unknown>;
+	readonly url?: string;
+	readonly headers?: Record<string, string>;
 }
 
 // ─── Subscriptions ──────────────────────────────────────────────────────────
 
 export interface SubscriptionsConfig {
-	wsEndpoint?: string;
-	reconnect?: boolean;
-	reconnectInterval?: number;
-	lazy?: boolean;
+	readonly wsEndpoint?: string;
+	readonly reconnect?: boolean;
+	readonly reconnectInterval?: number;
+	readonly lazy?: boolean;
 }
 
 // ─── Persisted Queries ──────────────────────────────────────────────────────
 
 export interface PersistedQueriesConfig {
-	enabled?: boolean;
-	hash?: 'sha256' | 'simple';
-	autoPersist?: boolean;
+	readonly enabled?: boolean;
+	readonly hash?: 'sha256' | 'simple';
+	readonly autoPersist?: boolean;
 	/** Send hash-only requests via GET instead of POST to enable CDN caching.
 	 *  Only applies when `hash` is set and the query body is empty (hash-only). */
-	useGetForHashedQueries?: boolean;
+	readonly useGetForHashedQueries?: boolean;
 }
 
 // ─── Retry Exchange ─────────────────────────────────────────────────────────
 
 export interface RetryExchangeConfig {
-	maxRetries?: number;
-	initialDelay?: number;
-	maxDelay?: number;
-	exponent?: number;
-	jitter?: boolean;
-	shouldRetry?: (result: unknown, attempt: number) => boolean;
+	readonly maxRetries?: number;
+	readonly initialDelay?: number;
+	readonly maxDelay?: number;
+	readonly exponent?: number;
+	readonly jitter?: boolean;
+	readonly shouldRetry?: (result: unknown, attempt: number) => boolean;
 }
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
 
 export interface MiddlewareConfig {
-	onError?: (error: string) => void;
+	readonly onError?: (error: string) => void;
 }
 
 // ─── Client Config ──────────────────────────────────────────────────────────
 
 export interface ClientConfig {
-	endpoint?: string;
-	url?: string;
-	headers?: Record<string, string | (() => string)>;
-	errorPolicy?: 'none' | 'all' | 'ignore';
-	showErrorsOnSuccess?: boolean;
-	retryCount?: number;
-	retryDelay?: number;
-	dedup?: boolean;
-	batchWindow?: number;
-	middleware?: GraphqlMiddleware[];
-	retryExchange?: RetryExchangeConfig;
-	devAuth?: {
-		token?: string;
-		enabled?: boolean;
+	readonly endpoint?: string;
+	readonly url?: string;
+	readonly headers?: Record<string, string | (() => string)>;
+	readonly errorPolicy?: 'none' | 'all' | 'ignore';
+	readonly showErrorsOnSuccess?: boolean;
+	readonly retryCount?: number;
+	readonly retryDelay?: number;
+	readonly dedup?: boolean;
+	readonly batchWindow?: number;
+	readonly middleware?: GraphqlMiddleware[];
+	readonly retryExchange?: RetryExchangeConfig;
+	readonly devAuth?: {
+		readonly token?: string;
+		readonly enabled?: boolean;
 	};
-	onError?: (error: string) => void;
+	readonly onError?: (error: string) => void;
 	/**
 	 * Custom error handler. Receives every error during query execution.
 	 * Called before `onError` — useful for logging, metrics, or custom toast.
 	 */
-	errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
-	subscriptions?: SubscriptionsConfig;
-	cache?: CacheConfig;
-	persistedQueries?: PersistedQueriesConfig;
+	readonly errorHandler?: { handle(error: unknown): boolean | Promise<boolean> };
+	readonly subscriptions?: SubscriptionsConfig;
+	readonly cache?: CacheConfig;
+	readonly persistedQueries?: PersistedQueriesConfig;
 }

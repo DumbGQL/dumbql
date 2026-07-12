@@ -1,8 +1,8 @@
 import { DumbqlError } from './base';
 
 export interface GraphQLLocation {
-	line: number;
-	column: number;
+	readonly line: number;
+	readonly column: number;
 }
 
 export class GraphQLError extends DumbqlError {

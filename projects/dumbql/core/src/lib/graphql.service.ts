@@ -22,47 +22,47 @@ import { cacheMiddleware } from './cache-middleware';
 export { gql };
 
 export interface GraphQLError {
-	message: string;
-	locations?: { line: number; column: number }[];
-	path?: (string | number)[];
-	extensions?: Record<string, unknown>;
+	readonly message: string;
+	readonly locations?: readonly { readonly line: number; readonly column: number }[];
+	readonly path?: readonly (string | number)[];
+	readonly extensions?: Record<string, unknown>;
 }
 
 export interface NetworkErrorInfo {
-	message: string;
-	status?: number;
-	statusText?: string;
+	readonly message: string;
+	readonly status?: number;
+	readonly statusText?: string;
 }
 
 export type ErrorCode = 'NO_DATA' | 'GRAPHQL_ERROR' | 'NETWORK_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN';
 
 export type GraphQLResult<T> =
-	| { status: 'success'; data: T; graphQLErrors?: GraphQLError[] }
+	| { readonly status: 'success'; readonly data: T; readonly graphQLErrors?: readonly GraphQLError[] }
 	| {
-			status: 'error';
-			error: string;
-			errorCode?: ErrorCode;
-			graphQLErrors?: GraphQLError[];
-			networkError?: NetworkErrorInfo;
+			readonly status: 'error';
+			readonly error: string;
+			readonly errorCode?: ErrorCode;
+			readonly graphQLErrors?: readonly GraphQLError[];
+			readonly networkError?: NetworkErrorInfo;
 	  };
 
 export interface GraphQLResponse<T> {
-	data?: T;
-	errors?: { message: string; extensions?: Record<string, unknown> }[];
+	readonly data?: T;
+	readonly errors?: readonly { readonly message: string; readonly extensions?: Record<string, unknown> }[];
 }
 
 export type ErrorPolicy = 'none' | 'all' | 'ignore';
 
 export interface RequestOverrideConfig {
-	middleware?: GraphqlMiddleware[];
-	errorPolicy?: ErrorPolicy;
-	retryCount?: number;
-	retryDelay?: number;
+	readonly middleware?: GraphqlMiddleware[];
+	readonly errorPolicy?: ErrorPolicy;
+	readonly retryCount?: number;
+	readonly retryDelay?: number;
 }
 
 interface FileEntry {
-	path: string;
-	file: Blob;
+	readonly path: string;
+	readonly file: Blob;
 }
 
 const dedupCache = new Map<string, Observable<GraphQLResult<unknown>>>();

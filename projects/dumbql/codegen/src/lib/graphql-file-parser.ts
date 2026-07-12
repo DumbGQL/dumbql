@@ -12,16 +12,16 @@ import {
 } from 'graphql';
 
 export interface OperationVar {
-	name: string;
-	type: string;
+	readonly name: string;
+	readonly type: string;
 }
 
 export interface ParsedOperation {
-	name: string;
-	type: 'query' | 'mutation' | 'subscription';
-	variables: OperationVar[];
-	document: string;
-	filePath: string;
+	readonly name: string;
+	readonly type: 'query' | 'mutation' | 'subscription';
+	readonly variables: readonly OperationVar[];
+	readonly document: string;
+	readonly filePath: string;
 }
 
 export function findGraphqlFiles(pattern: string): string[] {
@@ -84,17 +84,17 @@ function extractTypeNames(code: string): string[] {
 }
 
 export interface FragmentTypeInfo {
-	name: string;
-	keyName: string;
-	typeCondition: string;
-	importRelative: string;
+	readonly name: string;
+	readonly keyName: string;
+	readonly typeCondition: string;
+	readonly importRelative: string;
 }
 
 export interface DocumentCodegenOptions {
-	prefix?: string;
-	suffix?: string;
+	readonly prefix?: string;
+	readonly suffix?: string;
 	/** When true, generates `createTypedQuery()` instead of `gql` tag — skips runtime `parse()`. */
-	clientPreset?: boolean;
+	readonly clientPreset?: boolean;
 }
 
 /**

@@ -1,13 +1,13 @@
 interface WsMessage {
-	type: string;
-	id?: string;
-	payload?: unknown;
+	readonly type: string;
+	readonly id?: string;
+	readonly payload?: unknown;
 }
 
 interface SubscriptionCallbacks<T> {
-	next: (data: T) => void;
-	error: (err: Error) => void;
-	complete: () => void;
+	readonly next: (data: T) => void;
+	readonly error: (err: Error) => void;
+	readonly complete: () => void;
 }
 
 const WS_PROTOCOL = 'graphql-transport-ws';

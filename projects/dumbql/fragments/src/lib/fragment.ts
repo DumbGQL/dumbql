@@ -1,10 +1,10 @@
 import { parse, type DocumentNode } from 'graphql';
 
 export interface FragmentDefinition<TData = unknown, TVars extends Record<string, unknown> = Record<string, unknown>> {
-	document: DocumentNode;
-	name: string;
-	__data?: TData;
-	__variables?: TVars;
+	readonly document: DocumentNode;
+	readonly name: string;
+	readonly __data?: TData;
+	readonly __variables?: TVars;
 }
 
 export function fragment<TData, TVars extends Record<string, unknown> = Record<string, unknown>>(

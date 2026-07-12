@@ -4,11 +4,11 @@ import { print } from '@dumbql/client';
 import { useClient } from './provider';
 
 export interface UseLiveQueryOptions<TData> {
-	variables?: Record<string, unknown>;
-	wsEndpoint?: string;
-	shouldSubscribe?: boolean;
-	onCompleted?: (data: TData) => void;
-	onError?: (error: string, errorCode?: ErrorCode) => void;
+	readonly variables?: Record<string, unknown>;
+	readonly wsEndpoint?: string;
+	readonly shouldSubscribe?: boolean;
+	readonly onCompleted?: (data: TData) => void;
+	readonly onError?: (error: string, errorCode?: ErrorCode) => void;
 }
 
 export interface UseLiveQueryResult<TData> {

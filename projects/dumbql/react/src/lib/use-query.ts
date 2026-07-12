@@ -3,12 +3,12 @@ import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '
 import { useClient } from './provider';
 
 export interface UseQueryOptions<TData, TVariables> {
-	variables?: TVariables;
-	pollInterval?: number;
-	skip?: boolean;
-	onCompleted?: (data: TData) => void;
-	onError?: (error: string, errorCode?: ErrorCode) => void;
-	fetchPolicy?: 'cache-first' | 'network-only' | 'no-cache';
+	readonly variables?: TVariables;
+	readonly pollInterval?: number;
+	readonly skip?: boolean;
+	readonly onCompleted?: (data: TData) => void;
+	readonly onError?: (error: string, errorCode?: ErrorCode) => void;
+	readonly fetchPolicy?: 'cache-first' | 'network-only' | 'no-cache';
 }
 
 export type NetworkStatus = 'loading' | 'ready' | 'error' | 'refetching' | 'poll';

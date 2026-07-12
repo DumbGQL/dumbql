@@ -4,14 +4,14 @@ import type { DocumentNode, GraphQLResult } from '@dumbql/core';
 import { GraphqlService } from '@dumbql/core';
 
 export interface GraphqlDebugEntry {
-	type: 'query' | 'mutate';
-	document: string;
-	variables?: Record<string, unknown>;
-	timestamp: number;
-	duration: number;
-	result: GraphQLResult<unknown>;
-	operationName?: string;
-	fields?: string[];
+	readonly type: 'query' | 'mutate';
+	readonly document: string;
+	readonly variables?: Record<string, unknown>;
+	readonly timestamp: number;
+	readonly duration: number;
+	readonly result: GraphQLResult<unknown>;
+	readonly operationName?: string;
+	readonly fields?: readonly string[];
 }
 
 function extractOperationName(query: string): string | undefined {

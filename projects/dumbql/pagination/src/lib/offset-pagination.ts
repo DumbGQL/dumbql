@@ -11,14 +11,14 @@ export interface OffsetPaginationState<T> {
 }
 
 export interface OffsetPaginationResult<T> {
-	items: T[];
-	totalCount: number;
-	hasMore: boolean;
+	readonly items: T[];
+	readonly totalCount: number;
+	readonly hasMore: boolean;
 }
 
 export interface OffsetPaginationConfig {
-	limit?: number;
-	offset?: number;
+	readonly limit?: number;
+	readonly offset?: number;
 }
 
 export function offsetPagination<T, TVars extends Record<string, unknown> = Record<string, unknown>>(

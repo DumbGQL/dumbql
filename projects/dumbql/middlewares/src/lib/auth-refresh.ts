@@ -2,10 +2,10 @@ import { Observable, of, switchMap, tap } from 'rxjs';
 import { type GraphqlMiddleware, type GraphqlRequestContext, type GraphQLResult } from '@dumbql/core';
 
 export interface AuthRefreshConfig {
-	refreshToken: () => string | Promise<string> | Observable<string>;
-	headerName?: string;
-	triggerStatuses?: number[];
-	maxAttempts?: number;
+	readonly refreshToken: () => string | Promise<string> | Observable<string>;
+	readonly headerName?: string;
+	readonly triggerStatuses?: readonly number[];
+	readonly maxAttempts?: number;
 }
 
 export function authRefreshMiddleware(config: AuthRefreshConfig): GraphqlMiddleware {

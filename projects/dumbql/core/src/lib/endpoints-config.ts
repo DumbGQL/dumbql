@@ -2,16 +2,16 @@ import type { GraphqlMiddleware } from './middleware';
 import type { ErrorPolicy } from './graphql.service';
 
 export interface EndpointRoute {
-	url: string;
-	headers?: Record<string, string | (() => string)>;
+	readonly url: string;
+	readonly headers?: Record<string, string | (() => string)>;
 	/** Per-endpoint middleware pipeline. Applied after global middleware. */
-	middleware?: GraphqlMiddleware[];
+	readonly middleware?: GraphqlMiddleware[];
 	/** Per-endpoint error policy override. */
-	errorPolicy?: ErrorPolicy;
+	readonly errorPolicy?: ErrorPolicy;
 	/** Per-endpoint retry count override. */
-	retryCount?: number;
+	readonly retryCount?: number;
 	/** Per-endpoint retry delay override (ms). */
-	retryDelay?: number;
+	readonly retryDelay?: number;
 	/** Fallback endpoint name when this endpoint fails (5xx / timeout). */
 	fallbackTo?: string;
 	/** Health check path appended to URL (e.g. "/health"). If set, a GET is sent on startup. */
@@ -24,14 +24,14 @@ export interface EndpointRoute {
 
 export interface EndpointGroup {
 	/** Endpoint names belonging to this group. */
-	endpoints: string[];
+	readonly endpoints: readonly string[];
 }
 
 export interface EndpointsYaml {
-	default_endpoint: string;
-	endpoints: Record<string, EndpointRoute>;
+	readonly default_endpoint: string;
+	readonly endpoints: Record<string, EndpointRoute>;
 	/** Named groups for bulk operations. */
-	groups?: Record<string, EndpointGroup>;
+	readonly groups?: Record<string, EndpointGroup>;
 }
 
 export type TransformFn = (message: string, statusCode?: number) => string;

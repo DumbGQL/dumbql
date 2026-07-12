@@ -4,17 +4,17 @@ import type { GraphQLResult } from './graphql.service';
 import type { GraphqlMiddleware } from './middleware';
 
 export interface SchemaDownloadConfig {
-	endpoint?: string;
-	headers?: Record<string, string>;
-	format?: 'json' | 'sdl';
+	readonly endpoint?: string;
+	readonly headers?: Record<string, string>;
+	readonly format?: 'json' | 'sdl';
 }
 
 export interface DevtoolsConfig {
-	autoConnect?: boolean;
-	maxRequests?: number;
-	captureSchema?: boolean;
-	endpoint?: string;
-	schemaDownload?: SchemaDownloadConfig;
+	readonly autoConnect?: boolean;
+	readonly maxRequests?: number;
+	readonly captureSchema?: boolean;
+	readonly endpoint?: string;
+	readonly schemaDownload?: SchemaDownloadConfig;
 }
 
 export const DEVTOLS_CONFIG = new InjectionToken<DevtoolsConfig>('DEVTOLS_CONFIG');

@@ -4,11 +4,11 @@ import type { CacheStore } from '@dumbql/cache';
 import { useClient } from './plugin';
 
 export interface UseReactiveMutationOptions<TData, TVariables> {
-	variables?: TVariables;
-	onCompleted?: (data: TData) => void;
-	onError?: (error: string, errorCode?: ErrorCode) => void;
-	update?: (cache: CacheStore, result: GraphQLResult<TData>) => void;
-	optimistic?: (cache: CacheStore) => string;
+	readonly variables?: TVariables;
+	readonly onCompleted?: (data: TData) => void;
+	readonly onError?: (error: string, errorCode?: ErrorCode) => void;
+	readonly update?: (cache: CacheStore, result: GraphQLResult<TData>) => void;
+	readonly optimistic?: (cache: CacheStore) => string;
 }
 
 export interface UseReactiveMutationState<TData> {

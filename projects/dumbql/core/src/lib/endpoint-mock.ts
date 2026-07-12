@@ -6,13 +6,13 @@ export type MockFieldResolver = (typeName: string, fieldName: string) => unknown
 
 export interface EndpointMockConfig {
 	/** Schema SDL string or parsed types map. */
-	schema?: string;
+	readonly schema?: string;
 	/** Custom mock resolvers per type. */
-	mocks?: Record<string, MockFieldResolver>;
+	readonly mocks?: Record<string, MockFieldResolver>;
 	/** Default delay (ms) to simulate network latency. */
-	delay?: number;
+	readonly delay?: number;
 	/** Passthrough URLs that should not be mocked. */
-	passthrough?: string[];
+	readonly passthrough?: string[];
 }
 
 function generateMockData(

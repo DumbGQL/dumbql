@@ -16,13 +16,13 @@ export type { ClientConfig };
 const dedupCache = new Map<string, Promise<GraphQLResult<unknown>>>();
 
 interface BatchEntry {
-	request: GraphqlRequestContext;
-	resolve: (result: GraphQLResult<unknown>) => void;
+	readonly request: GraphqlRequestContext;
+	readonly resolve: (result: GraphQLResult<unknown>) => void;
 }
 
 interface FileEntry {
-	path: string;
-	file: Blob;
+	readonly path: string;
+	readonly file: Blob;
 }
 
 export class DumbqlClient {

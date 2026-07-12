@@ -3,10 +3,10 @@ import { resolve } from 'node:path';
 import { getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
 
 export interface DownloaderOptions {
-	endpoint: string;
-	outputDir: string;
-	filename?: string;
-	headers?: Record<string, string>;
+	readonly endpoint: string;
+	readonly outputDir: string;
+	readonly filename?: string;
+	readonly headers?: Record<string, string>;
 }
 
 export async function downloadAndStoreSchema(

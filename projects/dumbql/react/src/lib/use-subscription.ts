@@ -4,15 +4,15 @@ import { print } from '@dumbql/client';
 import { useClient } from './provider';
 
 export interface UseSubscriptionOptions<TData> {
-	variables?: Record<string, unknown>;
-	wsEndpoint?: string;
-	shouldSubscribe?: boolean;
-	reconnect?: boolean;
-	reconnectInterval?: number;
-	maxReconnects?: number;
-	onNext?: (data: TData) => void;
-	onError?: (error: string, errorCode?: ErrorCode) => void;
-	onComplete?: () => void;
+	readonly variables?: Record<string, unknown>;
+	readonly wsEndpoint?: string;
+	readonly shouldSubscribe?: boolean;
+	readonly reconnect?: boolean;
+	readonly reconnectInterval?: number;
+	readonly maxReconnects?: number;
+	readonly onNext?: (data: TData) => void;
+	readonly onError?: (error: string, errorCode?: ErrorCode) => void;
+	readonly onComplete?: () => void;
 }
 
 export interface UseSubscriptionResult<TData> {

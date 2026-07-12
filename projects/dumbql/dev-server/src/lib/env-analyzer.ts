@@ -1,11 +1,11 @@
 export type RuntimeEnv = 'local' | 'stackblitz' | 'codespaces' | 'unknown';
 
 export interface EnvInfo {
-	runtime: RuntimeEnv;
+	readonly runtime: RuntimeEnv;
 	/** Whether absolute localhost URLs in proxied content should be rewritten */
-	needsUrlRewrite: boolean;
+	readonly needsUrlRewrite: boolean;
 	/** The public-facing host of the Angular dev server, if determinable */
-	publicFrontendHost: string | null;
+	readonly publicFrontendHost: string | null;
 }
 
 export function analyzeEnvironment(rewriteOverride?: boolean): EnvInfo {

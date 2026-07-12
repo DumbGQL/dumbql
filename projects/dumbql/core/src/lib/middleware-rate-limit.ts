@@ -4,13 +4,13 @@ import { Observable, throwError } from 'rxjs';
 
 export interface RateLimitConfig {
 	/** Max requests allowed within the window. Default: 10 */
-	maxRequests?: number;
+	readonly maxRequests?: number;
 	/** Window size in milliseconds. Default: 60000 (1 min) */
-	windowMs?: number;
+	readonly windowMs?: number;
 	/** Custom key function. Default: endpoint name */
-	key?: (request: GraphqlRequestContext) => string;
+	readonly key?: (request: GraphqlRequestContext) => string;
 	/** Callback when rate limited */
-	onRateLimited?: (key: string, retryAfterMs: number) => void;
+	readonly onRateLimited?: (key: string, retryAfterMs: number) => void;
 }
 
 interface RateLimitEntry {

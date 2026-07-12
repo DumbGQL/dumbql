@@ -1,10 +1,10 @@
 import { defineComponent, h, ref, watch, onUnmounted } from 'vue';
 
 export interface RateLimitGateProps {
-	isLimited: boolean;
-	retryAfter?: number;
-	onRetry?: () => void;
-	error?: string | null;
+	readonly isLimited: boolean;
+	readonly retryAfter?: number;
+	readonly onRetry?: () => void;
+	readonly error?: string | null;
 }
 
 export const RateLimitGate = defineComponent({

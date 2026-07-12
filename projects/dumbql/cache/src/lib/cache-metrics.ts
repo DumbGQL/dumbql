@@ -1,17 +1,17 @@
 export interface CacheMetricsSnapshot {
-	totalReads: number;
-	totalWrites: number;
-	totalMerges: number;
-	totalEvictions: number;
-	totalGcRuns: number;
-	totalEntitiesEvicted: number;
-	hitRate: number;
-	currentEntityCount: number;
-	currentRefCountTotal: number;
-	currentDanglingCount: number;
-	optimisticUpdateCount: number;
-	localStateCount: number;
-	sizeEstimateBytes: number;
+	readonly totalReads: number;
+	readonly totalWrites: number;
+	readonly totalMerges: number;
+	readonly totalEvictions: number;
+	readonly totalGcRuns: number;
+	readonly totalEntitiesEvicted: number;
+	readonly hitRate: number;
+	readonly currentEntityCount: number;
+	readonly currentRefCountTotal: number;
+	readonly currentDanglingCount: number;
+	readonly optimisticUpdateCount: number;
+	readonly localStateCount: number;
+	readonly sizeEstimateBytes: number;
 }
 
 export class CacheMetrics {

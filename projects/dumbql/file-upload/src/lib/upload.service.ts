@@ -4,8 +4,8 @@ import { Observable, catchError, of } from 'rxjs';
 import { print, type DocumentNode, type DumbqlConfig, DUMBQL_CONFIG } from '@dumbql/core';
 
 export interface FileEntry {
-	path: string;
-	file: Blob;
+	readonly path: string;
+	readonly file: Blob;
 }
 
 @Injectable({ providedIn: 'root' })

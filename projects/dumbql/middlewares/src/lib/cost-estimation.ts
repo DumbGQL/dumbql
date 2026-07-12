@@ -5,28 +5,28 @@ import type { GraphqlMiddleware, GraphQLResult } from '@dumbql/core';
 
 export interface QueryCost {
 	/** Raw field count (each selection = 1). */
-	fields: number;
+	readonly fields: number;
 	/** Maximum nesting depth. */
-	depth: number;
+	readonly depth: number;
 	/** Weighted cost = sum of (1 + depth * depthFactor) per field. */
-	cost: number;
+	readonly cost: number;
 	/** Number of fragment spreads used. */
-	fragments: number;
+	readonly fragments: number;
 	/** Number of aliased fields. */
-	aliases: number;
+	readonly aliases: number;
 	/** Human-readable breakdown. */
-	details: string[];
+	readonly details: readonly string[];
 }
 
 export interface CostEstimationConfig {
 	/** Maximum allowed cost. Requests above this are blocked (in 'block' mode). */
-	maxCost?: number;
+	readonly maxCost?: number;
 	/** Cost threshold for warnings. */
-	warnAt?: number;
+	readonly warnAt?: number;
 	/** Multiplier per nesting level. Default 0.5. */
-	depthFactor?: number;
+	readonly depthFactor?: number;
 	/** Action when cost > maxCost. Default 'warn'. */
-	mode?: 'block' | 'warn' | 'pass';
+	readonly mode?: 'block' | 'warn' | 'pass';
 }
 
 export function estimateQueryCost(query: string, depthFactor = 0.5): QueryCost {

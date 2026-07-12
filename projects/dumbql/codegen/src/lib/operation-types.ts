@@ -1,10 +1,10 @@
 import { parse, type DocumentNode, type OperationDefinitionNode, type VariableDefinitionNode } from 'graphql';
 
 export interface OperationInfo {
-	name: string;
-	type: 'query' | 'mutation' | 'subscription';
-	variables: { name: string; type: string }[];
-	fields: string[];
+	readonly name: string;
+	readonly type: 'query' | 'mutation' | 'subscription';
+	readonly variables: readonly { readonly name: string; readonly type: string }[];
+	readonly fields: readonly string[];
 }
 
 /**
@@ -60,8 +60,8 @@ function serializeTypeRef(typeRef: unknown): string {
 }
 
 export interface TypedOperationConfig {
-	operationResultPrefix?: string;
-	operationResultSuffix?: string;
+	readonly operationResultPrefix?: string;
+	readonly operationResultSuffix?: string;
 }
 
 /**

@@ -4,19 +4,19 @@ import { GraphqlService, type GraphQLResult, type RequestOverrideConfig } from '
 import type { DocumentNode, TypedDocumentNode } from './gql';
 
 export interface MutationBatchItem<TResponse> {
-	document: DocumentNode | TypedDocumentNode<TResponse>;
-	variables?: Record<string, unknown>;
-	endpoint?: string;
-	overrideConfig?: RequestOverrideConfig;
-	resolve: (result: GraphQLResult<TResponse>) => void;
-	reject: (error: unknown) => void;
+	readonly document: DocumentNode | TypedDocumentNode<TResponse>;
+	readonly variables?: Record<string, unknown>;
+	readonly endpoint?: string;
+	readonly overrideConfig?: RequestOverrideConfig;
+	readonly resolve: (result: GraphQLResult<TResponse>) => void;
+	readonly reject: (error: unknown) => void;
 }
 
 export interface MutationBatchConfig {
 	/** Max time (ms) to wait before flushing the batch. Default: 50 */
-	batchWindowMs?: number;
+	readonly batchWindowMs?: number;
 	/** Max number of mutations in a single batch. Default: 10 */
-	maxBatchSize?: number;
+	readonly maxBatchSize?: number;
 }
 
 /**

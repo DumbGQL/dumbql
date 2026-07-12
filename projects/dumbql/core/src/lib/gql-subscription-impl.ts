@@ -10,7 +10,11 @@ export class GqlSubscriptionWsClient {
 	subscribe<T>(
 		query: string,
 		variables?: Record<string, unknown>,
-		observers: { next: (data: T) => void; error: (err: unknown) => void; complete: () => void },
+		observers: {
+			readonly next: (data: T) => void;
+			readonly error: (err: unknown) => void;
+			readonly complete: () => void;
+		},
 	): () => void {
 		this.ws = new WebSocket(this.url);
 

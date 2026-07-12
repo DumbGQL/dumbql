@@ -4,17 +4,17 @@ import { throwError, type Observable } from 'rxjs';
 
 export interface QueryCostConfig {
 	/** Maximum allowed query depth. Default: 10 */
-	maxDepth?: number;
+	readonly maxDepth?: number;
 	/** Maximum estimated cost. Default: 1000 */
-	maxCost?: number;
+	readonly maxCost?: number;
 	/** Cost per field. Default: 1 */
-	fieldCost?: number;
+	readonly fieldCost?: number;
 	/** Cost multiplier per nested level. Default: 10 */
-	depthMultiplier?: number;
+	readonly depthMultiplier?: number;
 	/** Mode: 'block' rejects expensive queries, 'warn' logs but allows. Default: 'block' */
-	mode?: 'block' | 'warn';
+	readonly mode?: 'block' | 'warn';
 	/** Callback when query exceeds limits */
-	onExceeded?: (info: { depth: number; cost: number; query: string }) => void;
+	readonly onExceeded?: (info: { readonly depth: number; readonly cost: number; readonly query: string }) => void;
 }
 
 function countDepth(query: string): number {

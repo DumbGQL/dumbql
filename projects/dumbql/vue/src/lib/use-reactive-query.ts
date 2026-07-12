@@ -3,14 +3,14 @@ import type { DocumentNode, TypedDocumentNode, GraphQLResult, ErrorCode } from '
 import { useClient } from './plugin';
 
 export interface UseReactiveQueryOptions<TData, TVariables> {
-	variables?: TVariables;
-	pollInterval?: number;
-	skip?: boolean;
-	placeholderData?: TData;
-	initialData?: TData;
-	select?: (data: TData) => unknown;
-	onCompleted?: (data: TData) => void;
-	onError?: (error: string, errorCode?: ErrorCode) => void;
+	readonly variables?: TVariables;
+	readonly pollInterval?: number;
+	readonly skip?: boolean;
+	readonly placeholderData?: TData;
+	readonly initialData?: TData;
+	readonly select?: (data: TData) => unknown;
+	readonly onCompleted?: (data: TData) => void;
+	readonly onError?: (error: string, errorCode?: ErrorCode) => void;
 }
 
 export type NetworkStatus = 'idle' | 'loading' | 'success' | 'error' | 'refetching' | 'poll';

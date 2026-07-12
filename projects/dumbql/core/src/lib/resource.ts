@@ -5,11 +5,11 @@ import type { DocumentNode, TypedDocumentNode } from './gql';
 import { GraphqlService } from './graphql.service';
 
 export interface GraphqlResourceOptions<TData, TVariables extends Record<string, unknown>> {
-	client: GraphqlService;
-	params: () => TVariables | undefined;
-	query: DocumentNode | TypedDocumentNode<TData, TVariables>;
-	id?: string;
-	defaultValue?: TData;
+	readonly client: GraphqlService;
+	readonly params: () => TVariables | undefined;
+	readonly query: DocumentNode | TypedDocumentNode<TData, TVariables>;
+	readonly id?: string;
+	readonly defaultValue?: TData;
 }
 
 export function graphqlResource<TData, TVariables extends Record<string, unknown>>(

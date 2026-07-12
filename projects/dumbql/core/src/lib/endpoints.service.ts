@@ -9,20 +9,20 @@ export const ENDPOINTS_YAML = new InjectionToken<EndpointsYaml>('ENDPOINTS_YAML'
 export const IS_MULTI_ENDPOINT = new InjectionToken<boolean>('IS_MULTI_ENDPOINT');
 
 export interface EndpointLifecycleHook {
-	beforeEndpoint?: (name: string, route: EndpointRoute) => void;
-	afterEndpoint?: (name: string, route: EndpointRoute, durationMs: number) => void;
-	onFallback?: (from: string, to: string) => void;
-	onHealthCheck?: (name: string, route: EndpointRoute, healthy: boolean) => void;
+	readonly beforeEndpoint?: (name: string, route: EndpointRoute) => void;
+	readonly afterEndpoint?: (name: string, route: EndpointRoute, durationMs: number) => void;
+	readonly onFallback?: (from: string, to: string) => void;
+	readonly onHealthCheck?: (name: string, route: EndpointRoute, healthy: boolean) => void;
 }
 
 export const ENDPOINT_LIFECYCLE = new InjectionToken<EndpointLifecycleHook>('ENDPOINT_LIFECYCLE');
 
 export interface HealthCheckResult {
-	name: string;
-	url: string;
-	healthy: boolean;
-	statusCode?: number;
-	durationMs: number;
+	readonly name: string;
+	readonly url: string;
+	readonly healthy: boolean;
+	readonly statusCode?: number;
+	readonly durationMs: number;
 }
 
 @Injectable({ providedIn: 'root' })

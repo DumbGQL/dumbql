@@ -4,13 +4,13 @@ import { Observable, throwError } from 'rxjs';
 
 export interface CircuitBreakerConfig {
 	/** Number of consecutive failures before opening the circuit. Default: 5 */
-	failureThreshold?: number;
+	readonly failureThreshold?: number;
 	/** Cooldown period (ms) before trying half-open. Default: 30000 */
-	cooldownMs?: number;
+	readonly cooldownMs?: number;
 	/** Max successes in half-open state before closing. Default: 2 */
-	halfOpenSuccessThreshold?: number;
+	readonly halfOpenSuccessThreshold?: number;
 	/** Optional callback when circuit state changes */
-	onStateChange?: (state: 'closed' | 'open' | 'half-open', endpoint?: string) => void;
+	readonly onStateChange?: (state: 'closed' | 'open' | 'half-open', endpoint?: string) => void;
 }
 
 type CircuitState = 'closed' | 'open' | 'half-open';

@@ -16,10 +16,10 @@ import { delay as rxDelay } from 'rxjs/operators';
 import { type GraphqlMiddleware, type GraphqlRequestContext, type GraphQLResult } from '@dumbql/core';
 
 export interface AutoMockConfig {
-	schema?: string;
-	mocks?: Record<string, MockResolver>;
-	delay?: number;
-	passthrough?: boolean;
+	readonly schema?: string;
+	readonly mocks?: Record<string, MockResolver>;
+	readonly delay?: number;
+	readonly passthrough?: boolean;
 }
 
 export type MockResolver = (fieldName: string, args: Record<string, unknown>) => unknown;

@@ -90,6 +90,45 @@ export class CacheStore {
 		this.events.emit({ type: 'optimistic', data: { action: 'commit', id } });
 	}
 
+	/** Read a full query result by its cache key. */
+	readQuery<T = unknown>(queryHash: string): T | undefined {
+		return this.localState.get(queryHash) as T | undefined;
+	}
+
+	/** Write a full query result into the cache. */
+	writeQuery<T>(queryHash: string, data: T): void {
+		this.writeLocal(queryHash, data);
+	}
+
+	/** Read specific fields from a cached entity. */
+	readFragment<T extends Record<string, unknown>>(
+		typename: string,
+		id: string,
+		fields: readonly string[],
+	): Pick<T, keyof T> | undefined {
+		const entity = this.cache.get(typename, id);
+		if (!entity) return undefined;
+		const result = {} as Record<string, unknown>;
+		for (const field of fields) {
+			if (field in entity) {
+				result[field] = entity[field];
+			}
+		}
+		return result as Pick<T, keyof T>;
+	}
+
+	/** Merge specific fields into a cached entity. */
+	writeFragment(
+		typename: string,
+		id: string,
+		fields: Record<string, unknown>,
+	): void {
+		this.merge({ __typename: typename, id, ...fields } as Partial<CacheEntity> & {
+			__typename: string;
+			id: string;
+		});
+	}
+
 	readLocal(key: string): unknown {
 		return this.localState.get(key);
 	}

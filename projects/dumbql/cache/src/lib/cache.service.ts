@@ -64,6 +64,30 @@ export class CacheService {
 		this.store.commitOptimistic(id);
 	}
 
+	readQuery<T = unknown>(queryHash: string): T | undefined {
+		return this.store.readQuery<T>(queryHash);
+	}
+
+	writeQuery<T>(queryHash: string, data: T): void {
+		this.store.writeQuery(queryHash, data);
+	}
+
+	readFragment<T extends Record<string, unknown>>(
+		typename: string,
+		id: string,
+		fields: readonly string[],
+	): Pick<T, keyof T> | undefined {
+		return this.store.readFragment<T>(typename, id, fields);
+	}
+
+	writeFragment(
+		typename: string,
+		id: string,
+		fields: Record<string, unknown>,
+	): void {
+		this.store.writeFragment(typename, id, fields);
+	}
+
 	readLocal(key: string): unknown {
 		return this.store.readLocal(key);
 	}

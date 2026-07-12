@@ -8,6 +8,7 @@ export { useSubscription, type UseSubscriptionOptions, type UseSubscriptionResul
 export { useLiveQuery, type UseLiveQueryOptions, type UseLiveQueryResult } from './lib/use-live-query';
 export { useSuspenseQuery, useBackgroundQuery, useReadQuery, type QueryRef } from './lib/use-suspense-query';
 export { useFragment, type UseFragmentResult } from './lib/use-fragment';
+export { useLazyQuery, type UseLazyQueryOptions, type UseLazyQueryResult } from './lib/use-lazy-query';
 export { usePrefetch } from './lib/use-prefetch';
 export { RateLimitGate, type RateLimitGateProps } from './lib/rate-limit-gate';
 

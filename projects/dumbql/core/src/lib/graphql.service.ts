@@ -60,6 +60,14 @@ export interface RequestOverrideConfig {
 	retryDelay?: number;
 }
 
+export interface RefetchQueryDef {
+	readonly document: TypedQueryString<unknown, Record<string, unknown>>
+		| DocumentNode
+		| TypedDocumentNode<unknown, Record<string, unknown>>;
+	readonly variables?: Record<string, unknown>;
+	readonly endpoint?: string;
+}
+
 interface FileEntry {
 	path: string;
 	file: Blob;
@@ -148,6 +156,7 @@ export class GraphqlService {
 		endpoint?: string,
 		optimistic?: (cache: GraphqlCacheLike) => string,
 		overrideConfig?: RequestOverrideConfig,
+		refetchQueries?: readonly RefetchQueryDef[],
 	): Observable<GraphQLResult<TResponse>> {
 		const query = typeof document === 'string' ? document : print(document);
 
@@ -180,6 +189,13 @@ export class GraphqlService {
 						cache.commitOptimistic(optimisticId);
 					} else {
 						cache.rollbackOptimistic(optimisticId);
+					}
+					// Refetch specified queries after successful mutation
+					if (result.status === 'success' && refetchQueries?.length) {
+						for (const rq of refetchQueries) {
+							this.query(rq.document, rq.variables as Record<string, unknown>, rq.endpoint)
+								.subscribe(); // fire-and-forget
+						}
 					}
 				},
 				error: () => {

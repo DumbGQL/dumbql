@@ -1,6 +1,6 @@
 import { inject, signal, type Signal } from '@angular/core';
 import { defer, Observable, tap } from 'rxjs';
-import { GraphqlService, type GraphQLResult, type RequestOverrideConfig } from './graphql.service';
+import { GraphqlService, type GraphQLResult, type RequestOverrideConfig, type RefetchQueryDef } from './graphql.service';
 import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { InferResponse, InferVariables, InferEndpointNames } from './types';
@@ -16,6 +16,8 @@ export type InjectMutationEndpointParam<Yaml extends EndpointsYaml | undefined =
 export interface InjectMutationOptions extends DumbqlInjectOptions {
 	/** Apply optimistic cache update. Return a unique ID for the update. */
 	readonly optimistic?: (cache: GraphqlCacheLike) => string;
+	/** Re-execute these queries after a successful mutation. */
+	readonly refetchQueries?: readonly RefetchQueryDef[];
 }
 
 export interface InjectMutationHandle<TResponse> {
@@ -94,6 +96,7 @@ export function injectMutation<
 				url,
 				options?.optimistic,
 				overrideCfg,
+				options?.refetchQueries,
 			).pipe(
 				tap({
 					next: (result) => {

@@ -34,6 +34,7 @@ export {
 	type ErrorCode,
 	type ErrorPolicy,
 	type RequestOverrideConfig,
+	type RefetchQueryDef,
 } from './lib/graphql.service';
 export { gql, print, createTypedQuery } from './lib/gql';
 export type { DocumentNode, TypedDocumentNode, TypedQueryString, FragmentRef } from './lib/gql';

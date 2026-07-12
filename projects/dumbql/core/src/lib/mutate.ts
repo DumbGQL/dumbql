@@ -1,6 +1,6 @@
 import { inject, type Signal } from '@angular/core';
 import { defer, Observable } from 'rxjs';
-import { GraphqlService, type GraphQLResult, type RequestOverrideConfig } from './graphql.service';
+import { GraphqlService, type GraphQLResult, type RequestOverrideConfig, type RefetchQueryDef } from './graphql.service';
 import { EndpointsService } from './endpoints.service';
 import type { DocumentNode, TypedDocumentNode, TypedQueryString } from './gql';
 import type { GraphqlCacheLike } from './dumbql-config';
@@ -15,6 +15,8 @@ export type MutateEndpointParam<Yaml extends EndpointsYaml | undefined = undefin
 export interface MutateOptions {
 	/** Apply optimistic cache update. Return a unique ID for the update. */
 	readonly optimistic?: (cache: GraphqlCacheLike) => string;
+	/** Re-execute these queries after a successful mutation. */
+	readonly refetchQueries?: readonly RefetchQueryDef[];
 }
 
 export function mutate<
@@ -62,6 +64,7 @@ export function mutate<
 
 		return svc.mutate<TResponse, TVariables>(
 			document, variables, url, options?.optimistic, overrideCfg,
+			options?.refetchQueries,
 		);
 	});
 }
